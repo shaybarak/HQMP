@@ -1,0 +1,423 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup>
+    <Filter Include="Source Files">
+      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
+      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    </Filter>
+    <Filter Include="Header Files">
+      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
+      <Extensions>h;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    </Filter>
+    <Filter Include="Resource Files">
+      <UniqueIdentifier>{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}</UniqueIdentifier>
+      <Extensions>rc;ico;cur;bmp;dlg;rc2;rct;bin;rgs;gif;jpg;jpeg;jpe;resx;tiff;tif;png;wav;mfcribbon-ms</Extensions>
+    </Filter>
+    <Filter Include="Header Files\Graph">
+      <UniqueIdentifier>{2dade9aa-a535-4f20-a631-51991504b074}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Graph">
+      <UniqueIdentifier>{a8c86634-6ec1-41a6-84d9-5d6238d42317}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Manager">
+      <UniqueIdentifier>{b56d62f4-4628-48e5-a784-bcbb417ad308}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Manager">
+      <UniqueIdentifier>{0e48714b-b55f-426a-bfb8-5bd37ec69650}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Manifolds">
+      <UniqueIdentifier>{f243dda2-f05d-4a9b-a9f1-979644ac1b35}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Manifolds\Base">
+      <UniqueIdentifier>{2b1a7dba-b9c9-4e28-a4ac-0d862f6a3830}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Manifolds\Fixed_angle">
+      <UniqueIdentifier>{84d1af3d-5447-47b7-b998-b66b66d926ff}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Manifolds\Fixed_point">
+      <UniqueIdentifier>{c9663699-39f2-4887-89d0-8db8b9f85de0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Path_planning">
+      <UniqueIdentifier>{fca58bdd-7087-4fff-9408-10814b54914e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Programs">
+      <UniqueIdentifier>{fa625eb6-0f8e-4afe-959c-213f2fe64db6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Project">
+      <UniqueIdentifier>{cd329d78-028b-4114-81cd-67043129fdcb}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Project">
+      <UniqueIdentifier>{63d3e2cb-3c4b-462d-a0f4-d31e32bc4fa4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils">
+      <UniqueIdentifier>{84f0cb26-cee6-4080-a02f-4dc5d0f26e65}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils\Communication_utils">
+      <UniqueIdentifier>{d389671b-69c7-4846-b4b9-dc2155a95bea}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utils">
+      <UniqueIdentifier>{a8c9afe0-bfb7-4b5c-a175-997f690335fe}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utils\Communication_utils">
+      <UniqueIdentifier>{d999c9b3-a224-4681-8c93-a1413837154e}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils\Geometry_utils">
+      <UniqueIdentifier>{136fd143-d030-4d72-ae68-605406655c88}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils\Interval_utils">
+      <UniqueIdentifier>{bb568e18-16d8-44ff-bf86-39908a641c46}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils\Number_utils">
+      <UniqueIdentifier>{c55d3c58-11a8-42e5-93ae-4b6713de3d19}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils\Polygon_utils">
+      <UniqueIdentifier>{d8aff0ba-1529-4ef0-88c9-ba9e91f01187}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils\Random_utils">
+      <UniqueIdentifier>{d54de5b7-4790-4a71-9e00-eb3702d0f15d}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils\Rotation_utils">
+      <UniqueIdentifier>{29c65598-1f47-4cc7-b9fc-9b5af4a99255}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Utils\UI_utils">
+      <UniqueIdentifier>{4ef25a9c-7e79-4a52-a645-a96b89170ba2}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Utils\UI_utils">
+      <UniqueIdentifier>{3071f85b-0d6f-4531-8041-4318c07f708c}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Players">
+      <UniqueIdentifier>{0492c404-a12c-47cd-a8f1-229caef43851}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Players">
+      <UniqueIdentifier>{ed3e5ffd-0e7c-48f9-94f0-743c66c9daab}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Configuration_spaces">
+      <UniqueIdentifier>{7eea82cf-0868-4d56-9984-8b3ae8a6cbf4}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Configuration_spaces\AnglePrimitive">
+      <UniqueIdentifier>{fad0d3cb-c4c1-4984-b946-45b29f8b55e0}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Header Files\Configuration_spaces\PointPrimitive">
+      <UniqueIdentifier>{a9dcd27e-835d-4c04-84cc-3460e8f75130}</UniqueIdentifier>
+    </Filter>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="Graph\ConnectedComponents.h">
+      <Filter>Header Files\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="Graph\Graph.h">
+      <Filter>Header Files\Graph</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\Additional_target_configurations_manager.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\File_names.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\Motion_handler.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\Request_handler.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\Safe_type.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\Syncronizer.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\Target_configurations_manager.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\Time_frame.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Manager\Writen_paths_filenames.h">
+      <Filter>Header Files\Manager</Filter>
+    </ClInclude>
+    <ClInclude Include="Manifolds\Base\Constraint_base.h">
+      <Filter>Header Files\Manifolds\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Manifolds\Base\Fsc_base.h">
+      <Filter>Header Files\Manifolds\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Manifolds\Base\Manifold_base.h">
+      <Filter>Header Files\Manifolds\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Manifolds\Base\Manifold_container_base.h">
+      <Filter>Header Files\Manifolds\Base</Filter>
+    </ClInclude>
+    <ClInclude Include="Manifolds\Fixed_angle\Fixed_angle_constraint.h">
+      <Filter>Header Files\Manifolds\Fixed_angle</Filter>
+    </ClInclude>
+    <ClInclude Include="Manifolds\Fixed_angle\Fixed_angle_fsc.h">
+      <Filter>Header Files\Manifolds\Fixed_angle</Filter>
+    </ClInclude>
+    <ClInclude Include="Manifolds\Fixed_angle\Fixed_angle_manifold.h">
+      <Filter>Header Files\Manifolds\Fixed_angle</Filter>
+    </ClInclude>
+    <ClInclude Include="Manifolds\Fixed_angle\Fixed_angle_manifold_container.h">
+      <Filter>Header Files\Manifolds\Fixed_angle</Filter>
+    </ClInclude>
+    <ClInclude Include="Manifolds\Fixed_point\Fixed_point_constraint.h">
+      <Filter>Header Files\Manifolds\Fixed_point</Filter>
+    </ClInclude>
+    <ClInclude Include="Manifolds\Fixed_point\Fixed_point_fsc.h">
+      <Filter>Header Files\Manifolds\Fixed_point</Filter>
+    </ClInclude>
+    <ClInclude Include="Manifolds\Fixed_point\Fixed_point_manifold.h">
+      <Filter>Header Files\Manifolds\Fixed_point</Filter>
+    </ClInclude>
+    <ClInclude Include="Manifolds\Fixed_point\Fixed_point_manifold_container.h">
+      <Filter>Header Files\Manifolds\Fixed_point</Filter>
+    </ClInclude>
+    <ClInclude Include="Manifolds\Fsc_indx.h">
+      <Filter>Header Files\Manifolds</Filter>
+    </ClInclude>
+    <ClInclude Include="Manifolds\Intersect_manifolds.h">
+      <Filter>Header Files\Manifolds</Filter>
+    </ClInclude>
+    <ClInclude Include="Manifolds\MMSTypedefs.h">
+      <Filter>Header Files\Manifolds</Filter>
+    </ClInclude>
+    <ClInclude Include="Path_planning\IntervalPathPlanning.h">
+      <Filter>Header Files\Path_planning</Filter>
+    </ClInclude>
+    <ClInclude Include="Path_planning\Motion_sequence.h">
+      <Filter>Header Files\Path_planning</Filter>
+    </ClInclude>
+    <ClInclude Include="Path_planning\Motion_sequence_gui_converter.h">
+      <Filter>Header Files\Path_planning</Filter>
+    </ClInclude>
+    <ClInclude Include="Path_planning\Motion_step_base.h">
+      <Filter>Header Files\Path_planning</Filter>
+    </ClInclude>
+    <ClInclude Include="Path_planning\Motion_step_reader.h">
+      <Filter>Header Files\Path_planning</Filter>
+    </ClInclude>
+    <ClInclude Include="Path_planning\Motion_step_rotational.h">
+      <Filter>Header Files\Path_planning</Filter>
+    </ClInclude>
+    <ClInclude Include="Path_planning\Motion_step_static.h">
+      <Filter>Header Files\Path_planning</Filter>
+    </ClInclude>
+    <ClInclude Include="Path_planning\Motion_step_translational.h">
+      <Filter>Header Files\Path_planning</Filter>
+    </ClInclude>
+    <ClInclude Include="Path_planning\Motion_step_writer.h">
+      <Filter>Header Files\Path_planning</Filter>
+    </ClInclude>
+    <ClInclude Include="Path_planning\PathPlanningUtils.h">
+      <Filter>Header Files\Path_planning</Filter>
+    </ClInclude>
+    <ClInclude Include="Path_planning\PolygonPathPlanning.h">
+      <Filter>Header Files\Path_planning</Filter>
+    </ClInclude>
+    <ClInclude Include="Path_planning\ShortestPathInPolygon.h">
+      <Filter>Header Files\Path_planning</Filter>
+    </ClInclude>
+    <ClInclude Include="Project\CgalTypedefs.h">
+      <Filter>Header Files\Project</Filter>
+    </ClInclude>
+    <ClInclude Include="Project\CompilationFlags.h">
+      <Filter>Header Files\Project</Filter>
+    </ClInclude>
+    <ClInclude Include="Project\Configuration.h">
+      <Filter>Header Files\Project</Filter>
+    </ClInclude>
+    <ClInclude Include="Project\Globals.h">
+      <Filter>Header Files\Project</Filter>
+    </ClInclude>
+    <ClInclude Include="Project\Includes.h">
+      <Filter>Header Files\Project</Filter>
+    </ClInclude>
+    <ClInclude Include="FSC.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Fsc_path_planning.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="heuristic_utils.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Mms_example.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="stdafx.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="targetver.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Communication_utils\client_utils.h">
+      <Filter>Header Files\Utils\Communication_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Communication_utils\server_utils.h">
+      <Filter>Header Files\Utils\Communication_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Communication_utils\Socket.h">
+      <Filter>Header Files\Utils\Communication_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Communication_utils\socket_typedefs.h">
+      <Filter>Header Files\Utils\Communication_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Geometry_utils\BoundingUtils.h">
+      <Filter>Header Files\Utils\Geometry_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Geometry_utils\GeometryIO.h">
+      <Filter>Header Files\Utils\Geometry_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Geometry_utils\GetClosestUtils.h">
+      <Filter>Header Files\Utils\Geometry_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Geometry_utils\Less_than_point.h">
+      <Filter>Header Files\Utils\Geometry_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Interval_utils\IntervalSet.h">
+      <Filter>Header Files\Utils\Interval_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Interval_utils\Interval.h">
+      <Filter>Header Files\Utils\Interval_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Number_utils\AK_conversions_1.h">
+      <Filter>Header Files\Utils\Number_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Number_utils\Sqrt_approximation.h">
+      <Filter>Header Files\Utils\Number_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Polygon_utils\do_intersect_predicates.h">
+      <Filter>Header Files\Utils\Polygon_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Polygon_utils\ExtendedPolygon.h">
+      <Filter>Header Files\Utils\Polygon_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Polygon_utils\Is_in_polygon_predicates.h">
+      <Filter>Header Files\Utils\Polygon_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Polygon_utils\MotionPlanningUtils.h">
+      <Filter>Header Files\Utils\Polygon_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Polygon_utils\Polygon_rotations.h">
+      <Filter>Header Files\Utils\Polygon_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Polygon_utils\Polygon_translations.h">
+      <Filter>Header Files\Utils\Polygon_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Polygon_utils\PolygonIO.h">
+      <Filter>Header Files\Utils\Polygon_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Polygon_utils\PolygonUtils.h">
+      <Filter>Header Files\Utils\Polygon_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Polygon_utils\Smart_polygon_with_holes.h">
+      <Filter>Header Files\Utils\Polygon_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Random_utils\RandomUtils.h">
+      <Filter>Header Files\Utils\Random_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Rotation_utils\Rotation.h">
+      <Filter>Header Files\Utils\Rotation_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Rotation_utils\RotationRange.h">
+      <Filter>Header Files\Utils\Rotation_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\Rotation_utils\RotationUtils.h">
+      <Filter>Header Files\Utils\Rotation_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\UI_utils\Environment.h">
+      <Filter>Header Files\Utils\UI_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\UI_utils\Graphics.h">
+      <Filter>Header Files\Utils\UI_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\UI_utils\InputReader.h">
+      <Filter>Header Files\Utils\UI_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\UI_utils\TimeManager.h">
+      <Filter>Header Files\Utils\UI_utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Utils\ReferencePoint.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
+    <ClInclude Include="Players\Player.h">
+      <Filter>Header Files\Players</Filter>
+    </ClInclude>
+    <ClInclude Include="Players\SleepingPlayer.h">
+      <Filter>Header Files\Players</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration_spaces\AnglePrimitive\ConfigurationSpace.h">
+      <Filter>Header Files\Configuration_spaces\AnglePrimitive</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration_spaces\AnglePrimitive\ShortestPathInPolygon.h">
+      <Filter>Header Files\Configuration_spaces\AnglePrimitive</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration_spaces\PointPrimitive\ConfigurationSpace.h">
+      <Filter>Header Files\Configuration_spaces\PointPrimitive</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration_spaces\PointPrimitive\CriticalValues.h">
+      <Filter>Header Files\Configuration_spaces\PointPrimitive</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration_spaces\PointPrimitive\CriticalValuesConstructor.h">
+      <Filter>Header Files\Configuration_spaces\PointPrimitive</Filter>
+    </ClInclude>
+    <ClInclude Include="Configuration_spaces\PointPrimitive\Fixed_point_utils.h">
+      <Filter>Header Files\Configuration_spaces\PointPrimitive</Filter>
+    </ClInclude>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="Graph\ConnectedComponents.cpp">
+      <Filter>Source Files\Graph</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager\File_names.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Manager\Time_frame.cpp">
+      <Filter>Source Files\Manager</Filter>
+    </ClCompile>
+    <ClCompile Include="Programs\Client_stubs.cpp">
+      <Filter>Source Files\Programs</Filter>
+    </ClCompile>
+    <ClCompile Include="Programs\Path_planner.cpp">
+      <Filter>Source Files\Programs</Filter>
+    </ClCompile>
+    <ClCompile Include="Programs\Server.cpp">
+      <Filter>Source Files\Programs</Filter>
+    </ClCompile>
+    <ClCompile Include="Project\Configuration.cpp">
+      <Filter>Source Files\Project</Filter>
+    </ClCompile>
+    <ClCompile Include="stdafx.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="workshop_betta.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Communication_utils\client_utils.cpp">
+      <Filter>Source Files\Utils\Communication_utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Communication_utils\server_utils.cpp">
+      <Filter>Source Files\Utils\Communication_utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\Communication_utils\socket.cpp">
+      <Filter>Source Files\Utils\Communication_utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\UI_utils\Graphics.cpp">
+      <Filter>Source Files\Utils\UI_utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\UI_utils\InputReader.cpp">
+      <Filter>Source Files\Utils\UI_utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Utils\UI_utils\TimeManager.cpp">
+      <Filter>Source Files\Utils\UI_utils</Filter>
+    </ClCompile>
+    <ClCompile Include="Players\Player.cpp">
+      <Filter>Source Files\Players</Filter>
+    </ClCompile>
+    <ClCompile Include="Players\SleepingPlayer.cpp">
+      <Filter>Source Files\Players</Filter>
+    </ClCompile>
+  </ItemGroup>
+</Project>

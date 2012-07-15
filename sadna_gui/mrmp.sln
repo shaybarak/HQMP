@@ -1,0 +1,25 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{12F64AF2-AAD4-4F0E-9DFC-2832A97CF11E}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "mrmp", "mrmp\mrmp.vcxproj", "{65E18D14-E01C-4405-A5AD-420A515C2EB0}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{65E18D14-E01C-4405-A5AD-420A515C2EB0}.Debug|Win32.ActiveCfg = Debug|Win32
+		{65E18D14-E01C-4405-A5AD-420A515C2EB0}.Debug|Win32.Build.0 = Debug|Win32
+		{65E18D14-E01C-4405-A5AD-420A515C2EB0}.Release|Win32.ActiveCfg = Release|Win32
+		{65E18D14-E01C-4405-A5AD-420A515C2EB0}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		QtVersion = $(DefaultQtVersion)
+	EndGlobalSection
+EndGlobal

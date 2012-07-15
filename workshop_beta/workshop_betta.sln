@@ -1,0 +1,32 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 11.00
+# Visual Studio 2010
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "single_robot_planner_example", "single_robot_planner_example\single_robot_planner_example.vcxproj", "{1A3D4DA6-0FD1-4A1A-9090-0A9F69E5C535}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "client", "client\client.vcxproj", "{D3B4BA98-941C-4B3B-9E04-EFC2FE1CD8ED}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "server", "server\server.vcxproj", "{A604F1A8-7845-44E6-B37E-C3CF6CA12ECE}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Win32 = Debug|Win32
+		Release|Win32 = Release|Win32
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{1A3D4DA6-0FD1-4A1A-9090-0A9F69E5C535}.Debug|Win32.ActiveCfg = Debug|Win32
+		{1A3D4DA6-0FD1-4A1A-9090-0A9F69E5C535}.Debug|Win32.Build.0 = Debug|Win32
+		{1A3D4DA6-0FD1-4A1A-9090-0A9F69E5C535}.Release|Win32.ActiveCfg = Release|Win32
+		{1A3D4DA6-0FD1-4A1A-9090-0A9F69E5C535}.Release|Win32.Build.0 = Release|Win32
+		{D3B4BA98-941C-4B3B-9E04-EFC2FE1CD8ED}.Debug|Win32.ActiveCfg = Debug|Win32
+		{D3B4BA98-941C-4B3B-9E04-EFC2FE1CD8ED}.Debug|Win32.Build.0 = Debug|Win32
+		{D3B4BA98-941C-4B3B-9E04-EFC2FE1CD8ED}.Release|Win32.ActiveCfg = Release|Win32
+		{D3B4BA98-941C-4B3B-9E04-EFC2FE1CD8ED}.Release|Win32.Build.0 = Release|Win32
+		{A604F1A8-7845-44E6-B37E-C3CF6CA12ECE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A604F1A8-7845-44E6-B37E-C3CF6CA12ECE}.Debug|Win32.Build.0 = Debug|Win32
+		{A604F1A8-7845-44E6-B37E-C3CF6CA12ECE}.Release|Win32.ActiveCfg = Release|Win32
+		{A604F1A8-7845-44E6-B37E-C3CF6CA12ECE}.Release|Win32.Build.0 = Release|Win32
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

@@ -1,0 +1,587 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<ui version="4.0">
+ <class>MRMPApplicationClass</class>
+ <widget class="QMainWindow" name="MRMPApplicationClass">
+  <property name="geometry">
+   <rect>
+    <x>0</x>
+    <y>0</y>
+    <width>817</width>
+    <height>592</height>
+   </rect>
+  </property>
+  <property name="windowTitle">
+   <string>Multiple Robot Motion Planner </string>
+  </property>
+  <property name="windowIcon">
+   <iconset>
+    <normaloff>Resources/icons/robot4_32.png</normaloff>Resources/icons/robot4_32.png</iconset>
+  </property>
+  <property name="windowOpacity">
+   <double>1.000000000000000</double>
+  </property>
+  <property name="toolButtonStyle">
+   <enum>Qt::ToolButtonIconOnly</enum>
+  </property>
+  <widget class="QWidget" name="centralWidget">
+   <property name="mouseTracking">
+    <bool>false</bool>
+   </property>
+   <property name="autoFillBackground">
+    <bool>false</bool>
+   </property>
+   <layout class="QGridLayout" name="gridLayout_2">
+    <item row="0" column="0">
+     <widget class="MRMPDrawingBox" name="DrawingBox">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="verticalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="horizontalScrollBarPolicy">
+       <enum>Qt::ScrollBarAlwaysOff</enum>
+      </property>
+      <property name="dragMode">
+       <enum>QGraphicsView::RubberBandDrag</enum>
+      </property>
+     </widget>
+    </item>
+    <item row="0" column="1">
+     <widget class="QGroupBox" name="groupBox">
+      <property name="enabled">
+       <bool>true</bool>
+      </property>
+      <property name="sizePolicy">
+       <sizepolicy hsizetype="Fixed" vsizetype="Expanding">
+        <horstretch>0</horstretch>
+        <verstretch>0</verstretch>
+       </sizepolicy>
+      </property>
+      <property name="minimumSize">
+       <size>
+        <width>251</width>
+        <height>521</height>
+       </size>
+      </property>
+      <property name="maximumSize">
+       <size>
+        <width>251</width>
+        <height>16777215</height>
+       </size>
+      </property>
+      <property name="title">
+       <string>Controls</string>
+      </property>
+      <property name="flat">
+       <bool>false</bool>
+      </property>
+      <property name="checkable">
+       <bool>false</bool>
+      </property>
+      <widget class="QWidget" name="layoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>10</x>
+         <y>280</y>
+         <width>231</width>
+         <height>44</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout">
+        <property name="horizontalSpacing">
+         <number>12</number>
+        </property>
+        <item row="11" column="1">
+         <widget class="QPushButton" name="buttonConnect">
+          <property name="text">
+           <string>Connect to Server</string>
+          </property>
+         </widget>
+        </item>
+        <item row="0" column="1">
+         <widget class="QLabel" name="label_2">
+          <property name="text">
+           <string>Online Mode</string>
+          </property>
+          <property name="alignment">
+           <set>Qt::AlignCenter</set>
+          </property>
+         </widget>
+        </item>
+       </layout>
+      </widget>
+      <widget class="QWidget" name="gridLayoutWidget">
+       <property name="geometry">
+        <rect>
+         <x>0</x>
+         <y>30</y>
+         <width>252</width>
+         <height>201</height>
+        </rect>
+       </property>
+       <layout class="QGridLayout" name="gridLayout_3">
+        <item row="6" column="2">
+         <widget class="QPushButton" name="buttonLoadWorkspace">
+          <property name="text">
+           <string>Load Workspace</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="2">
+         <widget class="QPushButton" name="buttonDrawObstacles_3">
+          <property name="text">
+           <string>Draw Obstacle</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="1">
+         <widget class="QPushButton" name="buttonLoadRobot">
+          <property name="text">
+           <string>Load Robot</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="1">
+         <widget class="QPushButton" name="buttonDrawRobots_3">
+          <property name="text">
+           <string>Draw Robot</string>
+          </property>
+         </widget>
+        </item>
+        <item row="6" column="0">
+         <widget class="QPushButton" name="buttonLoadQuery">
+          <property name="text">
+           <string>Load Query</string>
+          </property>
+         </widget>
+        </item>
+        <item row="2" column="0">
+         <widget class="QPushButton" name="buttonAddConfiguration">
+          <property name="text">
+           <string>Add Query</string>
+          </property>
+         </widget>
+        </item>
+        <item row="8" column="1">
+         <widget class="QPushButton" name="buttonLoadPath">
+          <property name="text">
+           <string>Load Path</string>
+          </property>
+         </widget>
+        </item>
+        <item row="10" column="1">
+         <widget class="QPushButton" name="buttonAnimate">
+          <property name="enabled">
+           <bool>true</bool>
+          </property>
+          <property name="text">
+           <string>Animate</string>
+          </property>
+         </widget>
+        </item>
+        <item row="1" column="1">
+         <widget class="QLabel" name="label">
+          <property name="text">
+           <string>Offline Mode</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="2">
+         <widget class="QPushButton" name="buttonSaveWorkspace">
+          <property name="text">
+           <string>Save Workspace</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="1">
+         <widget class="QPushButton" name="buttonSaveRobot">
+          <property name="text">
+           <string>Save Robot</string>
+          </property>
+         </widget>
+        </item>
+        <item row="4" column="0">
+         <widget class="QPushButton" name="buttonSaveQuery">
+          <property name="text">
+           <string>Save Query</string>
+          </property>
+         </widget>
+        </item>
+        <item row="3" column="1">
+         <spacer name="verticalSpacer">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="5" column="1">
+         <spacer name="verticalSpacer_2">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+        <item row="9" column="1">
+         <spacer name="verticalSpacer_3">
+          <property name="orientation">
+           <enum>Qt::Vertical</enum>
+          </property>
+          <property name="sizeHint" stdset="0">
+           <size>
+            <width>20</width>
+            <height>40</height>
+           </size>
+          </property>
+         </spacer>
+        </item>
+       </layout>
+      </widget>
+     </widget>
+    </item>
+   </layout>
+  </widget>
+  <widget class="QToolBar" name="mainToolBar">
+   <property name="enabled">
+    <bool>true</bool>
+   </property>
+   <attribute name="toolBarArea">
+    <enum>TopToolBarArea</enum>
+   </attribute>
+   <attribute name="toolBarBreak">
+    <bool>false</bool>
+   </attribute>
+   <addaction name="separator"/>
+  </widget>
+  <widget class="QStatusBar" name="statusBar"/>
+ </widget>
+ <layoutdefault spacing="6" margin="11"/>
+ <customwidgets>
+  <customwidget>
+   <class>MRMPDrawingBox</class>
+   <extends>QGraphicsView</extends>
+   <header location="global">MRMPDrawingBox.h</header>
+   <slots>
+    <signal>updateTextLines(char*,char*)</signal>
+    <signal>checkExecutionButtonState()</signal>
+    <signal>addRobotsComboBox(QString)</signal>
+    <signal>addObstaclesComboBox(QString)</signal>
+    <signal>setRobotsComboIndex(int)</signal>
+    <signal>setObstaclesComboIndex(int)</signal>
+    <signal>removeRobotCombo(int)</signal>
+    <signal>removeObstacleCombo(int)</signal>
+    <signal>deslectAndUncheckBoxes()</signal>
+    <signal>resetAllComboBoxes()</signal>
+    <signal>updateStats()</signal>
+    <signal>disableDeleteButton()</signal>
+    <signal>enableDeleteButton()</signal>
+    <signal>disableClearWidgets()</signal>
+    <signal>enableClearWidgets()</signal>
+    <signal>plannerFinished()</signal>
+    <slot>paintEvent(QPaintEvent*)</slot>
+    <slot>drawObstaclesButtonPushed()</slot>
+    <slot>drawRobotsButtonPushed()</slot>
+    <slot>clear()</slot>
+    <slot>clearResults()</slot>
+    <slot>saveScene()</slot>
+    <slot>startPathsAnimation()</slot>
+    <slot>handleRobotsComboSelection(int)</slot>
+    <slot>handleObstaclesComboSelection(int)</slot>
+    <slot>deleteSelectedItem()</slot>
+    <slot>toggleAllMinkowski()</slot>
+    <slot>setAnimationMultiplier(int)</slot>
+    <slot>radiusSliderChanged(int)</slot>
+    <slot>animateButtonPressed()</slot>
+    <slot>execute()</slot>
+    <slot>groupChanged(QString)</slot>
+    <slot>addConfigurationButtonPressed()</slot>
+    <slot>change_selected_robot(QString)</slot>
+    <slot>selected_robot_changed(QString)</slot>
+    <slot>connect_server()</slot>
+   </slots>
+  </customwidget>
+ </customwidgets>
+ <resources>
+  <include location="MRMPApplication.qrc"/>
+ </resources>
+ <connections>
+  <connection>
+   <sender>buttonDrawObstacles_3</sender>
+   <signal>clicked()</signal>
+   <receiver>DrawingBox</receiver>
+   <slot>drawObstaclesButtonPushed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>97</x>
+     <y>93</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>267</x>
+     <y>324</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>DrawingBox</sender>
+   <signal>plannerFinished()</signal>
+   <receiver>MRMPApplicationClass</receiver>
+   <slot>executeComplete()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>518</x>
+     <y>476</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>413</x>
+     <y>0</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonDrawRobots_3</sender>
+   <signal>clicked()</signal>
+   <receiver>DrawingBox</receiver>
+   <slot>drawRobotsButtonPushed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>93</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>445</x>
+     <y>244</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonAddConfiguration</sender>
+   <signal>clicked()</signal>
+   <receiver>DrawingBox</receiver>
+   <slot>addConfigurationButtonPressed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>259</x>
+     <y>93</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>394</x>
+     <y>422</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonAnimate</sender>
+   <signal>clicked()</signal>
+   <receiver>DrawingBox</receiver>
+   <slot>animateButtonPressed()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>250</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>337</x>
+     <y>370</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonConnect</sender>
+   <signal>clicked()</signal>
+   <receiver>DrawingBox</receiver>
+   <slot>connect_server()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>248</x>
+     <y>343</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>576</x>
+     <y>562</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonLoadWorkspace</sender>
+   <signal>clicked()</signal>
+   <receiver>MRMPApplicationClass</receiver>
+   <slot>load_workspace()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>97</x>
+     <y>178</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>1</x>
+     <y>254</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonSaveWorkspace</sender>
+   <signal>clicked()</signal>
+   <receiver>MRMPApplicationClass</receiver>
+   <slot>save_workspace()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>97</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>5</x>
+     <y>318</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonLoadRobot</sender>
+   <signal>clicked()</signal>
+   <receiver>MRMPApplicationClass</receiver>
+   <slot>load_robot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>178</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>-5</x>
+     <y>211</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonSaveRobot</sender>
+   <signal>clicked()</signal>
+   <receiver>MRMPApplicationClass</receiver>
+   <slot>save_robot()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>3</x>
+     <y>192</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonSaveQuery</sender>
+   <signal>clicked()</signal>
+   <receiver>MRMPApplicationClass</receiver>
+   <slot>save_query()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>259</x>
+     <y>136</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>5</x>
+     <y>395</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonLoadQuery</sender>
+   <signal>clicked()</signal>
+   <receiver>MRMPApplicationClass</receiver>
+   <slot>load_query()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>259</x>
+     <y>178</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>3</x>
+     <y>279</y>
+    </hint>
+   </hints>
+  </connection>
+  <connection>
+   <sender>buttonLoadPath</sender>
+   <signal>clicked()</signal>
+   <receiver>MRMPApplicationClass</receiver>
+   <slot>load_path()</slot>
+   <hints>
+    <hint type="sourcelabel">
+     <x>178</x>
+     <y>207</y>
+    </hint>
+    <hint type="destinationlabel">
+     <x>0</x>
+     <y>350</y>
+    </hint>
+   </hints>
+  </connection>
+ </connections>
+ <slots>
+  <signal>robotAdded()</signal>
+  <signal>obstacleAdded()</signal>
+  <signal>targetAdded()</signal>
+  <slot>updateTextLines(char*,char*)</slot>
+  <slot>drawObstaclesButtonPushed()</slot>
+  <slot>drawRobotsButtonPushed()</slot>
+  <slot>drawTargetsButtonPushed()</slot>
+  <slot>disableExecutionButton()</slot>
+  <slot>SaveFileAs()</slot>
+  <slot>LoadFile()</slot>
+  <slot>enableExecutionButton()</slot>
+  <slot>enableClearResults()</slot>
+  <slot>disableClearResults()</slot>
+  <slot>enableShowGraphsButton()</slot>
+  <slot>disableShowGraphsButton()</slot>
+  <slot>addRobotToCombo(QString)</slot>
+  <slot>addObstacleToCombo(QString)</slot>
+  <slot>setComboRobotIndex(int)</slot>
+  <slot>setComboObstacleIndex(int)</slot>
+  <slot>removeComboRobotIndex(int)</slot>
+  <slot>removeComboObstacleIndex(int)</slot>
+  <slot>resetComboBoxes()</slot>
+  <slot>checkBoxRobotPathChanged()</slot>
+  <slot>checkBoxRobotGraphChanged()</slot>
+  <slot>checkBoxRobotMinkChanged()</slot>
+  <slot>checkBoxRobotTrapezoidsChanged()</slot>
+  <slot>uncheckAllBoxes()</slot>
+  <slot>enableAnimateWidgets()</slot>
+  <slot>disableAnimateWidgets()</slot>
+  <slot>enableShowAllMink()</slot>
+  <slot>disableShowAllMink()</slot>
+  <slot>enableSaving()</slot>
+  <slot>disableSaving()</slot>
+  <slot>updateExecutionStatistics()</slot>
+  <slot>clearExecutionStatistics()</slot>
+  <slot>closeApplication()</slot>
+  <slot>setExecutionStatusBar()</slot>
+  <slot>resetExecutionStatusBar()</slot>
+  <slot>clearAllComboBoxes()</slot>
+  <slot>enableAllCheckBoxes()</slot>
+  <slot>disableAllCheckBoxes()</slot>
+  <slot>resetSlider()</slot>
+  <slot>disableDrawingButtons()</slot>
+  <slot>enableDrawingButtons()</slot>
+  <slot>enableDeleteButton()</slot>
+  <slot>disableDeleteButton()</slot>
+  <slot>enableClearWidgets()</slot>
+  <slot>disableClearWidgets()</slot>
+  <slot>executeComplete()</slot>
+  <slot>load_workspace()</slot>
+  <slot>save_workspace()</slot>
+  <slot>load_robot()</slot>
+  <slot>save_robot()</slot>
+  <slot>save_query()</slot>
+  <slot>load_query()</slot>
+  <slot>load_path()</slot>
+ </slots>
+</ui>

@@ -1,0 +1,26 @@
+Every query cofiguration has 5 states:
+	0 - none of the robots visited query (white)
+	1 - first robot visited (red / white)
+	2 - second robot (white / blue)
+	3 - both robots (red / blue)
+ 	4 - query invisible
+
+A state is an array of size number_of_queries with values in the range 0-4. 
+Every such array is preceeded by an integer that indicates the number of the 
+path section in which it is first used.
+
+
+Example:
+
+//////////////////////////////////////////////////////////////////////////////
+
+n  		// number of states 
+ 
+ m1    		// path section number
+ s1 s2 ... sq	// state for every query
+
+ m2		//
+ s1 s2 ... sq 	//
+.
+.
+.

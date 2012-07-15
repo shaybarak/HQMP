@@ -1,0 +1,6 @@
+n 				// numer of queries
+x1 y1 theta1 			// first query xy coordinates and angle
+x2 y2 theta2			// second query ...
+.
+.
+.

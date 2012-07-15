@@ -1,0 +1,8 @@
+n 			// number of obstacles
+m1 			// number of vertices  of the first polygon
+x1 y1 x2 y2 ... xm1 ym1	// vertices of first polygon
+m2 			// number of vertices  of the second polygon
+x1 y1 x2 y2 ... xm2 ym2	// vertices of first polygon
+.
+.
+.

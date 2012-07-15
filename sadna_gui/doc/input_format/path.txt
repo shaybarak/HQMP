@@ -1,0 +1,12 @@
+n 				// number of path sections
+
+xa ya ta xb yb tb 		// initial configuration of robot a and b (xy and angle)
+
+xa1 ya1 ta1 xb1 yb1 tb1 s1	// transformation to the second configuration 
+					and the duration of this path section (seconds)
+
+xa2 ya2 ta2 xb2 yb2 tb2 s2	// transformation to the third configuration and duration
+
+.
+.
+.

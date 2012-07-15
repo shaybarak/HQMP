@@ -1,0 +1,203 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{D3B4BA98-941C-4B3B-9E04-EFC2FE1CD8ED}</ProjectGuid>
+    <Keyword>Win32Proj</Keyword>
+    <RootNamespace>client</RootNamespace>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Application</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <WholeProgramOptimization>true</WholeProgramOptimization>
+    <CharacterSet>Unicode</CharacterSet>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <LinkIncremental>true</LinkIncremental>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <LinkIncremental>false</LinkIncremental>
+  </PropertyGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <ClCompile>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <WarningLevel>Level3</WarningLevel>
+      <Optimization>Disabled</Optimization>
+      <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\.;..\.;$(CGAL_DIR)\include;$(BOOST_DIR);$(CGAL_DIR)\auxiliary\gmp\include;$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zm146 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <AdditionalDependencies>Ws2_32.lib;qtmaind.lib;QtGuid4.lib;QtCored4.lib;QtOpenGLd4.lib;libgmp-10.lib;libmpfr-4.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>gmp-vc100-mt-gd.lib;mpfr-vc100-mt-gd.lib</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>$(CGAL_DIR)\lib;$(QTDIR)\lib;$(BOOST_DIR)\lib;$(CGAL_DIR)\auxiliary\gmp\lib</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <ClCompile>
+      <WarningLevel>Level3</WarningLevel>
+      <PrecompiledHeader>Use</PrecompiledHeader>
+      <Optimization>MaxSpeed</Optimization>
+      <FunctionLevelLinking>true</FunctionLevelLinking>
+      <IntrinsicFunctions>true</IntrinsicFunctions>
+      <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
+      <AdditionalIncludeDirectories>.\.;..\.;$(CGAL_DIR)\include;$(BOOST_DIR);$(CGAL_DIR)\auxiliary\gmp\include;$(QTDIR)\include;$(QTDIR)\include\QtCore;$(QTDIR)\include\QtGui</AdditionalIncludeDirectories>
+      <AdditionalOptions>-Zm146 %(AdditionalOptions)</AdditionalOptions>
+    </ClCompile>
+    <Link>
+      <SubSystem>Console</SubSystem>
+      <GenerateDebugInformation>true</GenerateDebugInformation>
+      <EnableCOMDATFolding>true</EnableCOMDATFolding>
+      <OptimizeReferences>true</OptimizeReferences>
+      <AdditionalDependencies>Ws2_32.lib;qtmaind.lib;QtGuid4.lib;QtCored4.lib;QtOpenGLd4.lib;libgmp-10.lib;libmpfr-4.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <IgnoreSpecificDefaultLibraries>gmp-vc100-mt.lib;mpfr-vc100-mt.lib</IgnoreSpecificDefaultLibraries>
+      <AdditionalLibraryDirectories>$(CGAL_DIR)\lib;$(QTDIR)\lib;$(BOOST_DIR)\lib;$(CGAL_DIR)\auxiliary\gmp\lib</AdditionalLibraryDirectories>
+    </Link>
+  </ItemDefinitionGroup>
+  <ItemGroup>
+    <None Include="ReadMe.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="..\Configuration_spaces\AnglePrimitive\ConfigurationSpace.h" />
+    <ClInclude Include="..\Configuration_spaces\AnglePrimitive\ShortestPathInPolygon.h" />
+    <ClInclude Include="..\Configuration_spaces\PointPrimitive\ConfigurationSpace.h" />
+    <ClInclude Include="..\Configuration_spaces\PointPrimitive\CriticalValues.h" />
+    <ClInclude Include="..\Configuration_spaces\PointPrimitive\CriticalValuesConstructor.h" />
+    <ClInclude Include="..\Configuration_spaces\PointPrimitive\Fixed_point_utils.h" />
+    <ClInclude Include="..\FSC.h" />
+    <ClInclude Include="..\Fsc_path_planning.h" />
+    <ClInclude Include="..\Graph\ConnectedComponents.h" />
+    <ClInclude Include="..\Graph\Graph.h" />
+    <ClInclude Include="..\heuristic_utils.h" />
+    <ClInclude Include="..\Manager\Additional_target_configurations_manager.h" />
+    <ClInclude Include="..\Manager\File_names.h" />
+    <ClInclude Include="..\Manager\Motion_handler.h" />
+    <ClInclude Include="..\Manager\Request_handler.h" />
+    <ClInclude Include="..\Manager\Safe_type.h" />
+    <ClInclude Include="..\Manager\Syncronizer.h" />
+    <ClInclude Include="..\Manager\Target_configurations_manager.h" />
+    <ClInclude Include="..\Manager\Time_frame.h" />
+    <ClInclude Include="..\Manager\Writen_paths_filenames.h" />
+    <ClInclude Include="..\Manifolds\Base\Constraint_base.h" />
+    <ClInclude Include="..\Manifolds\Base\Fsc_base.h" />
+    <ClInclude Include="..\Manifolds\Base\Manifold_base.h" />
+    <ClInclude Include="..\Manifolds\Base\Manifold_container_base.h" />
+    <ClInclude Include="..\Manifolds\Fixed_angle\Fixed_angle_constraint.h" />
+    <ClInclude Include="..\Manifolds\Fixed_angle\Fixed_angle_fsc.h" />
+    <ClInclude Include="..\Manifolds\Fixed_angle\Fixed_angle_manifold.h" />
+    <ClInclude Include="..\Manifolds\Fixed_angle\Fixed_angle_manifold_container.h" />
+    <ClInclude Include="..\Manifolds\Fixed_point\Fixed_point_constraint.h" />
+    <ClInclude Include="..\Manifolds\Fixed_point\Fixed_point_fsc.h" />
+    <ClInclude Include="..\Manifolds\Fixed_point\Fixed_point_manifold.h" />
+    <ClInclude Include="..\Manifolds\Fixed_point\Fixed_point_manifold_container.h" />
+    <ClInclude Include="..\Manifolds\Fsc_indx.h" />
+    <ClInclude Include="..\Manifolds\Intersect_manifolds.h" />
+    <ClInclude Include="..\Manifolds\MMSTypedefs.h" />
+    <ClInclude Include="..\Mms_example.h" />
+    <ClInclude Include="..\Path_planning\IntervalPathPlanning.h" />
+    <ClInclude Include="..\Path_planning\Motion_sequence.h" />
+    <ClInclude Include="..\Path_planning\Motion_sequence_gui_converter.h" />
+    <ClInclude Include="..\Path_planning\Motion_step_base.h" />
+    <ClInclude Include="..\Path_planning\Motion_step_reader.h" />
+    <ClInclude Include="..\Path_planning\Motion_step_rotational.h" />
+    <ClInclude Include="..\Path_planning\Motion_step_static.h" />
+    <ClInclude Include="..\Path_planning\Motion_step_translational.h" />
+    <ClInclude Include="..\Path_planning\Motion_step_writer.h" />
+    <ClInclude Include="..\Path_planning\PathPlanningUtils.h" />
+    <ClInclude Include="..\Path_planning\PolygonPathPlanning.h" />
+    <ClInclude Include="..\Path_planning\ShortestPathInPolygon.h" />
+    <ClInclude Include="..\Players\NaivePlayer.h" />
+    <ClInclude Include="..\Players\Player.h" />
+    <ClInclude Include="..\Players\SleepingPlayer.h" />
+    <ClInclude Include="..\Project\CgalTypedefs.h" />
+    <ClInclude Include="..\Project\CompilationFlags.h" />
+    <ClInclude Include="..\Project\Configuration.h" />
+    <ClInclude Include="..\Project\Globals.h" />
+    <ClInclude Include="..\Project\Includes.h" />
+    <ClInclude Include="..\Utils\Communication_utils\client_utils.h" />
+    <ClInclude Include="..\Utils\Communication_utils\server_utils.h" />
+    <ClInclude Include="..\Utils\Communication_utils\Socket.h" />
+    <ClInclude Include="..\Utils\Communication_utils\socket_typedefs.h" />
+    <ClInclude Include="..\Utils\Geometry_utils\BoundingUtils.h" />
+    <ClInclude Include="..\Utils\Geometry_utils\GeometryIO.h" />
+    <ClInclude Include="..\Utils\Geometry_utils\GetClosestUtils.h" />
+    <ClInclude Include="..\Utils\Geometry_utils\Less_than_point.h" />
+    <ClInclude Include="..\Utils\Interval_utils\Interval.h" />
+    <ClInclude Include="..\Utils\Interval_utils\IntervalSet.h" />
+    <ClInclude Include="..\Utils\Number_utils\AK_conversions_1.h" />
+    <ClInclude Include="..\Utils\Number_utils\Sqrt_approximation.h" />
+    <ClInclude Include="..\Utils\Polygon_utils\do_intersect_predicates.h" />
+    <ClInclude Include="..\Utils\Polygon_utils\ExtendedPolygon.h" />
+    <ClInclude Include="..\Utils\Polygon_utils\Is_in_polygon_predicates.h" />
+    <ClInclude Include="..\Utils\Polygon_utils\MotionPlanningUtils.h" />
+    <ClInclude Include="..\Utils\Polygon_utils\PolygonIO.h" />
+    <ClInclude Include="..\Utils\Polygon_utils\PolygonUtils.h" />
+    <ClInclude Include="..\Utils\Polygon_utils\Polygon_rotations.h" />
+    <ClInclude Include="..\Utils\Polygon_utils\Polygon_translations.h" />
+    <ClInclude Include="..\Utils\Polygon_utils\Smart_polygon_with_holes.h" />
+    <ClInclude Include="..\Utils\Random_utils\RandomUtils.h" />
+    <ClInclude Include="..\Utils\ReferencePoint.h" />
+    <ClInclude Include="..\Utils\Rotation_utils\Rotation.h" />
+    <ClInclude Include="..\Utils\Rotation_utils\RotationRange.h" />
+    <ClInclude Include="..\Utils\Rotation_utils\RotationUtils.h" />
+    <ClInclude Include="..\Utils\UI_utils\Environment.h" />
+    <ClInclude Include="..\Utils\UI_utils\Graphics.h" />
+    <ClInclude Include="..\Utils\UI_utils\InputReader.h" />
+    <ClInclude Include="..\Utils\UI_utils\TimeManager.h" />
+    <ClInclude Include="stdafx.h" />
+    <ClInclude Include="targetver.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="..\Graph\ConnectedComponents.cpp" />
+    <ClCompile Include="..\Manager\File_names.cpp" />
+    <ClCompile Include="..\Manager\Time_frame.cpp" />
+    <ClCompile Include="..\Players\NaivePlayer.cpp" />
+    <ClCompile Include="..\Players\Player.cpp" />
+    <ClCompile Include="..\Players\SleepingPlayer.cpp" />
+    <ClCompile Include="..\Programs\Client_stubs.cpp" />
+    <ClCompile Include="..\Programs\Path_planner.cpp" />
+    <ClCompile Include="..\Programs\Server.cpp" />
+    <ClCompile Include="..\Project\Configuration.cpp" />
+    <ClCompile Include="..\Utils\Communication_utils\client_utils.cpp" />
+    <ClCompile Include="..\Utils\Communication_utils\server_utils.cpp" />
+    <ClCompile Include="..\Utils\Communication_utils\socket.cpp" />
+    <ClCompile Include="..\Utils\UI_utils\Graphics.cpp" />
+    <ClCompile Include="..\Utils\UI_utils\InputReader.cpp" />
+    <ClCompile Include="..\Utils\UI_utils\TimeManager.cpp" />
+    <ClCompile Include="main.cpp" />
+    <ClCompile Include="stdafx.cpp">
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">Create</PrecompiledHeader>
+      <PrecompiledHeader Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">Create</PrecompiledHeader>
+    </ClCompile>
+  </ItemGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

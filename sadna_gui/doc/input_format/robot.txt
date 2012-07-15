@@ -1,0 +1,2 @@
+n 		// number of vertices of robot
+x1 y1 ... xn yn // vertices of robot
