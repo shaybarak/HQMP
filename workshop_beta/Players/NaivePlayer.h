@@ -17,4 +17,8 @@ public:
 
 protected:
 	Planner planner;
+
+private:
+	bool planned;
+	bool moved;
 };
