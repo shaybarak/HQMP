@@ -168,11 +168,11 @@ public:
 public:
   double get_colored_sleep_time()
   {
-    return 60;
+    return 5;
   }
   double get_gray_sleep_time()
   {
-    return 60;
+    return 5;
   }
 private:
   boost::thread thread;
