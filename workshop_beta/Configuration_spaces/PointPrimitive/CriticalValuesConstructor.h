@@ -295,6 +295,27 @@ private:
   }
   bool is_valid_value_ve(const Root_of_2& t)
   {
+    if (CGAL::is_zero(t.root()))
+	  {
+		  NT t_real(t.a0());
+		  return is_valid_value_ve<NT> (t_real, 
+										t_real*t_real,	//t_sq
+										0,				//zero
+										1);				//one
+	  }
+	  else //(CGAL::is_zero(t.root()) == false)
+	  {
+		  Root_of_2 t_sq(t*t);
+		  return is_valid_value_ve<Root_of_2> (	t, 
+												t_sq,							//t_sq
+												Root_of_2(0, 0, t_sq.root()),	//zero 
+												Root_of_2(1, 0, t_sq.root()));	//one
+	  }
+  }
+    
+  template <typename Number_type>
+  bool is_valid_value_ve(const Number_type& t, const Number_type& t_sq, const Number_type& zero, const Number_type& one)
+  {
     //////////////////////////////////////////////////
     //                                              //
     //  s should be in [0,1]                        //
@@ -309,16 +330,12 @@ private:
     const NT& x_o2 (_data.e.target().x());
     const NT& x_i  (_data.v.x());
     const NT& y_i  (_data.v.y());
-
-    Root_of_2 t_sq = t*t;
-    Root_of_2 zero(0, 0, t_sq.root());
-    Root_of_2 one(1, 0, t_sq.root());
-    
-    if (CGAL::compare (x_o2, x_o1) != CGAL::EQUAL)
+	
+	if (CGAL::compare (x_o2, x_o1) != CGAL::EQUAL)
     {
-      Root_of_2 s_numer =((1-t_sq)*x_i - 2*t*y_i + (1+t_sq)*(x_q-x_o1));// / ((1+t_sq)(x_o2 - x_o1));
-      Root_of_2 s_denom =((1+t_sq)*(x_o2 - x_o1));
-      Root_of_2 s = s_numer / s_denom;
+      Number_type s_numer =((1-t_sq)*x_i - 2*t*y_i + (1+t_sq)*(x_q-x_o1));// / ((1+t_sq)(x_o2 - x_o1));
+      Number_type s_denom =((1+t_sq)*(x_o2 - x_o1));
+      Number_type s = s_numer / s_denom;
 
       if (  (CGAL::compare(s, zero) == CGAL::SMALLER) ||
             (CGAL::compare(s, one) == CGAL::LARGER) )
@@ -326,7 +343,7 @@ private:
 
       return true;
     }
-    else //(CGAL::compare (x_o2, x_o1) != CGAL::EQUAL)
+    else //(CGAL::compare (x_o2, x_o1) == CGAL::EQUAL)
     {
       //////////////////////////////////////////////////
       //                                              //
@@ -341,9 +358,9 @@ private:
       const NT& y_o1 (_data.e.source().y());
       const NT& y_o2 (_data.e.target().y());
       
-      Root_of_2 s_numer =((2*t)*x_i - (1-t_sq)*y_i + (1+t_sq)*(y_q-y_o1));
-      Root_of_2 s_denom =((1+t_sq)*(y_o2 - y_o1));
-      Root_of_2 s = s_numer / s_denom;
+      Number_type s_numer =((2*t)*x_i - (1-t_sq)*y_i + (1+t_sq)*(y_q-y_o1));
+      Number_type s_denom =((1+t_sq)*(y_o2 - y_o1));
+      Number_type s = s_numer / s_denom;
 
       if (  (CGAL::compare(s, zero) == CGAL::SMALLER) ||
             (CGAL::compare(s, one) == CGAL::LARGER) )
@@ -431,8 +448,14 @@ private:
   template <typename OutputIterator>
   void contruct_algebraic(const Root_of_2& t, OutputIterator& oi)
   {
+	if (CGAL::is_zero(t.root()) || CGAL::is_zero(t.a1()))
+	{
+		*oi++ = _construct_algebraic_real_1(t.a1());
+		return;
+	}
     //for a number t = a_0 x + a_1 sqrt (r)
     //it is one of the roots of the equation
+
     //x^2 - 2a_0 x + a_0^2 - a_1^2 r
     //
     //if a_1 > 0 it is the larger root
