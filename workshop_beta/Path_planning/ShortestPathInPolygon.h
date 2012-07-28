@@ -132,7 +132,7 @@ private:
   {
     K::FT sq_dist (CGAL::squared_distance(v1,v2));
     K::FT approx_d(_sqrt_approximation(sq_dist));
-    int weight (CGAL::to_double(approx_d));
+    double weight (CGAL::to_double(approx_d));
     _graph.add_edge(v1,v2,weight);
     return;
   }
