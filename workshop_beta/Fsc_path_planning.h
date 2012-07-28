@@ -51,6 +51,8 @@ void plan_path___fixed_angle (const Fsc* fsc_ptr,
   CGAL_precondition(fsc_ptr->get_constraint_type() == FIXED_ANGLE);
   CGAL_precondition(fsc_ptr->contains(source));
   CGAL_precondition(fsc_ptr->contains(target));
+  if (source == target)
+    return;
   
   Rot fsc_rotation = fsc_ptr->get_free_space_constraint<Fixed_angle_constraint<K> >().restriction();
   
