@@ -100,6 +100,12 @@
     <Filter Include="Source Files\Project">
       <UniqueIdentifier>{ca7ac0da-0860-4c5e-8006-87011e642bc5}</UniqueIdentifier>
     </Filter>
+    <Filter Include="Header Files\Planner">
+      <UniqueIdentifier>{feda6442-d5d2-47cf-a198-b993f0a236a6}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="Source Files\Planner">
+      <UniqueIdentifier>{757e5335-93c1-423e-9c87-6a52a06c02fa}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -369,6 +375,9 @@
     <ClInclude Include="..\Players\NaivePlayer.h">
       <Filter>Header Files\Players</Filter>
     </ClInclude>
+    <ClInclude Include="..\Planner\NaivePlanner.h">
+      <Filter>Header Files\Planner</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -424,6 +433,9 @@
     </ClCompile>
     <ClCompile Include="..\Players\NaivePlayer.cpp">
       <Filter>Source Files\Players</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Planner\NaivePlanner.cpp">
+      <Filter>Source Files\Planner</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

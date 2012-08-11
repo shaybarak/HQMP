@@ -2,10 +2,11 @@
 
 #include "Path_planning\Motion_sequence.h"
 #include "Mms_example.h"
+#include "Planner\NaivePlanner.h"
 
 typedef Environment<>                     Env;
-typedef mms::Mms_path_planner_example<>   Planner;
-typedef Motion_sequence<Planner::K>       Motion;
+typedef mms::NaivePlanner<>				  Planner;
+typedef Motion_sequence<Planner::K>		  Motion;
 typedef Env::Reference_point              Ref_p;
 typedef Env::Reference_point_vec          Ref_p_vec;
 

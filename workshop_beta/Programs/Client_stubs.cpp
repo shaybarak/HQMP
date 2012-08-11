@@ -13,7 +13,7 @@
 
 //global typedefs used in this file
 typedef Environment<>                     Env;
-typedef mms::Mms_path_planner_example<>   Planner;
+//typedef mms::Mms_path_planner_example<>   Planner;
 typedef Motion_sequence<Planner::K>       Motion;
 typedef Env::Reference_point              Ref_p;
 
