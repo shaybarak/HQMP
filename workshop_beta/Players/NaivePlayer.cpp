@@ -16,6 +16,8 @@ void NaivePlayer::plan(double deadline) {
 }
 
 void NaivePlayer::move(double deadline, Motion& motion_sequence) {
+	// TODO use a clock internally to also
+
 	// Don't allow more than one movement turn
 	if (!moved) {
 		// Assume we have enough time to perform the entire motion
@@ -23,8 +25,15 @@ void NaivePlayer::move(double deadline, Motion& motion_sequence) {
 		Planner::Reference_point q_s (env->get_source_configuration_a());
 		Planner::Reference_point q_t (env->get_target_configurations().front());
 
-		//perform query
-		bool found_path = planner.query(q_s, q_t, motion_sequence);
+		// Perform query
+		Motion remaining;
+		if (planner.query(q_s, q_t, remaining)) {
+			// Path found!
+			std::cout << "Found path with " << remaining.get_sequence().size() << " steps requiring " << remaining.motion_time(configuration.get_translational_speed(), configuration.get_rotational_speed()) << " seconds";
+			// Cut it according to the deadline
+			remaining.cut(deadline, configuration.get_translational_speed(), configuration.get_rotational_speed(), motion_sequence);
+			std::cout << "Cut to " << motion_sequence.get_sequence().size() << " and " << remaining.get_sequence().size();
+		}
 		moved = true;
 	}
 }
