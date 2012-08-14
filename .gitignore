@@ -170,3 +170,10 @@ player_*_path.txt
 robot_*_location*.txt
 path_[0-9].txt
 status_[0-9].txt
+<<<<<<< HEAD
+=======
+robot_[a-z]_location_[0-9].txt
+player_[a-z]_[0-9]_path.txt
+*.exe
+
+>>>>>>> Adding bat file to delete output files, addinog output files+exe to gitignore
