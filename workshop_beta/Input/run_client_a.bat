@@ -1,3 +1,3 @@
-NaivePlayer configuration_a.txt
+client configuration_a.txt
 pause
 exit
