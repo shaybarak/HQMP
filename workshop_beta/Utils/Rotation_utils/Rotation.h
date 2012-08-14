@@ -200,7 +200,7 @@ public:
       angle+=360;
     return (mode == DEG) ? angle : (angle * PI / 180);
   }
-public:
+
   //access
   NT& sin() 
   {
@@ -244,6 +244,7 @@ public:
       return false;
     return true;
   }
+
 private:
   NT _sin;
   NT _cos;
