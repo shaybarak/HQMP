@@ -42,7 +42,7 @@ bool NaivePlayer::move(double deadline, Motion& motion_sequence) {
 		std::cout << "Found path with " << total_motion.get_sequence().size() << " steps requiring " << total_motion.motion_time(configuration.get_translational_speed(), configuration.get_rotational_speed()) << " seconds";
 		// Cut it according to the deadline
 		total_motion.cut(deadline - timer.time(), configuration.get_translational_speed(), configuration.get_rotational_speed(), motion_sequence);
-		std::cout << "Cut to " << motion_sequence.get_sequence().size() << " and " << remaining.get_sequence().size();
+		std::cout << "Cut to " << motion_sequence.get_sequence().size() << " and " << total_motion.get_sequence().size();
 	}
 
 	moved = true;
