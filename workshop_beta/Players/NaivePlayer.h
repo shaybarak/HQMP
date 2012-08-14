@@ -11,7 +11,7 @@ class NaivePlayer : protected Player {
 public:
 	NaivePlayer(Env* env, Configuration* config);
 	virtual void plan(double deadline);
-	virtual void move(double deadline, Motion& motion_sequence);
+	virtual bool move(double deadline, Motion& motion_sequence);
 
 protected:
 	Planner planner;

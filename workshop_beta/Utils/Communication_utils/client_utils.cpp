@@ -104,3 +104,26 @@ void terminate_connection(Socket_client& socket_client)
 
   socket_client.close();  
 }
+
+bool is_game_over(Socket_client& socket_client)
+{
+  //construct query
+  std::stringstream request;
+  request << IS_GAME_OVER_REQUEST ;
+  socket_client.send_line(request.str());
+
+  //recieve reply
+  std::string answer = socket_client.receive_line();
+  std::cout <<"answer in "<<"is_game_over " <<answer<<std::endl;
+
+  std::vector<std::string> decomposed_result;
+  string_split(answer, " ", std::back_inserter(decomposed_result));
+
+  //convert reply
+  int header = atoi(decomposed_result[0].c_str());
+  CGAL_postcondition(header == IS_GAME_OVER_REPLY);
+  int is_game_over_int = atoi(decomposed_result[1].c_str());
+  CGAL_postcondition( (is_game_over_int == 0) || (is_game_over_int == 1) );
+  bool is_game_over = static_cast<bool> (is_game_over_int);
+  return is_game_over;
+}

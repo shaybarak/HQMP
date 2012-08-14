@@ -26,6 +26,10 @@ public:
   typedef std::pair<Robot_location*, Robot_location*> Robot_location_pair;
   typedef std::pair<Writen_paths_filenames*, 
                     Writen_paths_filenames*>          Writen_paths_filenames_pair;
+  typedef std::pair<Target_configurations_manager*, 
+					Additional_target_configurations_manager*> Configuration_manager_pair;
+
+  typedef Safe_type<bool>            Safe_bool;
 
 
 public:
@@ -39,28 +43,34 @@ public:
               Robot_location*                 robot_a_location_ptr,
               Robot_location*                 robot_b_location_ptr, 
               Writen_paths_filenames*         writen_paths_filenames_a_ptr,
-              Writen_paths_filenames*         writen_paths_filenames_b_ptr)
+              Writen_paths_filenames*         writen_paths_filenames_b_ptr,
+			  Safe_bool*					  is_game_over_ptr)
   {
     Robot_location_pair         robot_location_pair(robot_a_location_ptr, 
                                                     robot_b_location_ptr);
     Writen_paths_filenames_pair writen_paths_filenames_pair(writen_paths_filenames_a_ptr, 
                                                             writen_paths_filenames_b_ptr);
+	Configuration_manager_pair  configuration_manager_pair(	target_configurations_manager_ptr,
+															additional_target_configurations_manager_ptr);
     thread = boost::thread( &Syncronizer::syncronize, this, 
                           time_frame, env_ptr, result_ptr, socket_gui_ptr,
-                          target_configurations_manager_ptr, additional_target_configurations_manager_ptr,
-                          robot_location_pair, writen_paths_filenames_pair);
+                          configuration_manager_pair,
+                          robot_location_pair, writen_paths_filenames_pair, 
+						  is_game_over_ptr);
     return;
   }
   void syncronize(Time_frame* time_frame, Environment*  env_ptr, Result* result_ptr, Socket* socket_gui_ptr,
-                  Target_configurations_manager*            target_configurations_manager_ptr,
-                  Additional_target_configurations_manager* additional_target_configurations_manager_ptr,
+                  Configuration_manager_pair& configuration_manager_pair,
                   Robot_location_pair& robot_location_pair,
-                  Writen_paths_filenames_pair& writen_paths_filenames_pair)
+                  Writen_paths_filenames_pair& writen_paths_filenames_pair,
+				  Safe_bool* is_game_over_ptr)
   {
     Robot_location* robot_a_location_ptr = robot_location_pair.first;
     Robot_location* robot_b_location_ptr = robot_location_pair.second;
     Writen_paths_filenames* writen_paths_filenames_a_ptr = writen_paths_filenames_pair.first;
     Writen_paths_filenames* writen_paths_filenames_b_ptr = writen_paths_filenames_pair.second;
+	Target_configurations_manager*				target_configurations_manager_ptr = configuration_manager_pair.first;
+	Additional_target_configurations_manager*	additional_target_configurations_manager_ptr = configuration_manager_pair.second;
 
     time_frame->start();
     bool added_additional_configurations = false;
@@ -96,6 +106,10 @@ public:
 
     while(1)
     {
+		is_game_over_ptr->set(true);
+		return;
+
+
       //begining of colored interval
       //(1)   check if to activate additional target configurations
       //(2)   read paths that the player whose interval ended has writen
@@ -127,6 +141,8 @@ public:
       
       if(target_configurations_manager_ptr->completed_task(is_prev_player_a))
       {
+    	is_game_over_ptr->set(true);
+
         result_ptr->first = target_configurations_manager_ptr->get_score(true);
         result_ptr->second = target_configurations_manager_ptr->get_score(false);
 
@@ -168,7 +184,7 @@ public:
 public:
   double get_colored_sleep_time()
   {
-    return 60;
+    return 29;
   }
   
   double get_gray_sleep_time()

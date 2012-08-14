@@ -11,11 +11,14 @@
 #include "Manager\Additional_target_configurations_manager.h"
 #include "Manager\Target_configurations_manager.h"
 
+#include <boost/thread/mutex.hpp>
+
 #define USE_PLAYER_A 1
 #define USE_PLAYER_B 1
 
 typedef Environment<>                         Env;
 typedef Safe_type<Env::Reference_point>       Robot_location;
+typedef Safe_type<bool>						  Safe_bool;
 typedef Request_handler<Env::K>               Client_request_handler;
 typedef Target_configurations_manager<Env::K> Targets_manager;
 typedef std::pair<int, int>                   Result;
@@ -86,6 +89,13 @@ Socket* set_up_connection__gui( Robot_location& robot_location_a,
 
   return socket_g;
 }
+void end_connection__gui(Socket* socket)
+{
+  socket->send_line("CLOSE SOCKET");
+  boost::this_thread::sleep(boost::posix_time::seconds(5));
+  delete socket;
+}
+
 
 Socket* set_up_connection__player_a()
 {
@@ -126,8 +136,10 @@ void server_main(int argc, char* argv[])
   ///////////////////////////////////////////////////////////////
   //set up global data structures
   Syncronizer<Env::K>                       syncronizer;
-
+  std::cout <<"before env"<<std::endl;
   Env                                       env(argc,argv);
+  std::cout <<"after env"<<std::endl;
+
 
   Time_frame::Interval_color                player_a_color = PLAYER_A_COLOR;
   Time_frame::Interval_color                player_b_color = PLAYER_B_COLOR;
@@ -143,6 +155,7 @@ void server_main(int argc, char* argv[])
   Writen_paths_filenames                    writen_paths_filenames_a;
   Writen_paths_filenames                    writen_paths_filenames_b;
 
+  Safe_bool									is_game_over(false);
   Result                                    result;
 
   ///////////////////////////////////////////////////////////////
@@ -163,7 +176,8 @@ void server_main(int argc, char* argv[])
                           &time_frame, &file_names,
                           &additional_target_configurations_manager,
                           &writen_paths_filenames_a,
-                          &robot_location_b);
+                          &robot_location_b,
+						  &is_game_over);
   
 #endif //USE_PLAYER_A
 #if USE_PLAYER_B
@@ -172,18 +186,22 @@ void server_main(int argc, char* argv[])
                           &time_frame, &file_names,
                           &additional_target_configurations_manager,
                           &writen_paths_filenames_b,
-                          &robot_location_a);
+                          &robot_location_a,
+						  &is_game_over);
 #endif //USE_PLAYER_B
 
   ///////////////////////////////////////////////////////////////
   //start up syncronizer
+
   std::cout <<"in main thread : " <<boost::this_thread::get_id()<<std::endl;
   std::cout <<"before synchronizer"<<std::endl<<std::endl;
+
   syncronizer.start(&time_frame, &env, &result, socket_g,
                     &target_configurations_manager,
                     &additional_target_configurations_manager,
                     &robot_location_a, &robot_location_b,
-                    &writen_paths_filenames_a, &writen_paths_filenames_b);
+                    &writen_paths_filenames_a, &writen_paths_filenames_b,
+					&is_game_over);
   
   syncronizer.join();
   
@@ -192,7 +210,7 @@ void server_main(int argc, char* argv[])
             <<"player b score: "
             <<result.second 
             <<std::endl;
-            
+  
 #if USE_PLAYER_A
   request_handler_a.join();
 #endif //USE_PLAYER_A
@@ -200,7 +218,7 @@ void server_main(int argc, char* argv[])
   request_handler_b.join();
 #endif //USE_PLAYER_B
 
-
+  end_connection__gui(socket_g);
   
   return ;
 }

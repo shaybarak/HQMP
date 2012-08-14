@@ -15,37 +15,39 @@ void NaivePlayer::plan(double deadline) {
 	}
 }
 
-void NaivePlayer::move(double deadline, Motion& motion_sequence) {
-	// TODO use a clock internally to also
+bool NaivePlayer::move(double deadline, Motion& motion_sequence) {
+	if (moved) {
+		return true;
+	}
+
+	CGAL::Timer timer;
+	timer.start();
 
 	// Don't allow more than one movement turn
-	if (!moved) {
-		// Assume we have enough time to perform the entire motion
-		// Get source the destination
-		Planner::Reference_point q_s (env->get_source_configuration_a());
-		Planner::Reference_point q_t (env->get_target_configurations().front());
+	// Assume we have enough time to perform the entire motion
+	// Get source the destination
+	Planner::Reference_point q_s (env->get_source_configuration_a());
+	Planner::Reference_point q_t (env->get_target_configurations().front());
 
-		// Perform query
-		Motion remaining;
-		Ref_p_vec::iterator iter_to_closest;
-
-		//This is the original one query version. can uncomment out for debug. 
-		//TODO: remove.
-		//bool found_path = planner.query(q_s, q_t, motion_sequence);
-		bool path_found = planner.query_closest_point(
-			q_s, 
-			env->get_target_configurations(),
-			iter_to_closest, 
-			motion_sequence);
-
-		if (path_found) {
-			// Path found!
-			std::cout << "Found path with " << remaining.get_sequence().size() << " steps requiring " << remaining.motion_time(configuration.get_translational_speed(), configuration.get_rotational_speed()) << " seconds";
-			// Cut it according to the deadline
-			remaining.cut(deadline, configuration.get_translational_speed(), configuration.get_rotational_speed(), motion_sequence);
-			std::cout << "Cut to " << motion_sequence.get_sequence().size() << " and " << remaining.get_sequence().size();
-		}
-
-		moved = true;
+	// Perform query
+	Ref_p_vec::iterator iter_to_closest;
+	Motion total_motion;
+	bool path_found = planner.query_closest_point(
+		q_s, 
+		env->get_target_configurations(),
+		iter_to_closest, 
+		total_motion);
+	
+	if (path_found) {
+		std::cout << "Found path with " << remaining.get_sequence().size() << " steps requiring " << remaining.motion_time(configuration.get_translational_speed(), configuration.get_rotational_speed()) << " seconds";
+		// Cut it according to the deadline
+		total_motion.cut(deadline, configuration.get_translational_speed(), configuration.get_rotational_speed(), motion_sequence);
+		std::cout << "Cut to " << motion_sequence.get_sequence().size() << " and " << remaining.get_sequence().size();
 	}
+
+	moved = true;
+	
+	// If we did not generate a motion, assume that the game is over
+	// TODO maybe the motion is empty because the path is (temporarily) blocked, fix this in a later iteration
+	return motion_sequence.empty();
 }

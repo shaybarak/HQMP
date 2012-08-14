@@ -17,12 +17,11 @@ public:
 	static void log(char* label, char* message);
 	Player(Env* env, Configuration* config);
 	void set_dynamic_obstacle_config(Ref_p& dynamic_obstacle);
-	void update_target_configs(Ref_p_vec* target_configs);
 	virtual void plan(double deadline) = 0;
-	virtual void move(double deadline, Motion& motion_sequence) = 0;
+	// Returns true if there is nowhere left to move (all targets have been collected)
+	virtual bool move(double deadline, Motion& motion_sequence) = 0;
 protected:
 	Env* env;
 	Configuration* config;
 	Ref_p dynamic_obstacle;
-	Ref_p_vec* target_configs;
 };

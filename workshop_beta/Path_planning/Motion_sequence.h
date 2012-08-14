@@ -189,6 +189,11 @@ public:
 			}
 	}
 
+	// Whether this motion sequence is empty
+	bool empty() {
+		return motion_sequence.empty();
+	}
+
 private:
 	Motion motion_sequence;
 }; //Motion_sequence

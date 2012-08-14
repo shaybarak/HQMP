@@ -15,6 +15,7 @@ class Request_handler
 public:
   typedef Reference_point<K>                Reference_point;
   typedef Safe_type<Reference_point>        Robot_location;
+  typedef Safe_type<bool>					Safe_bool;
   typedef Time_frame::Interval_color        Color;
 private:
 struct Request_handler_data
@@ -27,7 +28,7 @@ struct Request_handler_data
   Additional_target_configurations_manager* additional_target_configurations_manager_ptr;
   Writen_paths_filenames*                   writen_paths_filenames_ptr;
   Robot_location*                           other_robot_location_ptr;
-  
+  Safe_bool*								is_game_over;  
 }; //Request_handler_data
   
 public:
@@ -39,12 +40,13 @@ public:
               File_names*                               file_names_ptr,
               Additional_target_configurations_manager* additional_target_configurations_manager_ptr,
               Writen_paths_filenames*                   writen_paths_filenames_ptr,
-              Robot_location*                           other_robot_location_ptr)
+              Robot_location*                           other_robot_location_ptr,
+			  Safe_bool*								is_game_over_ptr)
   {
     thread = boost::thread( &Request_handler::handle_client_requests, this, 
                             socket_ptr, color, time_frame_ptr, file_names_ptr, 
                             additional_target_configurations_manager_ptr,
-                            writen_paths_filenames_ptr, other_robot_location_ptr);
+                            writen_paths_filenames_ptr, other_robot_location_ptr, is_game_over_ptr);
     return;  
   }
   void handle_client_requests(Socket*                                   socket_ptr,
@@ -54,7 +56,8 @@ public:
                               File_names*                               file_names_ptr,
                               Additional_target_configurations_manager* additional_target_configurations_manager_ptr,
                               Writen_paths_filenames*                   writen_paths_filenames_ptr,
-                              Robot_location*                           other_robot_location_ptr)
+                              Robot_location*                           other_robot_location_ptr,
+							  Safe_bool*								is_game_over_ptr)
   {  
     while(true)    
     {
@@ -75,9 +78,21 @@ public:
           //                 : remaining_time
 
           //construct reply
-          bool is_moveable = (time_frame_ptr->get_color() == 
+          bool is_moveable;
+          double remaining_time;
+
+		  if (is_game_over_ptr->get())
+		  {
+			  is_moveable = false;
+			  remaining_time = 1; //dummy
+		  }
+		  else
+		  {
+			  is_moveable = (time_frame_ptr->get_color() == 
                               color);
-          double remaining_time = time_frame_ptr->remaining_time();
+			  remaining_time = time_frame_ptr->remaining_time();
+			  CGAL_postcondition (remaining_time >= 0);
+		  }
 
           std::stringstream reply;
           reply << TIME_FRAME_STATUS_REPLY << " ";  //header        
@@ -136,6 +151,9 @@ public:
           bool has_enough_time = (remaining_time >= motion_length);
           bool request_approved = has_enough_time && is_moveable;
 
+		  if (is_game_over_ptr->get())
+			  request_approved = false;
+
           std::cout <<"### request recieved of time "
                     << motion_length
                     <<" there is "
@@ -169,6 +187,16 @@ public:
           socket_ptr->send_line(reply.str());
           break;
         }
+	  case IS_GAME_OVER_REQUEST:
+		{
+			//construct reply
+			std::stringstream reply;
+			reply << IS_GAME_OVER_REPLY << " ";				//header        
+			reply << is_game_over_ptr->get() << " ";		//data
+
+			socket_ptr->send_line(reply.str());
+			break;
+		}
       case TERMINATE:
         {
           std::cout <<std::endl<<std::endl<<std::endl<<"terminating connection..."<<std::endl<<std::endl<<std::endl;
