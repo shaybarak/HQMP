@@ -54,7 +54,7 @@ typename K::Point_2 get_reference_point(const CGAL::Polygon_2<K>& polygon)
     above_in_polygon1 = polygon.has_on_positive_side(above1);
     below_in_polygon1 = polygon.has_on_positive_side(below1);
     above_in_polygon2 = polygon.has_on_positive_side(above2);
-    below_in_polygon2 = polygon.has_on_positive_side(below1);
+    below_in_polygon2 = polygon.has_on_positive_side(below2);
   }
   CGAL_postcondition( (above_in_polygon1 != below_in_polygon1) ||
                       (above_in_polygon2 != below_in_polygon2) );
