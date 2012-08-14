@@ -2,10 +2,7 @@
 
 #include "Player.h"
 #include "Path_planning\Motion_sequence.h"
-#include "Mms_example.h"
 #include "Planner\NaivePlanner.h"
-
-//typedef mms::NaivePlanner<>             NaivePlanner;
 
 /**
  * Player that sleeps throughout the game.
@@ -18,7 +15,6 @@ public:
 
 protected:
 	Planner planner;
-	//Planner planner;
 
 private:
 	bool planned;

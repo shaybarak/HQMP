@@ -170,9 +170,10 @@ public:
   {
     return 60;
   }
+  
   double get_gray_sleep_time()
   {
-    return 60;
+    return 1;
   }
 private:
   boost::thread thread;

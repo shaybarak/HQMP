@@ -103,9 +103,6 @@
     <Filter Include="Header Files\Planner">
       <UniqueIdentifier>{feda6442-d5d2-47cf-a198-b993f0a236a6}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Source Files\Planner">
-      <UniqueIdentifier>{757e5335-93c1-423e-9c87-6a52a06c02fa}</UniqueIdentifier>
-    </Filter>
   </ItemGroup>
   <ItemGroup>
     <None Include="ReadMe.txt" />
@@ -433,9 +430,6 @@
     </ClCompile>
     <ClCompile Include="..\Players\NaivePlayer.cpp">
       <Filter>Source Files\Players</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Planner\NaivePlanner.cpp">
-      <Filter>Source Files\Planner</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

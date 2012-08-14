@@ -12,6 +12,11 @@
 #include "Graph\Graph.h"
 #include "Fsc_path_planning.h"
 
+
+typedef Environment<> Env;
+typedef Env::Reference_point              Ref_p;
+typedef Env::Reference_point_vec          Ref_p_vec;
+
 namespace mms{
 
 template <typename K_ = Rational_kernel, 
@@ -171,6 +176,53 @@ public:
     motion_sequence.add_motion_sequence(target_motion_sequence);
     return true;
   }
+	
+  //Returns closest point to target, according to motion_Sequence.motion_time.
+  //Sets the motion_sequence to the point to motion_sequence.
+
+  //TODO: delete point from the vector, return the point!
+	bool query_closest_point(
+		const Reference_point& source, 
+		Ref_p_vec& target_configurations,
+		Ref_p_vec::iterator& iter_to_closest,
+		Motion_sequence& motion_sequence) {
+			
+		Reference_point closest_point;
+		bool can_access = false;
+		Motion_sequence* pShortest_sequence = new Motion_sequence();
+		Motion_sequence* pCurrent_sequence = new Motion_sequence();
+		double shortest_time = INFINITY, current_time = 0;
+		
+		for (Ref_p_vec::iterator it = target_configurations.begin(); it!=target_configurations.end(); it++) {
+			can_access = query(source, *it, *pCurrent_sequence);
+		/*BOOST_FOREACH(Ref_p& target, target_configurations) {	
+			can_access = query(source, target, *pCurrent_sequence);*/
+			if (!can_access) {
+				continue;
+			}
+
+			double current_time = pCurrent_sequence->motion_time(
+				configuration.get_translational_speed(),
+                configuration.get_rotational_speed());
+
+			if (current_time < shortest_time) {
+				delete pShortest_sequence;
+				pShortest_sequence = pCurrent_sequence;
+				shortest_time = current_time;
+				iter_to_closest = it;
+				pCurrent_sequence = new Motion_sequence();
+			} else {
+				pCurrent_sequence->clear();
+			}
+		}
+
+		motion_sequence = *pShortest_sequence;
+		if (pCurrent_sequence != pShortest_sequence) {
+			delete pCurrent_sequence; 
+		}
+		return can_access;
+  }
+
 private: //layer methods
   void generate_rotations(const unsigned int num_of_angles)
   {

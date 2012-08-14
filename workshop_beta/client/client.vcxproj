@@ -179,7 +179,6 @@
     <ClCompile Include="..\Graph\ConnectedComponents.cpp" />
     <ClCompile Include="..\Manager\File_names.cpp" />
     <ClCompile Include="..\Manager\Time_frame.cpp" />
-    <ClCompile Include="..\Planner\NaivePlanner.cpp" />
     <ClCompile Include="..\Players\NaivePlayer.cpp" />
     <ClCompile Include="..\Players\Player.cpp" />
     <ClCompile Include="..\Players\SleepingPlayer.cpp" />
