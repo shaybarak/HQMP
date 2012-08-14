@@ -118,7 +118,7 @@ private:
   {
     std::string path_file_name = this->get_path_file_name();
     std::string status_file_name = this->get_status_file_name();
-    const Motion_sequence::Motion_vec& motion_vec = motion_sequence.get_sequence();
+    const Motion_sequence::Motion& motion = motion_sequence.get_sequence();
     
     //convert path & duration to GUI format and write to file
     Converter::Path_3d path;
@@ -183,7 +183,7 @@ private:
     target_configurations_manager_ptr->get_configuration_status(configuration_status);
     configuration_statuses.push_back(configuration_status);
 
-    BOOST_FOREACH(Motion_sequence::MS_base_ptr ms_ptr, motion_vec)
+    BOOST_FOREACH(Motion_sequence::MS_base_ptr ms_ptr, motion)
     {
       configuration_status.clear();
       target_configurations_manager_ptr->mark_contained_configurations(ms_ptr, is_player_a);

@@ -28,7 +28,7 @@ public:
   template <typename OutputIterator>
   void operator() (Motion_sequence& motion_sequence, OutputIterator& oi)
   {
-    const Motion_sequence::Motion_vec& motion_vec(motion_sequence.get_sequence());
+    const Motion_sequence::Motion& motion_vec(motion_sequence.get_sequence());
 
     if (motion_vec.empty())
       return ;    

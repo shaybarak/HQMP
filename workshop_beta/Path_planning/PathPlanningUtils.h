@@ -211,7 +211,7 @@ template <typename K, typename OutputIterator>
 void sample_motion_sequence ( Motion_sequence<K>& motion_sequence,
                               OutputIterator& oi)
 {
-  const Motion_sequence<K>::Motion_vec& motion_vec = motion_sequence.get_sequence();
+  const Motion_sequence<K>::Motion& motion_vec = motion_sequence.get_sequence();
   BOOST_FOREACH(Motion_sequence<K>::MS_base_ptr motion_step_ptr, motion_vec)
   {
     if (motion_step_ptr->type() == Motion_step_base<K>::TRANSLATION)
