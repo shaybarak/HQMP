@@ -25,7 +25,7 @@
 //--------------------------------------
 // Input	   
 //--------------------------------------
-#define ANGLES_IN_RADIANS	//used when reading from OOPSMP files
+#define EXACT_READ_MODE	1 //turn off when reading from gui files
 
 //--------------------------------------
 // Graphics    

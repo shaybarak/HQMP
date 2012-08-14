@@ -443,7 +443,7 @@ public slots:
 			return;
 		}
 		int size = m_vecObstacles.size();
-		fprintf(fOutput, "\n%d\n", size);
+		fprintf(fOutput, "%d\n", size);
 
 		for (int i = 0; i < size; i++)
 		{
@@ -501,14 +501,14 @@ public slots:
 
 		
 		int size = m_conf_rotation.size();
-		fprintf(fOutput, "\n%d\n", size);
+		fprintf(fOutput, "%d\n", size);
 
 		for (int i = 0; i < size; i++)
 		{
 			QPointF fake_point = reference_point(m_displayed_robots[i]->polygon());
 			QPointF real_point = point_normalize(m_displayed_robots[i]->mapToScene(fake_point));
 
-			fprintf(fOutput, "%.5f %.5f %.5f ", real_point.x(), real_point.y(), m_conf_rotation[i]);
+			fprintf(fOutput, "%.5f\n%.5f\n%.5f\n", real_point.x(), real_point.y(), m_conf_rotation[i]);
 		}
 		
 
@@ -643,15 +643,15 @@ public slots:
 	void write_polygon(FILE* file, QPolygonF poly)
 	{
 		int num_vertices = poly.size();
-		fprintf(file, "\n %d ", num_vertices);
-
+		fprintf(file, "%d\n", num_vertices);
+		
 		for (int i = 0; i < num_vertices; i++)
 		{
 			QPointF norm_point = point_normalize(poly[i]);
 			double dx = norm_point.rx();
 			double dy = norm_point.ry();
 
-			fprintf(file, "%.2f %.2f ", dx, dy);
+			fprintf(file, "%.2f %.2f \n", dx, dy);
 		}
 	}
 

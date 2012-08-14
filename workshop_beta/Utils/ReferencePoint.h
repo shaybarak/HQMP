@@ -25,7 +25,6 @@ public:
 				+ point2.get_rotation().to_angle(RAD) * (1 - ratio);
 			return Reference_point(Point(x, y), to_rotation<FT>(angle, RAD));
 	}
-
 	//constructors
 	Reference_point(){}
 	Reference_point(Point p, Rotation r)
@@ -100,11 +99,23 @@ public:
 	}
 	void read(std::istream& is)
 	{
-		typename K::FT  s_x, s_y, s_sin, s_cos;
-		is >> s_x >> s_y >> s_sin >> s_cos;
+#if EXACT_READ_MODE	
+		typename K::FT  x, y;
+		is >> x >> y;
+		_p = Point(x, y);
 
-		_p = Point(s_x, s_y);
-		_r = Rotation(s_sin, s_cos);
+		typename K::FT  sin, cos;
+		is >> sin >> cos;
+		_r = Rotation(sin, cos);
+#else //EXACT_READ_MODE
+		double  x, y;
+		is >> x >> y;
+		_p = Point(x, y);
+
+		double angle;
+		is >>angle;
+		_r = to_rotation<typename K::FT> (angle, DEG);
+#endif //EXACT_READ_MODE
 		return;
 	}
 
