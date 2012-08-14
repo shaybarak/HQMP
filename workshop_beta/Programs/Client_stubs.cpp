@@ -149,7 +149,7 @@ void client_stubs_main(int argc, char* argv[])
 
 	////////////////////////////////////////////////////////////
 	//begin planning
-	player = (Player*)new SleepingPlayer(&env, &configuration);
+	player = (Player*)new NaivePlayer(&env, &configuration);
 	bool read_additional_configurations = true;
 	while (is_game_over(*socket_client_ptr) == false) {    
 		//before doing any planning, see if something changed
