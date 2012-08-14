@@ -56,7 +56,7 @@ namespace FixedRotation
                              const CGAL::Polygon_2<K> & obstacle, 
                              CGAL::Polygon_with_holes_2<K> & c_space_obstacle)
   {
-    Polygon robot_in_the_middle, minus_robot_in_the_middle;
+    CGAL::Polygon_2<K> robot_in_the_middle, minus_robot_in_the_middle;
     center_polygon_ref_point_at_zero<K>(robot, robot_in_the_middle);
     negate_polygon<K>(robot_in_the_middle, minus_robot_in_the_middle);
 
@@ -64,8 +64,8 @@ namespace FixedRotation
     sum = minkowski_sum<Kernel>(minus_robot_in_the_middle, obstacle);
 
     //cannonicalize by translating each obstacle back
-    Point reference_point (get_reference_point<K>(robot));
-    Point translation     ( -reference_point.x(),-reference_point.y());
+    K::Point_2 reference_point (get_reference_point<K>(robot));
+    K::Point_2 translation     ( -reference_point.x(),-reference_point.y());
     translate_polygon<K> (sum, c_space_obstacle, translation);
 
     return;
