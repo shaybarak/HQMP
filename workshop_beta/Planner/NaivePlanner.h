@@ -186,14 +186,18 @@ public:
 		Ref_p_vec& target_configurations,
 		Ref_p_vec::iterator& iter_to_closest,
 		Motion_sequence& motion_sequence) {
-			
+
 		Reference_point closest_point;
 		bool can_access = false;
 		Motion_sequence* pShortest_sequence = new Motion_sequence();
 		Motion_sequence* pCurrent_sequence = new Motion_sequence();
 		double shortest_time = INFINITY, current_time = 0;
 		
+		std::cout << "Start querying for closest points" << endl;
+
 		for (Ref_p_vec::iterator it = target_configurations.begin(); it!=target_configurations.end(); it++) {
+			global_tm.write_time_log(std::string("querying point"));
+			std::cout << "Query point: " << (it - target_configurations.begin()) << endl;
 			can_access = query(source, *it, *pCurrent_sequence);
 		/*BOOST_FOREACH(Ref_p& target, target_configurations) {	
 			can_access = query(source, target, *pCurrent_sequence);*/
@@ -205,13 +209,18 @@ public:
 				configuration.get_translational_speed(),
                 configuration.get_rotational_speed());
 
+			std::cout << "Found path to point, time: " << current_time << endl;
+
 			if (current_time < shortest_time) {
+				std::cout << "Best time till now: " << shortest_time << " point replacing closest point" << endl;
 				delete pShortest_sequence;
 				pShortest_sequence = pCurrent_sequence;
 				shortest_time = current_time;
 				iter_to_closest = it;
 				pCurrent_sequence = new Motion_sequence();
+				
 			} else {
+				std::cout << endl;
 				pCurrent_sequence->clear();
 			}
 		}
@@ -220,6 +229,9 @@ public:
 		if (pCurrent_sequence != pShortest_sequence) {
 			delete pCurrent_sequence; 
 		}
+
+		std::cout << "Finished querying for point" << endl;
+
 		return can_access;
   }
 

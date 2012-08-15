@@ -32,6 +32,7 @@ bool NaivePlayer::move(double deadline, Motion& motion_sequence) {
 	// Perform query
 	Ref_p_vec::iterator iter_to_closest;
 	Motion total_motion;
+	
 	bool path_found = planner.query_closest_point(
 		q_s, 
 		env->get_target_configurations(),
@@ -39,10 +40,10 @@ bool NaivePlayer::move(double deadline, Motion& motion_sequence) {
 		total_motion);
 	
 	if (path_found) {
-		std::cout << "Found path with " << total_motion.get_sequence().size() << " steps requiring " << total_motion.motion_time(configuration.get_translational_speed(), configuration.get_rotational_speed()) << " seconds";
+		std::cout << "Found path with " << total_motion.get_sequence().size() << " steps requiring " << total_motion.motion_time(configuration.get_translational_speed(), configuration.get_rotational_speed()) << " seconds" << endl;
 		// Cut it according to the deadline
 		total_motion.cut(deadline - timer.time(), configuration.get_translational_speed(), configuration.get_rotational_speed(), motion_sequence);
-		std::cout << "Cut to " << motion_sequence.get_sequence().size() << " and " << total_motion.get_sequence().size();
+		std::cout << "Cut to " << motion_sequence.get_sequence().size() << " and " << total_motion.get_sequence().size() << endl;
 	}
 
 	moved = true;
