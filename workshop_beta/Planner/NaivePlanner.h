@@ -209,7 +209,7 @@ public:
 				configuration.get_translational_speed(),
                 configuration.get_rotational_speed());
 
-			std::cout << "Found path to point, time: " << current_time << endl;
+			std::cout << "Found path to point, motion time: " << current_time << endl;
 
 			if (current_time < shortest_time) {
 				std::cout << "Best time till now: " << shortest_time << " point replacing closest point" << endl;
