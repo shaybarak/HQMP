@@ -186,12 +186,20 @@ public:
 public:
   double get_colored_sleep_time()
   {
-    return 29;
+	  //noam: changed per our group
+	  if (configuration.get_colored_sleep_time() == -1) {
+		return 60;
+	  }
+	  return configuration.get_colored_sleep_time();
   }
   
   double get_gray_sleep_time()
   {
-    return 1;
+	  //noam: changed per our group
+	  if (configuration.get_gray_sleep_time() == -1) {
+		return 1;
+	  }
+	  return configuration.get_gray_sleep_time();
   }
 private:
   boost::thread thread;

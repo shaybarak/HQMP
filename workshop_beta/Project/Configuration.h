@@ -82,6 +82,13 @@ public: //get
   std::string get_additional_target_configurations_file_name();
   std::string get_all_target_configurations_file_name();
 
+
+  //noam: changes per our group
+  void set_colored_sleep_time(const int _colored_sleep_time);
+  void set_gray_sleep_time(const int _gray_sleep_time);
+  int get_colored_sleep_time();
+  int get_gray_sleep_time();
+
 private:
   std::string _robot_file_name_a;
   std::string _robot_file_name_b;
@@ -120,6 +127,12 @@ private:
   std::string _target_configurations_file_name;
   std::string _additional_target_configurations_file_name;
   std::string _all_target_configurations_file_name;
+  
+  //noam: changes per our group
+  int _colored_sleep_time;
+  int _gray_sleep_time;
+
+
 }; //Configuration
 
 /////////////////////////////

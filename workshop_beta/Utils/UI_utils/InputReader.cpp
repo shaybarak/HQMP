@@ -14,6 +14,9 @@ void Input_reader::read_configuration(const std::string& filename, Configuration
         assert (false);
       }
 
+	  configuration.set_colored_sleep_time(-1);
+	  configuration.set_gray_sleep_time(-1);
+
       while (! file.eof() )
       {        
         getline (file,line);
@@ -93,6 +96,12 @@ void Input_reader::read_configuration(const std::string& filename, Configuration
           configuration.set_additional_target_configurations_file_name(decomposed_line[1]);
         else if (decomposed_line[0].compare("all_target_configurations_file_name") == 0)
           configuration.set_all_target_configurations_file_name(decomposed_line[1]);
+
+		/* Additions for our group */
+		else if (decomposed_line[0].compare("colored_sleep_time") == 0)
+          configuration.set_colored_sleep_time(atoi(decomposed_line[1].c_str()));
+		else if (decomposed_line[0].compare("gray_sleep_time") == 0)
+          configuration.set_gray_sleep_time(atoi(decomposed_line[1].c_str()));
       }
       
       file.close();

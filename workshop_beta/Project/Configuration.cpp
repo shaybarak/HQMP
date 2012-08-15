@@ -288,3 +288,21 @@ std::string Configuration::get_all_target_configurations_file_name()
 {
   return _all_target_configurations_file_name;
 }
+
+
+//noam: changes per our group
+void Configuration::set_colored_sleep_time(const int colored_sleep_time) {
+	_colored_sleep_time = colored_sleep_time;
+}
+
+int Configuration::get_colored_sleep_time() {
+	return _colored_sleep_time;
+}
+
+void Configuration::set_gray_sleep_time(const int gray_sleep_time) {
+	_gray_sleep_time = gray_sleep_time;
+}
+
+int Configuration::get_gray_sleep_time() {
+	return _gray_sleep_time;
+}
