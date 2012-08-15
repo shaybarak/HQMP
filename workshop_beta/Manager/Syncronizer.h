@@ -107,7 +107,9 @@ public:
     while(1)
     {
 		is_game_over_ptr->set(true);
-		return;
+		//noam: this will not allow the GUI to draw the path!!!!!
+		//TODO: verify what did Oren meant her...
+		/*return;*/
 
 
       //begining of colored interval
