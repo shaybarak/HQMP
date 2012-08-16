@@ -20,8 +20,8 @@ typedef Env::Reference_point              Ref_p;
 
 //globals for the sake of the example - bad programing!
 Socket_client*            socket_client_ptr = NULL;
-bool                      finished_game = false;
 Player*					  player;
+bool                      finished_game = false;
 
 void dbg_log(char* function_name, char* action)
 {
@@ -109,7 +109,7 @@ void moveable_planner(double remaining_time)
 
 	CGAL::Timer timer;
 	timer.start();
-	while (timer.time() < remaining_time)
+	while(timer.time() < remaining_time)
 	{
 		//plan and then move (if time remains)
 		plan(remaining_time - timer.time());
@@ -162,7 +162,9 @@ void client_stubs_main(int argc, char* argv[])
 			input_reader.read_reference_points<Rational_kernel>(
 				scene_status.updated_target_configurations_filename,
 				std::back_inserter(env.get_target_configurations()));
+			//player->add_new_targets();
 			read_additional_configurations = false;
+			finished_game = false;
 		}   
 
 		//now plan
