@@ -17,6 +17,7 @@ protected:
 	Planner planner;
 
 private:
+	Planner::Reference_point q_s;
 	bool planned;
 	bool moved;
 };
