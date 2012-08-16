@@ -100,7 +100,7 @@ public:
   }
   //query
   bool query( const Reference_point& source, const Reference_point& target,
-              Motion_sequence& motion_sequence) 
+              Motion_sequence& motion_sequence, double& motion_time, double motion_time_limit) 
   {
 
 	TIMED_TRACE_ENTER("query");
@@ -109,8 +109,24 @@ public:
     ////////////////////////////////////
     Motion_sequence source_motion_sequence, target_motion_sequence;
     Reference_point perturbed_source = connect_to_graph(source, source_motion_sequence);
+
+	motion_time += Motion_sequence::step_time_config(
+		(Motion_sequence::MS_base_ptr)*source_motion_sequence.get_sequence().begin());
+
+	if (motion_time >= motion_time_limit) {
+		TIMED_TRACE_EXIT("query, connecting source, not the closest point");
+		return false;
+	}
+
     Reference_point perturbed_target = connect_to_graph(target, target_motion_sequence);
-    
+    motion_time += Motion_sequence::step_time_config(
+		(Motion_sequence::MS_base_ptr)*target_motion_sequence.get_sequence().begin());
+
+	if (motion_time >= motion_time_limit) {
+		TIMED_TRACE_EXIT("query, connecting target, not the closest point");
+		return false;
+	}
+
     if (perturbed_source ==  Reference_point() || 
         perturbed_target ==  Reference_point())
     {
@@ -149,6 +165,10 @@ public:
 
     std::list<Fsc_indx>::iterator curr, next;
 
+	
+	//skip computing source step
+	int time_index = 1;
+
     next = curr = fsc_indx_path.begin();
     ++next;
     while (next != fsc_indx_path.end())
@@ -161,6 +181,19 @@ public:
       CGAL_precondition ( (motion_sequence.get_sequence().empty()) || 
                           (motion_sequence.get_sequence().back()->target() == curr_ref_p) );
       plan_path(fsc_ptr, curr_ref_p, next_ref_p, motion_sequence);
+	  
+	  //TODO: there still seems to be a loop in plan_path__fixed_[angle/point]
+	  //However seems like heaviest part in plan_path is before. May consider do more delicate "return"
+	  //from this functions
+	  int current_size = motion_sequence.get_sequence().size();
+	  motion_time += motion_sequence.motion_time_config_between(time_index, current_size-1);
+	  if (motion_time >= motion_time_limit) {
+		  TIMED_TRACE_EXIT("query, main loop, not the closest point");
+		  return false;
+	  }
+
+	  time_index = current_size;
+
       CGAL_precondition ( (motion_sequence.get_sequence().empty()) || 
                           (motion_sequence.get_sequence().back()->target() == next_ref_p) );
       
@@ -172,10 +205,18 @@ public:
 
     Fsc* fsc_ptr = get_fsc(*curr);
     plan_path(fsc_ptr, curr_ref_p, perturbed_target, motion_sequence);
+	motion_time += motion_sequence.motion_time_config_between(time_index, motion_sequence.get_sequence().size()-1);
+	if (motion_time >= motion_time_limit) {
+		TIMED_TRACE_EXIT("query, connecting perturbed target, not the closest point");
+		return false;
+	}
+
     delete fsc_ptr;
 
-    //(3) add source motion
+    //(3) add target motion
+	//time for this step is already computed!
     motion_sequence.add_motion_sequence(target_motion_sequence);
+	cout << "motion time computed inside query: " << motion_time << endl;
 	TIMED_TRACE_EXIT("query");
     return true;
   }
@@ -183,7 +224,6 @@ public:
   //Returns closest point to target, according to motion_Sequence.motion_time.
   //Sets the motion_sequence to the point to motion_sequence.
 
-  //TODO: delete point from the vector, return the point!
 	bool query_closest_point(
 		const Reference_point& source, 
 		Ref_p_vec& target_configurations,
@@ -199,22 +239,17 @@ public:
 		double shortest_time = INFINITY, current_time = 0;
 
 		for (Ref_p_vec::iterator it = target_configurations.begin(); it!=target_configurations.end(); it++) {
-			std::cout << "Time: " << global_tm.timer.time() << " Query point: " << (it - target_configurations.begin()) << endl;
-			can_access = query(source, *it, *pCurrent_sequence);
-		/*BOOST_FOREACH(Ref_p& target, target_configurations) {	
-			can_access = query(source, target, *pCurrent_sequence);*/
+			current_time = 0;
+			std::cout << "Time: " << global_tm.timer.time() << " Query point: " << (it - target_configurations.begin()) << endl << endl;
+			can_access = query(source, *it, *pCurrent_sequence, current_time, INFINITY);
 			if (!can_access) {
 				continue;
 			}
 
-			double current_time = pCurrent_sequence->motion_time(
-				configuration.get_translational_speed(),
-                configuration.get_rotational_speed());
-
 			std::cout << endl << "Found path to point, motion time: " << current_time << endl;
 
 			if (current_time < shortest_time) {
-				std::cout << "Best time till now: " << shortest_time << " point replacing closest point" << endl;
+				std::cout << "Best time till now: " << shortest_time << " point replacing closest point" << endl << endl;
 				delete pShortest_sequence;
 				pShortest_sequence = pCurrent_sequence;
 				shortest_time = current_time;
@@ -233,7 +268,6 @@ public:
 		}
 
 		TIMED_TRACE_EXIT("query_closest_point");
-
 		return can_access;
   }
 

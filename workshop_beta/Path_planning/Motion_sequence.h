@@ -99,15 +99,40 @@ public:
 		std::reverse(motion_sequence.begin(), motion_sequence.end());
 	}
 
-	double motion_time(const double translational_speed, //unit per second
-		const double rotational_speed) //full rotation per second
-	{
-		double t(0);
-		BOOST_FOREACH(MS_base_ptr motion_step_ptr, motion_sequence)
-		{
-			t += step_time(motion_step_ptr, translational_speed, rotational_speed);
+	//compute motion time for interval inside motion sequence, including first index and last index
+
+	double motion_time_config_between(int first_index, int last_index) {
+		return motion_time_between(
+			first_index,
+			last_index,
+			configuration.get_translational_speed(),
+			configuration.get_rotational_speed());
+	}
+
+	double motion_time_between(
+		int first_index,
+		int last_index,
+		const double translational_speed,
+		const double rotational_speed) {
+		
+		double t = 0;
+		
+		for (int i=first_index; i<=last_index; i++) {
+			t += step_time(motion_sequence[i], translational_speed, rotational_speed);
 		}
-		return t;      
+		return t;
+	}
+
+	double motion_time(const double translational_speed, const double rotational_speed) {
+		return motion_time_between(0, motion_sequence.size()-1, 
+			translational_speed, rotational_speed);   
+	}
+
+	static double step_time_config(MS_base_ptr& motion_step_ptr) {
+		return step_time(
+			motion_step_ptr, 
+			configuration.get_translational_speed(), 
+			configuration.get_rotational_speed());
 	}
 
 	static double step_time( MS_base_ptr& motion_step_ptr,

@@ -53,11 +53,14 @@ public:
   //get shortest path
   void shortest_path(const Point & source,const Point & target, Point_list& path)
   {
+	TIMED_TRACE_ENTER("shortest_path (Path_planning folder)");
     if (!_initialized)
     {
       this->init_graph();
       _initialized=true;
     }
+
+	TIMED_TRACE_ACTION("shortest_path", "start check source");
     //check if source is in graph
     if (_graph.is_in_graph(source) == false)
     {
@@ -72,7 +75,9 @@ public:
             this->insert_edge(source,v);
       }
     }
+	TIMED_TRACE_ACTION("shortest_path", "finish check source");
 
+	TIMED_TRACE_ACTION("shortest_path", "start check target");
     //check if target is in graph
     if (_graph.is_in_graph(target) == false)
     {
@@ -87,8 +92,10 @@ public:
             this->insert_edge(target,v);
       }
     }
+	TIMED_TRACE_ACTION("shortest_path", "finish check target");
 
   _graph.find_path(source,target, path);
+  TIMED_TRACE_EXIT("shortest_path (Path_planning folder)");
   return;
 
   }
@@ -144,6 +151,7 @@ private:
   }
   void init_graph()
   {
+	TIMED_TRACE_ENTER("init_graph");
     this->get_polygon_vertices();
     
     //insert vertices
@@ -163,6 +171,7 @@ private:
           }
       }
     }
+	TIMED_TRACE_EXIT("init_graph");
   }
 }; //Shortest_path_in_polygon
 
