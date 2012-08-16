@@ -26,6 +26,7 @@ void plan_path(const Fsc* fsc_ptr,
                const typename Fsc::Ref_p& target,
                Motion_sequence<typename Fsc::K>& motion_sequence)
 {
+  TIMED_TRACE_ENTER("plan_path");
   switch (fsc_ptr->get_constraint_type())
   {
   case FIXED_ANGLE:
@@ -35,6 +36,7 @@ void plan_path(const Fsc* fsc_ptr,
   default:
     assert(false);
   } 
+  TIMED_TRACE_EXIT("plan_path");
 }
 
 template <typename Fsc>
@@ -43,6 +45,7 @@ void plan_path___fixed_angle (const Fsc* fsc_ptr,
                               const typename Fsc::Ref_p& target,
                               Motion_sequence<typename Fsc::K>& motion_sequence)
 {
+  TIMED_TRACE_ENTER("plan_path___fixed_angle");
   typedef typename Fsc::K           K;
   typedef typename Fsc::Ref_p       Ref_p;
   typedef typename Ref_p::Point     Point;
@@ -78,7 +81,7 @@ void plan_path___fixed_angle (const Fsc* fsc_ptr,
     ++curr;
     ++next;
   }
-  
+  TIMED_TRACE_EXIT("plan_path___fixed_angle");
   return;
 }
 
@@ -88,6 +91,7 @@ void plan_path__fixed_point ( const Fsc* fsc_ptr,
                               const typename Fsc::Ref_p& target,
                               Motion_sequence<typename Fsc::K>& motion_sequence)
 {
+  TIMED_TRACE_ENTER("plan_path___fixed_point");
   CGAL_precondition(fsc_ptr->get_constraint_type() == FIXED_POINT);
   CGAL_precondition(fsc_ptr->contains(source));
   CGAL_precondition(fsc_ptr->contains(target));
@@ -114,7 +118,7 @@ void plan_path__fixed_point ( const Fsc* fsc_ptr,
                                                                              source.get_rotation(), target.get_rotation(), 
                                                                              orientation);
   motion_sequence.add_motion_step(motion_step_ptr);
-
+  TIMED_TRACE_EXIT("plan_path___fixed_point");
   return;
 }
 

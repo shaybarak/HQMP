@@ -142,6 +142,7 @@
     <ClInclude Include="..\Utils\Communication_utils\server_utils.h" />
     <ClInclude Include="..\Utils\Communication_utils\Socket.h" />
     <ClInclude Include="..\Utils\Communication_utils\socket_typedefs.h" />
+    <ClInclude Include="..\Utils\general_utils.h" />
     <ClInclude Include="..\Utils\Geometry_utils\BoundingUtils.h" />
     <ClInclude Include="..\Utils\Geometry_utils\GeometryIO.h" />
     <ClInclude Include="..\Utils\Geometry_utils\GetClosestUtils.h" />
@@ -180,6 +181,7 @@
     <ClCompile Include="..\Utils\Communication_utils\client_utils.cpp" />
     <ClCompile Include="..\Utils\Communication_utils\server_utils.cpp" />
     <ClCompile Include="..\Utils\Communication_utils\socket.cpp" />
+    <ClCompile Include="..\Utils\general_utils.cpp" />
     <ClCompile Include="..\Utils\UI_utils\Graphics.cpp" />
     <ClCompile Include="..\Utils\UI_utils\InputReader.cpp" />
     <ClCompile Include="..\Utils\UI_utils\TimeManager.cpp" />

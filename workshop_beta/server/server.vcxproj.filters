@@ -354,6 +354,9 @@
     <ClInclude Include="..\Mms_example.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="..\Utils\general_utils.h">
+      <Filter>Header Files\Utils</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -394,6 +397,9 @@
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Utils\general_utils.cpp">
+      <Filter>Source Files\Utils</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

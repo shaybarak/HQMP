@@ -102,6 +102,8 @@ public:
   bool query( const Reference_point& source, const Reference_point& target,
               Motion_sequence& motion_sequence) 
   {
+
+	TIMED_TRACE_ENTER("query");
     ////////////////////////////////////
     //connect source and target to graph
     ////////////////////////////////////
@@ -174,6 +176,7 @@ public:
 
     //(3) add source motion
     motion_sequence.add_motion_sequence(target_motion_sequence);
+	TIMED_TRACE_EXIT("query");
     return true;
   }
 	
@@ -187,17 +190,16 @@ public:
 		Ref_p_vec::iterator& iter_to_closest,
 		Motion_sequence& motion_sequence) {
 
+		TIMED_TRACE_ENTER("query_closest_point");
+
 		Reference_point closest_point;
 		bool can_access = false;
 		Motion_sequence* pShortest_sequence = new Motion_sequence();
 		Motion_sequence* pCurrent_sequence = new Motion_sequence();
 		double shortest_time = INFINITY, current_time = 0;
-		
-		std::cout << "Start querying for closest points" << endl;
 
 		for (Ref_p_vec::iterator it = target_configurations.begin(); it!=target_configurations.end(); it++) {
-			global_tm.write_time_log(std::string("querying point"));
-			std::cout << "Query point: " << (it - target_configurations.begin()) << endl;
+			std::cout << "Time: " << global_tm.timer.time() << " Query point: " << (it - target_configurations.begin()) << endl;
 			can_access = query(source, *it, *pCurrent_sequence);
 		/*BOOST_FOREACH(Ref_p& target, target_configurations) {	
 			can_access = query(source, target, *pCurrent_sequence);*/
@@ -209,7 +211,7 @@ public:
 				configuration.get_translational_speed(),
                 configuration.get_rotational_speed());
 
-			std::cout << "Found path to point, motion time: " << current_time << endl;
+			std::cout << endl << "Found path to point, motion time: " << current_time << endl;
 
 			if (current_time < shortest_time) {
 				std::cout << "Best time till now: " << shortest_time << " point replacing closest point" << endl;
@@ -230,7 +232,7 @@ public:
 			delete pCurrent_sequence; 
 		}
 
-		std::cout << "Finished querying for point" << endl;
+		TIMED_TRACE_EXIT("query_closest_point");
 
 		return can_access;
   }

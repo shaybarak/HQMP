@@ -61,3 +61,6 @@
 #include "..\Utils\UI_utils\Graphics.h"
 #include "..\Utils\UI_utils\InputReader.h"
 #include "..\Utils\UI_utils\TimeManager.h"
+
+//General utils
+#include "..\Utils\general_utils.h"
