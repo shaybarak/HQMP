@@ -216,7 +216,6 @@ public:
     //(3) add target motion
 	//time for this step is already computed!
     motion_sequence.add_motion_sequence(target_motion_sequence);
-	cout << "motion time computed inside query: " << motion_time << endl;
 	TIMED_TRACE_EXIT("query");
     return true;
   }
@@ -234,14 +233,14 @@ public:
 
 		Reference_point closest_point;
 		bool path_found = false;
-		Motion_sequence* pShortest_sequence = new Motion_sequence();
-		Motion_sequence* pCurrent_sequence = new Motion_sequence();
-		double shortest_time = INFINITY, current_time = 0;
+		Motion_sequence seq1, seq2;
+		Motion_sequence *current = &seq1, *shortest = &seq2, *temp = NULL;
+		double shortest_time = INFINITY, current_time;
 
 		for (Ref_p_vec::iterator it = target_configurations.begin(); it != target_configurations.end(); it++) {
 			current_time = 0;
-			std::cout << "Time: " << global_tm.timer.time() << " Query point: " << (it - target_configurations.begin()) << endl << endl;
-			if (!query(source, *it, *pCurrent_sequence, current_time, shortest_time)) {
+			cout << "Time: " << global_tm.timer.time() << " Query point: " << (it - target_configurations.begin()) << endl << endl;
+			if (!query(source, *it, *current, current_time, shortest_time)) {
 				continue;
 			}
 			path_found = true;
@@ -249,24 +248,19 @@ public:
 			std::cout << endl << "Found path to point, motion time: " << current_time << endl;
 
 			if (current_time < shortest_time) {
-				std::cout << "Best time till now: " << shortest_time << " point replacing closest point" << endl << endl;
-				delete pShortest_sequence;
-				pShortest_sequence = pCurrent_sequence;
+				cout << "Best time till now: " << shortest_time << endl << endl;
+				// Exchange current and shortest
+				temp = current;
+				current = shortest;
+				shortest = temp;
 				shortest_time = current_time;
 				iter_to_closest = it;
-				pCurrent_sequence = new Motion_sequence();
-				
 			} else {
-				std::cout << endl;
-				pCurrent_sequence->clear();
+				current->clear();
 			}
 		}
 
-		motion_sequence = *pShortest_sequence;
-		if (pCurrent_sequence != pShortest_sequence) {
-			delete pCurrent_sequence; 
-		}
-
+		motion_sequence = *shortest;
 		TIMED_TRACE_EXIT("query_closest_point");
 		return path_found;
   }
