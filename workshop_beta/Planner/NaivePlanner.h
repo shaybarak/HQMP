@@ -110,7 +110,7 @@ public:
     Motion_sequence source_motion_sequence, target_motion_sequence;
     Reference_point perturbed_source = connect_to_graph(source, source_motion_sequence);
 
-	motion_time += Motion_sequence::step_time_config(
+	motion_time += Motion_sequence::step_time(
 		(Motion_sequence::MS_base_ptr)*source_motion_sequence.get_sequence().begin());
 
 	if (motion_time >= motion_time_limit) {
@@ -119,7 +119,7 @@ public:
 	}
 
     Reference_point perturbed_target = connect_to_graph(target, target_motion_sequence);
-    motion_time += Motion_sequence::step_time_config(
+    motion_time += Motion_sequence::step_time(
 		(Motion_sequence::MS_base_ptr)*target_motion_sequence.get_sequence().begin());
 
 	if (motion_time >= motion_time_limit) {
@@ -186,7 +186,7 @@ public:
 	  //However seems like heaviest part in plan_path is before. May consider do more delicate "return"
 	  //from this functions
 	  int current_size = motion_sequence.get_sequence().size();
-	  motion_time += motion_sequence.motion_time_config_between(time_index, current_size-1);
+	  motion_time += motion_sequence.motion_time_between(time_index, current_size-1);
 	  if (motion_time >= motion_time_limit) {
 		  TIMED_TRACE_EXIT("query, main loop, not the closest point");
 		  return false;
@@ -205,7 +205,7 @@ public:
 
     Fsc* fsc_ptr = get_fsc(*curr);
     plan_path(fsc_ptr, curr_ref_p, perturbed_target, motion_sequence);
-	motion_time += motion_sequence.motion_time_config_between(time_index, motion_sequence.get_sequence().size()-1);
+	motion_time += motion_sequence.motion_time_between(time_index, motion_sequence.get_sequence().size()-1);
 	if (motion_time >= motion_time_limit) {
 		TIMED_TRACE_EXIT("query, connecting perturbed target, not the closest point");
 		return false;
@@ -233,18 +233,18 @@ public:
 		TIMED_TRACE_ENTER("query_closest_point");
 
 		Reference_point closest_point;
-		bool can_access = false;
+		bool path_found = false;
 		Motion_sequence* pShortest_sequence = new Motion_sequence();
 		Motion_sequence* pCurrent_sequence = new Motion_sequence();
 		double shortest_time = INFINITY, current_time = 0;
 
-		for (Ref_p_vec::iterator it = target_configurations.begin(); it!=target_configurations.end(); it++) {
+		for (Ref_p_vec::iterator it = target_configurations.begin(); it != target_configurations.end(); it++) {
 			current_time = 0;
 			std::cout << "Time: " << global_tm.timer.time() << " Query point: " << (it - target_configurations.begin()) << endl << endl;
-			can_access = query(source, *it, *pCurrent_sequence, current_time, INFINITY);
-			if (!can_access) {
+			if (!query(source, *it, *pCurrent_sequence, current_time, shortest_time)) {
 				continue;
 			}
+			path_found = true;
 
 			std::cout << endl << "Found path to point, motion time: " << current_time << endl;
 
@@ -268,7 +268,7 @@ public:
 		}
 
 		TIMED_TRACE_EXIT("query_closest_point");
-		return can_access;
+		return path_found;
   }
 
 private: //layer methods
