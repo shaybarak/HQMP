@@ -30,7 +30,7 @@ bool NaivePlayer::move(double deadline, Motion& motion_sequence) {
 
 	if (!remaining_motion.empty()) {
 		// Continue a previous motion
-		remaining_motion.cut(deadline - timer.time(), configuration.get_translational_speed(), configuration.get_rotational_speed(), motion_sequence);
+		remaining_motion.cut(deadline - timer.time(), motion_sequence);
 		return false;
 	}
 	
@@ -40,7 +40,6 @@ bool NaivePlayer::move(double deadline, Motion& motion_sequence) {
 	}
 	
 	// Find motion to closest target
-	remaining_motion.clear();
 	bool path_found = planner.query_closest_point(
 		q_s, 
 		env->get_target_configurations(),
@@ -52,7 +51,7 @@ bool NaivePlayer::move(double deadline, Motion& motion_sequence) {
 		// Erase next target
 		env->get_target_configurations().erase(iter_to_closest);
 		// Cut the motion according to the deadline
-		remaining_motion.cut(deadline - timer.time(), configuration.get_translational_speed(), configuration.get_rotational_speed(), motion_sequence);
+		remaining_motion.cut(deadline - timer.time(), motion_sequence);
 	}
 
 	return false;
