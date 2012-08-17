@@ -26,15 +26,8 @@ public:
 
 	Motion_sequence() {}
 
-	~Motion_sequence() 
-	{
-		clear();
-	}
-
 	void clear()
 	{
-		BOOST_FOREACH(MS_base_ptr motion_step_ptr, motion_sequence)
-			delete motion_step_ptr;
 		motion_sequence.clear();
 	}
 
