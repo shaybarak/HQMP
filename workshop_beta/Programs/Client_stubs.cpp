@@ -45,6 +45,7 @@ void plan(double remaining_time)
 	dbg_log("plan", "exiting");
 	return;
 }
+
 void construct_motion(double remaining_time, Motion& motion_sequence)
 {
 	dbg_log("construct_motion", "entering");
@@ -59,12 +60,6 @@ void construct_motion(double remaining_time, Motion& motion_sequence)
 		return;
 
 	finished_game = player->move(remaining_time, motion_sequence);
-
-	if (finished_game) {
-		dbg_log("construct_motion", "sleeping");
-		boost::posix_time::seconds sleep_time(remaining_time - timer.time());
-		boost::this_thread::sleep(sleep_time);
-	}
 
 	dbg_log("construct_motion", "exiting");
 	return;
@@ -109,12 +104,8 @@ void moveable_planner(double remaining_time)
 
 	CGAL::Timer timer;
 	timer.start();
-	while(timer.time() < remaining_time)
-	{
-		//plan and then move (if time remains)
-		plan(remaining_time - timer.time());
-		if (remaining_time > timer.time())
-			move(remaining_time - timer.time());
+	while((timer.time() < remaining_time) && !finished_game) {
+		move(remaining_time - timer.time());
 	}
 
 	dbg_log("moveable_planner", "exiting");
@@ -127,11 +118,10 @@ void static_planner(double remaining_time)
 
 	CGAL::Timer timer;
 	timer.start();
-	while (timer.time() < remaining_time)
-	{
-		//plan
-		plan(remaining_time - timer.time());
-	}
+	plan(remaining_time);
+	cout << "Planned " << timer.time() << ", sleeping for the remaining " << remaining_time - timer.time() << endl;
+	boost::posix_time::seconds sleep_time(remaining_time - timer.time());
+	boost::this_thread::sleep(sleep_time);
 
 	dbg_log("static_planner", "exiting");
 	return;
