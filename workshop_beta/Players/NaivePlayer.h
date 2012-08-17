@@ -18,6 +18,7 @@ protected:
 
 private:
 	Planner::Reference_point q_s;
+	Planner::Reference_point q_t;
+	Motion remaining_motion;
 	bool planned;
-	bool moved;
 };
