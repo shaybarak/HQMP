@@ -1,7 +1,5 @@
 #pragma once
 
-#define SHORT_FILE (strrchr(__FILE__, '/') ? (strrchr(__FILE__, '/') + 1) : __FILE__)
-
 #ifdef DEBUG_PRINT_TIME_LOG
 
 #define TIMED_TRACE_ENTER(x) timed_trace(x, __FILE__, __LINE__, "ENTERING")
