@@ -3,6 +3,7 @@
 
 #include "Graph\Graph.h"
 #include "Utils\Number_utils\Sqrt_approximation.h"
+#include "Utils\logging.h"
 
 
 template <typename K>
