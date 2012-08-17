@@ -2,11 +2,17 @@
 
 #include "stdafx.h"
 
-void timed_trace(const char* function_name, const char* file, int line, const char* action) {
+void timed_trace(const char* function_name, const char* full_path, int line, const char* action) {
+	char filename[_MAX_FNAME];
+	_splitpath_s(full_path, 
+		NULL, 0, 
+		NULL, 0, 
+		filename, _MAX_FNAME,
+		NULL, 0);
 	// Time:
 	std::cout << global_tm.timer.time() << ": "
 		// File:Line
-		<< file << ":" << line << " - "
+		<< filename << ":" << line << " - "
 		// function_name, action
 		<< function_name << ", " << action << std::endl;
 };
