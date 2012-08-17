@@ -99,7 +99,7 @@ public:
 		std::reverse(motion_sequence.begin(), motion_sequence.end());
 	}
 
-	//compute motion time for interval inside motion sequence, including first index and last index
+	
 
 	double motion_time_config_between(int first_index, int last_index) {
 		return motion_time_between(
@@ -109,6 +109,18 @@ public:
 			configuration.get_rotational_speed());
 	}
 
+	double motion_time_config() {
+		return motion_time_between(0, motion_sequence.size()-1, 
+			configuration.get_translational_speed(), configuration.get_rotational_speed());   
+	}
+
+	double motion_time(const double translational_speed, const double rotational_speed) {
+		return motion_time_between(0, motion_sequence.size()-1, 
+			translational_speed, rotational_speed);   
+	}
+
+
+	//compute motion time between indices first and last, including both first and last
 	double motion_time_between(
 		int first_index,
 		int last_index,
@@ -121,11 +133,6 @@ public:
 			t += step_time(motion_sequence[i], translational_speed, rotational_speed);
 		}
 		return t;
-	}
-
-	double motion_time(const double translational_speed, const double rotational_speed) {
-		return motion_time_between(0, motion_sequence.size()-1, 
-			translational_speed, rotational_speed);   
 	}
 
 	static double step_time_config(MS_base_ptr& motion_step_ptr) {
