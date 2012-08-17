@@ -375,7 +375,7 @@
     <ClInclude Include="..\Planner\NaivePlanner.h">
       <Filter>Header Files\Planner</Filter>
     </ClInclude>
-    <ClInclude Include="..\Utils\general_utils.h">
+    <ClInclude Include="..\Utils\logging.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
   </ItemGroup>
@@ -434,7 +434,7 @@
     <ClCompile Include="..\Players\NaivePlayer.cpp">
       <Filter>Source Files\Players</Filter>
     </ClCompile>
-    <ClCompile Include="..\Utils\general_utils.cpp">
+    <ClCompile Include="..\Utils\logging.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
   </ItemGroup>

@@ -62,5 +62,5 @@
 #include "..\Utils\UI_utils\InputReader.h"
 #include "..\Utils\UI_utils\TimeManager.h"
 
-//General utils
-#include "..\Utils\general_utils.h"
+//Custom logger
+#include "..\Utils\logging.h"

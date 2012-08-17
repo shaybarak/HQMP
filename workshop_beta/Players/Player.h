@@ -14,7 +14,6 @@ typedef Motion_sequence<Planner::K>		  Motion;
  */
 class Player {
 public:
-	static void log(char* label, char* message);
 	Player(Env* env, Configuration* config);
 	void set_dynamic_obstacle_config(Ref_p& dynamic_obstacle);
 	virtual void plan(double deadline) = 0;

@@ -142,13 +142,13 @@
     <ClInclude Include="..\Utils\Communication_utils\server_utils.h" />
     <ClInclude Include="..\Utils\Communication_utils\Socket.h" />
     <ClInclude Include="..\Utils\Communication_utils\socket_typedefs.h" />
-    <ClInclude Include="..\Utils\general_utils.h" />
     <ClInclude Include="..\Utils\Geometry_utils\BoundingUtils.h" />
     <ClInclude Include="..\Utils\Geometry_utils\GeometryIO.h" />
     <ClInclude Include="..\Utils\Geometry_utils\GetClosestUtils.h" />
     <ClInclude Include="..\Utils\Geometry_utils\Less_than_point.h" />
     <ClInclude Include="..\Utils\Interval_utils\Interval.h" />
     <ClInclude Include="..\Utils\Interval_utils\IntervalSet.h" />
+    <ClInclude Include="..\Utils\logging.h" />
     <ClInclude Include="..\Utils\Number_utils\AK_conversions_1.h" />
     <ClInclude Include="..\Utils\Number_utils\Sqrt_approximation.h" />
     <ClInclude Include="..\Utils\Polygon_utils\do_intersect_predicates.h" />
@@ -181,7 +181,7 @@
     <ClCompile Include="..\Utils\Communication_utils\client_utils.cpp" />
     <ClCompile Include="..\Utils\Communication_utils\server_utils.cpp" />
     <ClCompile Include="..\Utils\Communication_utils\socket.cpp" />
-    <ClCompile Include="..\Utils\general_utils.cpp" />
+    <ClCompile Include="..\Utils\logging.cpp" />
     <ClCompile Include="..\Utils\UI_utils\Graphics.cpp" />
     <ClCompile Include="..\Utils\UI_utils\InputReader.cpp" />
     <ClCompile Include="..\Utils\UI_utils\TimeManager.cpp" />
