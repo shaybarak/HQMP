@@ -101,7 +101,7 @@ public:
 
 	
 
-	double motion_time_config_between(int first_index, int last_index) {
+	double motion_time_between(int first_index, int last_index) {
 		return motion_time_between(
 			first_index,
 			last_index,
@@ -109,7 +109,7 @@ public:
 			configuration.get_rotational_speed());
 	}
 
-	double motion_time_config() {
+	double motion_time() {
 		return motion_time_between(0, motion_sequence.size()-1, 
 			configuration.get_translational_speed(), configuration.get_rotational_speed());   
 	}
@@ -135,7 +135,7 @@ public:
 		return t;
 	}
 
-	static double step_time_config(MS_base_ptr& motion_step_ptr) {
+	static double step_time(MS_base_ptr& motion_step_ptr) {
 		return step_time(
 			motion_step_ptr, 
 			configuration.get_translational_speed(), 
@@ -224,6 +224,10 @@ public:
 	// Whether this motion sequence is empty
 	bool empty() {
 		return motion_sequence.empty();
+	}
+
+	void cut(double remaining_time, Motion_sequence& output) {
+		cut(remaining_time, configuration.get_translational_speed(), configuration.get_rotational_speed(), output);
 	}
 
 private:
