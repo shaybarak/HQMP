@@ -54,7 +54,7 @@ void NaivePlayer::plan_future_motion_seq(){
  
  
  
-bool NaivePlayer::move(double deadline, Motion& motion_sequence) {
+void NaivePlayer::move(double deadline, Motion& motion_sequence) {
  
         CGAL::Timer timer;
         timer.start();
@@ -67,12 +67,12 @@ bool NaivePlayer::move(double deadline, Motion& motion_sequence) {
 			if (!motion_sequence.empty()){
 					q_s = motion_sequence.get_sequence().back()->target();
 			}
-			return false;
+			return;
 		}
  
         if (env->get_target_configurations().empty()) {
                 // No more motion to plot
-                return true;
+                return;
         }
  
 		plan(deadline);
@@ -84,10 +84,19 @@ bool NaivePlayer::move(double deadline, Motion& motion_sequence) {
 			if (!motion_sequence.empty()){
 					q_s = motion_sequence.get_sequence().back()->target();
 			}
-			return false;
+			return;
 		}
  
 
          // TODO maybe the motion is empty because the path is (temporarily) blocked, fix this in a later iteration
-        return false;           
+        return;           
+}
+
+// Returns whether the player thinks that the game is over.
+bool NaivePlayer::is_game_over() {
+	return (
+		// No additional targets
+		env->get_target_configurations().empty() &&
+		// No planned pending motion
+		remaining_motion.empty());
 }

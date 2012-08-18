@@ -59,33 +59,29 @@ void construct_motion(double remaining_time, Motion& motion_sequence)
 	//make sure that you have enough time to complete the motion 
 	//or else no write approval will granted
 
-	CGAL::Timer timer;
-	timer.start();
-
-	if (finished_game)
-		return;
-
-	finished_game = player->move(remaining_time, motion_sequence);
+	player->move(remaining_time, motion_sequence);
+	finished_game = player->is_game_over();
 
 	dbg_log("construct_motion", "exiting");
 	return;
 }
 
-void move(double remaining_time)
+// Returns whether this method should be called again this turn
+// (if the remaining time permits)
+bool move(double remaining_time)
 {
 	dbg_log("move", "entering");
 
-	if (finished_game)
-		return;
+	if (finished_game) {
+		return false;
+	}
 
-	//here you should construct a motion
 	Motion motion_sequence;
 	construct_motion(remaining_time, motion_sequence);
 
-	double motion_length(motion_sequence.motion_time( configuration.get_translational_speed(),
-		configuration.get_rotational_speed()));
+	double motion_length(motion_sequence.motion_time());
 	if (motion_length == 0) //no motion
-		return;
+		return false;
 	std::string path_filename;
 
 	dbg_log("move", "requesting to write");
@@ -99,23 +95,11 @@ void move(double remaining_time)
 	else
 	{
 		dbg_log("move", "request denied");
+		// TODO handle movement failures correctly
 	}
 
 	dbg_log("move", "exiting");
-	return ;
-}
-void moveable_planner(double remaining_time)
-{
-	dbg_log("moveable_planner", "entering");
-
-	CGAL::Timer timer;
-	timer.start();
-	while((timer.time() < remaining_time) && !finished_game) {
-		move(remaining_time - timer.time());
-	}
-
-	dbg_log("moveable_planner", "exiting");
-	return;
+	return true;
 }
 
 void static_planner(double remaining_time)
@@ -133,6 +117,24 @@ void static_planner(double remaining_time)
 	return;
 }
 
+void moveable_planner(double remaining_time)
+{
+	dbg_log("moveable_planner", "entering");
+
+	CGAL::Timer timer;
+	timer.start();
+	while((timer.time() < remaining_time) && !finished_game) {
+		// Continue moving
+		if (!move(remaining_time - timer.time())) {
+			// If there is no extra movement to do this turn, spend the remaining time planning
+			static_planner(remaining_time - timer.time());
+		}
+	}
+
+	dbg_log("moveable_planner", "exiting");
+	return;
+}
+
 void client_stubs_main(int argc, char* argv[])
 {
 	////////////////////////////////////////////////////////////
@@ -145,7 +147,7 @@ void client_stubs_main(int argc, char* argv[])
 
 	////////////////////////////////////////////////////////////
 	//begin planning
-	player = (Player*)new NaivePlayer(&env, &configuration);
+	player = (Player*)new MyPlayer(&env, &configuration);
 	bool read_additional_configurations = true;
 	while (is_game_over(*socket_client_ptr) == false) {    
 		//before doing any planning, see if something changed
@@ -153,12 +155,11 @@ void client_stubs_main(int argc, char* argv[])
 		Scene_status scene_status = get_scene_status(*socket_client_ptr); 
 		player->set_dynamic_obstacle_config(
 			input_reader.read_reference_point<Rational_kernel>(scene_status.quasi_dynamic_obs_location_filename));
-		if (scene_status.updated_target_configurations && (read_additional_configurations) )
+		if (scene_status.updated_target_configurations && (read_additional_configurations))
 		{
 			input_reader.read_reference_points<Rational_kernel>(
 				scene_status.updated_target_configurations_filename,
 				std::back_inserter(env.get_target_configurations()));
-			//player->add_new_targets();
 			read_additional_configurations = false;
 			finished_game = false;
 		}   

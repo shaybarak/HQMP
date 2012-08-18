@@ -15,8 +15,9 @@ public:
 	Player(Env* env, Configuration* config);
 	void set_dynamic_obstacle_config(Ref_p& dynamic_obstacle);
 	virtual void plan(double deadline) = 0;
-	// Returns true if there is nowhere left to move (all targets have been collected)
-	virtual bool move(double deadline, Motion& motion_sequence) = 0;
+	virtual void move(double deadline, Motion& motion_sequence) = 0;
+	virtual bool is_game_over() = 0;
+
 protected:
 	Env* env;
 	Configuration* config;
