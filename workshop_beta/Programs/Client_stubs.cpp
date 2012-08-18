@@ -12,6 +12,7 @@
 #include "..\Players\Player.h"
 #include "..\Players\SleepingPlayer.h"
 #include "..\Players\NaivePlayer.h"
+#include "..\Players\MyPlayer.h"
 
 //global typedefs used in this file
 typedef Environment<>                     Env;
