@@ -18,7 +18,8 @@ protected:
 
 private:
 	Planner::Reference_point q_s;
-	Planner::Reference_point q_t;
+	Planner::Reference_point last_point_in_path;
 	Motion remaining_motion;
+	virtual void plan_future_motion_seq();
 	bool planned;
 };

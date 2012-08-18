@@ -37,10 +37,16 @@ void plan(double remaining_time)
 	//here you should implement your planner
 	//instead we just sleep for the remaining time
 
+	CGAL::Timer timer;
+	timer.start();
+
+
 	if (finished_game)  //update this flag when you finished all queries
 		return;
-
-	player->plan(remaining_time);
+	
+	while((timer.time() < remaining_time) && !finished_game) {
+		player->plan(remaining_time - timer.time());
+	}
 
 	dbg_log("plan", "exiting");
 	return;

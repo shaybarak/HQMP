@@ -1,6 +1,6 @@
 #include "stdafx.h"
 #include "NaivePlayer.h"
-
+ 
 NaivePlayer::NaivePlayer(Env* env, Configuration* config) :
 	Player(env, config),
 	planner(env->get_workspace(),
@@ -8,51 +8,86 @@ NaivePlayer::NaivePlayer(Env* env, Configuration* config) :
 	q_s(env->get_source_configuration_a()),
 	planned(false) {
 }
-
+ 
 void NaivePlayer::plan(double deadline) {
-	if (!planned) {
-		// Assume we have enough time to preprocess
-		planner.preprocess();
-		planned = true;
-	}
+        // Don't allow more than one planning turn
+        if (!planned) {
+                // Assume we have enough time to preprocess
+                planner.preprocess();
+                planned = true;
+        }
+        plan_future_motion_seq();
 }
-
+ 
+ 
+void NaivePlayer::plan_future_motion_seq(){
+ 
+        Planner::Reference_point last_point_in_path;
+        Ref_p_vec::iterator iter_all_targets;
+        Ref_p_vec::iterator iter_to_closest;
+        Motion total_motion;
+        bool path_found;
+       
+        if (env->get_target_configurations().empty()){
+                //No more motion to plot
+                return;
+        }
+		
+		if (remaining_motion.empty()){
+			last_point_in_path = q_s;
+		}
+       // Find motion to closest target
+        path_found = planner.query_closest_point(
+                        last_point_in_path,
+                        env->get_target_configurations(),
+                        iter_to_closest,
+                        total_motion);
+	
+ 
+        if (path_found){
+			last_point_in_path = *iter_to_closest;
+            //Erase next target
+            env->get_target_configurations().erase(iter_to_closest);
+            remaining_motion.add_motion_sequence(total_motion);	   
+        }      
+}      
+ 
+ 
+ 
 bool NaivePlayer::move(double deadline, Motion& motion_sequence) {
+ 
+        CGAL::Timer timer;
+        timer.start();
+        bool path_found = true;
 
-	if (!planned) {
+		if (!remaining_motion.empty()) {
+			// Continue a previous motion
+			remaining_motion.cut(deadline - timer.time(), configuration.get_translational_speed(), configuration.get_rotational_speed(), motion_sequence);
+			std::cout << "Cut to " << motion_sequence.get_sequence().size() << " and " << remaining_motion.get_sequence().size() << endl;
+			if (!motion_sequence.empty()){
+					q_s = motion_sequence.get_sequence().back()->target();
+			}
+			return false;
+		}
+ 
+        if (env->get_target_configurations().empty()) {
+                // No more motion to plot
+                return true;
+        }
+ 
 		plan(deadline);
-	}
 
-	CGAL::Timer timer;
-	timer.start();
-	
-	Ref_p_vec::iterator iter_to_closest;
+       	if (!remaining_motion.empty()) {
+			// Cut it according to the deadline
+			remaining_motion.cut(deadline - timer.time(), configuration.get_translational_speed(), configuration.get_rotational_speed(), motion_sequence);
+			std::cout << "Cut to " << motion_sequence.get_sequence().size() << " and " << remaining_motion.get_sequence().size() << endl;
+			if (!motion_sequence.empty()){
+					q_s = motion_sequence.get_sequence().back()->target();
+			}
+			return false;
+		}
+ 
 
-	if (!remaining_motion.empty()) {
-		// Continue a previous motion
-		remaining_motion.cut(deadline - timer.time(), motion_sequence);
-		return false;
-	}
-	
-	if (env->get_target_configurations().empty()) {
-		// No more motion to plot
-		return true;
-	}
-	
-	// Find motion to closest target
-	bool path_found = planner.query_closest_point(
-		q_s, 
-		env->get_target_configurations(),
-		iter_to_closest,
-		remaining_motion);
-	
-	if (path_found) {
-		q_s = *iter_to_closest;
-		// Erase next target
-		env->get_target_configurations().erase(iter_to_closest);
-		// Cut the motion according to the deadline
-		remaining_motion.cut(deadline - timer.time(), motion_sequence);
-	}
-
-	return false;
+         // TODO maybe the motion is empty because the path is (temporarily) blocked, fix this in a later iteration
+        return false;           
 }
