@@ -45,8 +45,6 @@ namespace mms{
 		typedef Motion_step_translational<K>            Motion_step_translational;
 		typedef Motion_sequence<K>                      Motion_sequence;
 
-
-	public:
 		typedef Fsc_indx<K>                             Fsc_indx;
 		typedef FSC<K, AK, AK_conversions>              Fsc;
 
@@ -162,10 +160,11 @@ namespace mms{
 			else
 				_graph.find_path( source_fsc_indx, target_fsc_indx, fsc_indx_path);
 
-			if (fsc_indx_path.empty())
-				TIMED_TRACE_EVENT("fsc index path is empty");
+			if (fsc_indx_path.empty()) {
+				TIMED_TRACE_ACTION("query", "fsc index path is empty");
 				TIMED_TRACE_EXIT("query");
 				return false;
+			}
 
 			////////////////////////////////////
 			//construct motion sequence
@@ -221,7 +220,7 @@ namespace mms{
 			plan_path(fsc_ptr, curr_ref_p, perturbed_target, motion_sequence);
 			motion_time += motion_sequence.motion_time_between(time_index, motion_sequence.get_sequence().size()-1);
 			if (motion_time >= motion_time_limit) {
-				TIMED_TRACE_EVENT("connecting perturbed target, not the closest point");
+				TIMED_TRACE_ACTION("query", "connecting perturbed target, not the closest point");
 				TIMED_TRACE_EXIT("query");
 				return false;
 			}
