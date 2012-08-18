@@ -88,16 +88,17 @@ namespace mms{
 		//preprocess
 		void preprocess   (const unsigned int num_of_angles = configuration.get_slices_granularity())
 		{
-			CGAL_precondition(!_initialized);
 			TIMED_TRACE_ENTER("preprocess");
+			CGAL_precondition(!_initialized);
+			TIMED_TRACE_ACTION("preprocess",  "generate_rotation START");
 			generate_rotations(num_of_angles);
+			TIMED_TRACE_ACTION("preprocess", "generate_rotation FINISH, add_layers START");
 			BOOST_FOREACH (Rotation rotation, _rotations)
 				add_layer(rotation);
-			global_tm.write_time_log(std::string("finished layers"));
+			TIMED_TRACE_ACTION("preprocess", "add_layers FINISH, generate_connectors START");
 			generate_connectors();    
-			global_tm.write_time_log(std::string("finished connectors"));
-			global_tm.write_time_log(std::string("finished preproccesing"));
 			_initialized = true;
+			TIMED_TRACE_ACTION("preprocess", "generate_connectors FINISH");
 			TIMED_TRACE_EXIT("preprocess");
 			return;
 		}
@@ -422,7 +423,7 @@ namespace mms{
 			return true;
 		}
 
-	private: //Connectiivity_graph methods
+	private: //Connectivity_graph methods
 		void update_connectivity_graph_vertices(Layer& layer, int layer_id)
 		{
 			for (int fsc_id(0); fsc_id<layer.num_of_fscs(); ++fsc_id)
@@ -466,6 +467,7 @@ namespace mms{
 		Reference_point connect_to_graph( const Reference_point& ref_p,
 			Motion_sequence& motion_sequence)
 		{
+			TIMED_TRACE_ENTER("connect_to_graph");
 			//(1) find closest base layer
 			Point location(ref_p.get_location());
 			Rotation rotation(ref_p.get_rotation());
@@ -512,6 +514,7 @@ namespace mms{
 			motion_sequence.add_motion_step(motion_step_ptr);
 
 			delete line_ptr;
+			TIMED_TRACE_ENTER("connect_to_graph");
 			return Reference_point(location, closest_rotation);
 		}
 	private: //Fsc_indx related methods
