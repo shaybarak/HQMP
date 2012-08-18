@@ -187,7 +187,6 @@
     <ClCompile Include="..\Players\SleepingPlayer.cpp" />
     <ClCompile Include="..\Programs\Client_stubs.cpp" />
     <ClCompile Include="..\Programs\Path_planner.cpp" />
-    <ClCompile Include="..\Programs\Server.cpp" />
     <ClCompile Include="..\Project\Configuration.cpp" />
     <ClCompile Include="..\Utils\Communication_utils\client_utils.cpp" />
     <ClCompile Include="..\Utils\Communication_utils\server_utils.cpp" />

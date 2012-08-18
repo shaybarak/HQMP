@@ -425,9 +425,6 @@
     <ClCompile Include="..\Programs\Path_planner.cpp">
       <Filter>Source Files\Programs</Filter>
     </ClCompile>
-    <ClCompile Include="..\Programs\Server.cpp">
-      <Filter>Source Files\Programs</Filter>
-    </ClCompile>
     <ClCompile Include="..\Project\Configuration.cpp">
       <Filter>Source Files\Project</Filter>
     </ClCompile>
