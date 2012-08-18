@@ -131,6 +131,7 @@ public:
   }
   void decompose(const Polygon& robot, const Polygon_vec& workspace)
   {
+	TIMED_TRACE_ENTER("decompose");
     Polygon robot_in_the_middle,minus_robot_in_the_middle;
     center_polygon_ref_point_at_zero<Kernel>(robot,robot_in_the_middle);
     negate_polygon<Kernel>(robot_in_the_middle,minus_robot_in_the_middle);
@@ -177,7 +178,7 @@ public:
       if (pgn.is_unbounded() == false)
         polygons.push_back(Smart_polygon(pgn));
     }
-
+	TIMED_TRACE_EXIT("decompose");
     return;
   }
 public:
