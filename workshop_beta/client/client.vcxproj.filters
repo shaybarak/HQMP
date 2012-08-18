@@ -378,6 +378,9 @@
     <ClInclude Include="..\Utils\logging.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
+    <ClInclude Include="..\Players\MyPlayer.h">
+      <Filter>Header Files\Players</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">
@@ -436,6 +439,9 @@
     </ClCompile>
     <ClCompile Include="..\Utils\logging.cpp">
       <Filter>Source Files\Utils</Filter>
+    </ClCompile>
+    <ClCompile Include="..\Players\MyPlayer.cpp">
+      <Filter>Source Files\Players</Filter>
     </ClCompile>
   </ItemGroup>
 </Project>

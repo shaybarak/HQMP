@@ -134,6 +134,7 @@
     <ClInclude Include="..\Path_planning\PolygonPathPlanning.h" />
     <ClInclude Include="..\Path_planning\ShortestPathInPolygon.h" />
     <ClInclude Include="..\Planner\NaivePlanner.h" />
+    <ClInclude Include="..\Players\MyPlayer.h" />
     <ClInclude Include="..\Players\NaivePlayer.h" />
     <ClInclude Include="..\Players\Player.h" />
     <ClInclude Include="..\Players\SleepingPlayer.h" />
@@ -180,6 +181,7 @@
     <ClCompile Include="..\Graph\ConnectedComponents.cpp" />
     <ClCompile Include="..\Manager\File_names.cpp" />
     <ClCompile Include="..\Manager\Time_frame.cpp" />
+    <ClCompile Include="..\Players\MyPlayer.cpp" />
     <ClCompile Include="..\Players\NaivePlayer.cpp" />
     <ClCompile Include="..\Players\Player.cpp" />
     <ClCompile Include="..\Players\SleepingPlayer.cpp" />
