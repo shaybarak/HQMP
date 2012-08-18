@@ -123,7 +123,7 @@ namespace mms{
 				(Motion_sequence::MS_base_ptr)*source_motion_sequence.get_sequence().begin());
 
 			if (motion_time >= motion_time_limit) {
-				TIMED_TRACE_ACTION("connecting source, not the closest point");
+				TIMED_TRACE_ACTION("query", "connecting source, not the closest point");
 				TIMED_TRACE_EXIT("query");
 				return false;
 			}
@@ -133,7 +133,7 @@ namespace mms{
 				(Motion_sequence::MS_base_ptr)*target_motion_sequence.get_sequence().begin());
 
 			if (motion_time >= motion_time_limit) {
-				TIMED_TRACE_ACTION("connecting target, not the closest point");
+				TIMED_TRACE_ACTION("query", "connecting target, not the closest point");
 				TIMED_TRACE_EXIT("query");
 				return false;
 			}
@@ -141,7 +141,7 @@ namespace mms{
 			if (perturbed_source ==  Reference_point() || 
 				perturbed_target ==  Reference_point())
 			{
-				TIMED_TRACE_ACTION("failed to connect to pre-processed configuration space");
+				TIMED_TRACE_ACTION("query", "failed to connect to pre-processed configuration space");
 				TIMED_TRACE_EXIT("query");
 				return false;
 			}
