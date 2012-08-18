@@ -274,7 +274,7 @@ namespace mms{
 					}
 				}
 
-				motion_sequence = *shortest;
+				motion_sequence.add_motion_sequence(*shortest);
 				TIMED_TRACE_EXIT("query_closest_point");
 				return path_found;
 		}
