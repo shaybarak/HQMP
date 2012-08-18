@@ -91,6 +91,7 @@ namespace mms{
 		void preprocess   (const unsigned int num_of_angles = configuration.get_slices_granularity())
 		{
 			CGAL_precondition(!_initialized);
+			TIMED_TRACE_ENTER("preprocess");
 			generate_rotations(num_of_angles);
 			BOOST_FOREACH (Rotation rotation, _rotations)
 				add_layer(rotation);
@@ -99,6 +100,7 @@ namespace mms{
 			global_tm.write_time_log(std::string("finished connectors"));
 			global_tm.write_time_log(std::string("finished preproccesing"));
 			_initialized = true;
+			TIMED_TRACE_EXIT("preprocess");
 			return;
 		}
 		// Return whether the planner was initialized
@@ -121,7 +123,8 @@ namespace mms{
 				(Motion_sequence::MS_base_ptr)*source_motion_sequence.get_sequence().begin());
 
 			if (motion_time >= motion_time_limit) {
-				TIMED_TRACE_EXIT("query, connecting source, not the closest point");
+				TIMED_TRACE_ACTION("connecting source, not the closest point");
+				TIMED_TRACE_EXIT("query");
 				return false;
 			}
 
@@ -130,14 +133,16 @@ namespace mms{
 				(Motion_sequence::MS_base_ptr)*target_motion_sequence.get_sequence().begin());
 
 			if (motion_time >= motion_time_limit) {
-				TIMED_TRACE_EXIT("query, connecting target, not the closest point");
+				TIMED_TRACE_ACTION("connecting target, not the closest point");
+				TIMED_TRACE_EXIT("query");
 				return false;
 			}
 
 			if (perturbed_source ==  Reference_point() || 
 				perturbed_target ==  Reference_point())
 			{
-				std::cout <<"failed to connect to pre-processed configuration space"<<std::endl;
+				TIMED_TRACE_ACTION("failed to connect to pre-processed configuration space");
+				TIMED_TRACE_EXIT("query");
 				return false;
 			}
 
@@ -158,6 +163,8 @@ namespace mms{
 				_graph.find_path( source_fsc_indx, target_fsc_indx, fsc_indx_path);
 
 			if (fsc_indx_path.empty())
+				TIMED_TRACE_EVENT("fsc index path is empty");
+				TIMED_TRACE_EXIT("query");
 				return false;
 
 			////////////////////////////////////
@@ -214,7 +221,8 @@ namespace mms{
 			plan_path(fsc_ptr, curr_ref_p, perturbed_target, motion_sequence);
 			motion_time += motion_sequence.motion_time_between(time_index, motion_sequence.get_sequence().size()-1);
 			if (motion_time >= motion_time_limit) {
-				TIMED_TRACE_EXIT("query, connecting perturbed target, not the closest point");
+				TIMED_TRACE_EVENT("connecting perturbed target, not the closest point");
+				TIMED_TRACE_EXIT("query");
 				return false;
 			}
 
