@@ -133,6 +133,7 @@
     <ClInclude Include="..\Path_planning\PathPlanningUtils.h" />
     <ClInclude Include="..\Path_planning\PolygonPathPlanning.h" />
     <ClInclude Include="..\Path_planning\ShortestPathInPolygon.h" />
+    <ClInclude Include="..\Planner\MyPlanner.h" />
     <ClInclude Include="..\Planner\NaivePlanner.h" />
     <ClInclude Include="..\Players\MyPlayer.h" />
     <ClInclude Include="..\Players\NaivePlayer.h" />

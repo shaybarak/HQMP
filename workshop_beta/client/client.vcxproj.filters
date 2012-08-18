@@ -381,6 +381,9 @@
     <ClInclude Include="..\Players\MyPlayer.h">
       <Filter>Header Files\Players</Filter>
     </ClInclude>
+    <ClInclude Include="..\Planner\MyPlanner.h">
+      <Filter>Header Files\Planner</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="stdafx.cpp">

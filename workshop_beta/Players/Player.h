@@ -1,10 +1,10 @@
 #pragma once
 
 #include "Path_planning\Motion_sequence.h"
-#include "Planner\NaivePlanner.h"
+#include "Planner\MyPlanner.h"
 
 typedef Environment<>                     Env;
-typedef mms::NaivePlanner<>				  Planner;
+typedef mms::MyPlanner<>				  Planner;
 typedef Motion_sequence<Planner::K>		  Motion;
 
 /**
