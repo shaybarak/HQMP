@@ -516,7 +516,7 @@ namespace mms{
 			motion_sequence.add_motion_step(motion_step_ptr);
 
 			delete line_ptr;
-			TIMED_TRACE_ENTER("connect_to_graph");
+			TIMED_TRACE_EXIT("connect_to_graph");
 			return Reference_point(location, closest_rotation);
 		}
 	private: //Fsc_indx related methods
