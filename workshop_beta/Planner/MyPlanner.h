@@ -126,6 +126,12 @@ namespace mms{
 				return false;
 			}
 
+			if (perturbed_source == Reference_point()) {
+				TIMED_TRACE_ACTION("query", "failed to connect source to pre-processed configuration space");
+				TIMED_TRACE_EXIT("query");
+				return false;
+			}
+
 			Reference_point perturbed_target = connect_to_graph(target, target_motion_sequence);
 			motion_time += Motion_sequence::step_time(
 				(Motion_sequence::MS_base_ptr)*target_motion_sequence.get_sequence().begin());
@@ -136,15 +142,11 @@ namespace mms{
 				return false;
 			}
 
-			if (perturbed_source ==  Reference_point() || 
-				perturbed_target ==  Reference_point())
-			{
-				TIMED_TRACE_ACTION("query", "failed to connect to pre-processed configuration space");
+			if (perturbed_target == Reference_point()) {
+				TIMED_TRACE_ACTION("query", "failed to connect target to pre-processed configuration space");
 				TIMED_TRACE_EXIT("query");
 				return false;
 			}
-
-			target_motion_sequence.reverse_motion_sequence();
 
 			////////////////////////////////////
 			//find path of fscs(if exists)
@@ -229,6 +231,7 @@ namespace mms{
 
 			//(3) add target motion
 			//time for this step is already computed!
+			target_motion_sequence.reverse_motion_sequence();
 			motion_sequence.add_motion_sequence(target_motion_sequence);
 			TIMED_TRACE_EXIT("query");
 			return true;
