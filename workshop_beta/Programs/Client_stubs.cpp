@@ -72,7 +72,6 @@ bool move(double remaining_time)
 		return false;
 	std::string path_filename;
 
-	dbg_log("move", "requesting to write");
 	TIMED_TRACE_ACTION("move", "requesting to write move");
 	if (request_to_write(*socket_client_ptr, motion_length, path_filename))
 	{
