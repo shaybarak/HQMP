@@ -3,8 +3,6 @@
 
 #include "Utils\Communication_utils\socket.h"
 #include "Utils\Communication_utils\client_utils.h"
-
-#include "Mms_example.h"
 #include "Path_planning\Motion_sequence.h"
 
 #include <boost/thread/thread.hpp>
