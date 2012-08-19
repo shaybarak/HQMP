@@ -13,6 +13,7 @@
 #include "..\Players\SleepingPlayer.h"
 #include "..\Players\NaivePlayer.h"
 #include "..\Players\MyPlayer.h"
+#include "..\Utils\logging.h"
 
 //global typedefs used in this file
 typedef Environment<>                     Env;
@@ -24,17 +25,8 @@ Socket_client*            socket_client_ptr = NULL;
 Player*					  player;
 bool                      finished_game = false;
 
-void dbg_log(char* function_name, char* action)
-{
-	std::cout << "client, thread id " <<boost::this_thread::get_id()<<" " 
-		<< "in function " << function_name
-		<< " " <<action
-		<<std::endl;
-}
-
 void plan(double remaining_time)
 {
-	dbg_log("plan", "entering");
 	//here you should implement your planner
 	//instead we just sleep for the remaining time
 
@@ -49,13 +41,11 @@ void plan(double remaining_time)
 		player->plan(remaining_time - timer.time());
 	}
 
-	dbg_log("plan", "exiting");
 	return;
 }
 
 void construct_motion(double remaining_time, Motion& motion_sequence)
 {
-	dbg_log("construct_motion", "entering");
 	//construct a motion, 
 	//make sure that you have enough time to complete the motion 
 	//or else no write approval will granted
@@ -63,7 +53,6 @@ void construct_motion(double remaining_time, Motion& motion_sequence)
 	player->move(remaining_time, motion_sequence);
 	finished_game = player->is_game_over();
 
-	dbg_log("construct_motion", "exiting");
 	return;
 }
 
@@ -71,8 +60,6 @@ void construct_motion(double remaining_time, Motion& motion_sequence)
 // (if the remaining time permits)
 bool move(double remaining_time)
 {
-	dbg_log("move", "entering");
-
 	if (finished_game) {
 		return false;
 	}
@@ -86,53 +73,48 @@ bool move(double remaining_time)
 	std::string path_filename;
 
 	dbg_log("move", "requesting to write");
+	TIMED_TRACE_ACTION("move", "requesting to write move");
 	if (request_to_write(*socket_client_ptr, motion_length, path_filename))
 	{
-		dbg_log("move", "request granted");
+		TIMED_TRACE_ACTION("move", "request granted");
 		//request granted
 		ofstream out(path_filename.c_str(), std::ios::app); //it is essential to append
 		motion_sequence.write(out);    
 	}
 	else
 	{
-		dbg_log("move", "request denied");
+		TIMED_TRACE_ACTION("move", "request denied");
 		// TODO handle movement failures correctly
 	}
 
-	dbg_log("move", "exiting");
 	return true;
 }
 
 void static_planner(double remaining_time)
 {
-	dbg_log("static_planner", "entering");
-
 	CGAL::Timer timer;
 	timer.start();
 	plan(remaining_time);
 	cout << "Planned " << timer.time() << ", sleeping for the remaining " << remaining_time - timer.time() << endl;
 	boost::posix_time::seconds sleep_time(remaining_time - timer.time());
 	boost::this_thread::sleep(sleep_time);
-
-	dbg_log("static_planner", "exiting");
 	return;
 }
 
 void moveable_planner(double remaining_time)
 {
-	dbg_log("moveable_planner", "entering");
-
 	CGAL::Timer timer;
 	timer.start();
+	TIMED_TRACE_ENTER("moveable_planner");
 	while((timer.time() < remaining_time) && !finished_game) {
 		// Continue moving
 		if (!move(remaining_time - timer.time())) {
+			TIMED_TRACE_ACTION("moveable_planner", "could not find next move, spending rest of turn planning");
 			// If there is no extra movement to do this turn, spend the remaining time planning
 			static_planner(remaining_time - timer.time());
 		}
 	}
-
-	dbg_log("moveable_planner", "exiting");
+	TIMED_TRACE_EXIT("moveable_planner");
 	return;
 }
 
@@ -143,16 +125,16 @@ void client_stubs_main(int argc, char* argv[])
 	Input_reader input_reader;
 
 	////////////////////////////////////////////////////////////
-	//initialize connection to server
+	// Initialize connection to server
 	socket_client_ptr = new Socket_client(configuration.get_host_name(), configuration.get_host_port());
 
 	////////////////////////////////////////////////////////////
-	//begin planning
+	// Begin game
 	player = (Player*)new MyPlayer(&env, &configuration);
 	bool read_additional_configurations = true;
 	while (is_game_over(*socket_client_ptr) == false) {    
-		//before doing any planning, see if something changed
-		dbg_log("main client", "getting scene status");
+		// Before doing any planning, see if something changed
+		TIMED_TRACE_ACTION("client_main", "getting scene status");
 		Scene_status scene_status = get_scene_status(*socket_client_ptr); 
 		player->set_dynamic_obstacle_config(
 			input_reader.read_reference_point<Rational_kernel>(scene_status.quasi_dynamic_obs_location_filename));
@@ -165,19 +147,19 @@ void client_stubs_main(int argc, char* argv[])
 			finished_game = false;
 		}   
 
-		//now plan
-		dbg_log("main client", "planning");
+		// Now play
+		TIMED_TRACE_ACTION("client_main", "playing turn");
 		Time_frame_status time_frame_status = get_time_frame_status(*socket_client_ptr); 
 		if (time_frame_status.is_moveable) {
 			moveable_planner(time_frame_status.remaining_time);
 		} else {
 			static_planner(time_frame_status.remaining_time);
 		}
-
-		std::cout <<std::endl<<std::endl;
+		TIMED_TRACE_ACTION("client_main", "turn complete");
+		cout << endl;
 	}
 
-	std::cout <<"FINISHED..."<<std::endl;
+	cout << "FINISHED..." << endl;
 
 	terminate_connection(*socket_client_ptr);
 	delete (socket_client_ptr);
