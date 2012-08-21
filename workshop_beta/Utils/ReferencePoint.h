@@ -28,12 +28,14 @@ public:
 	//constructors
 	Reference_point(){}
 	Reference_point(Point p, Rotation r)
-		: _p(p), _r(r) 
+		: _p(p), _r(r)
 	{
 		CGAL_precondition(r.has_complete_rotation() == false);
 	}
 	Reference_point(const Reference_point<K>& other) 
-		: _p(other.get_location()), _r(other.get_rotation()) {}
+		: _p(other.get_location()), _r(other.get_rotation()) {
+			cached_aerial_time = other.get_cached_aerial_time();
+	}
 
 	//assignment operator
 	Reference_point<K>& operator= (const Reference_point<K> &other)
@@ -42,6 +44,7 @@ public:
 		{
 			_p = other.get_location();
 			_r = other.get_rotation();
+			cached_aerial_time = other.get_cached_aerial_time();
 		}
 		return *this;
 	}
@@ -119,11 +122,66 @@ public:
 		return;
 	}
 
+	//Methods for easy computation distance and time betwwen points, with no need for verbose motion_step
+
+	double get_angular_delta(const Reference_point& other) const{
+		double delta = abs(get_rotation().to_angle() - other.get_rotation().to_angle());
+		if (delta > 180) {
+			delta = (360 - delta);
+		}
+		return delta;
+	}
+
+	double get_translational_delta(const Reference_point& other) const{
+		Sqrt_approximation<typename K::FT> sqrt_approximation;
+		K::FT d_sq = CGAL::squared_distance(get_location(), other.get_location());
+		double delta = CGAL::to_double(sqrt_approximation(d_sq));
+		return delta;
+	}
+
+	double get_angular_time(const Reference_point& other) const{
+		return get_angular_delta(other) / configuration.get_rotational_speed();
+	}
+
+	double get_translational_time(const Reference_point& other) const{
+		return get_translational_delta(other) / configuration.get_translational_speed();
+	}
+
+	double get_aerial_time(const Reference_point& other) const {
+		double time = get_angular_time(other) + get_translational_time(other);
+		return time;
+	}
+
+	/* Following methods and members:
+	 * set_cached_aerial_time, 
+	 * get_cached_aerial_time, 
+	 * less_than_cached_aerial_time 
+	 * and the member cached_aerial_time 
+	 * have no meaning in the context of single point, but only in the context of vector of points that references some target.
+	 * They were added here only for easy sorting of such vector and later iterating over it's values.
+	 * Do not use this methods for different purposes.
+	 */
+	void set_cached_aerial_time(const Reference_point& other) {
+		cached_aerial_time = get_aerial_time(other);
+	}
+
+	double get_cached_aerial_time() const{
+		return cached_aerial_time;
+	}
+
+
 private:
+	double cached_aerial_time;
 	Point    _p;    //location
 	Rotation _r;    //rotation
 }; //Reference_point
 
+template <typename K>
+struct less_than_cached_aerial_time {
+	bool operator()(const Reference_point<K>& p1,const Reference_point<K>& p2) const {
+		return (p1.get_cached_aerial_time() < p2.get_cached_aerial_time());
+	}
+};
 
 template <typename K>
 struct Less_than_reference_point

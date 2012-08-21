@@ -239,7 +239,8 @@ namespace mms{
 
 		//Returns closest point to target, according to motion_Sequence.motion_time.
 		//Sets the motion_sequence to the point to motion_sequence.
-
+		//This method mutates target_configurations vector, as it sorts it according to distances from source.
+		//Returned itarator  iter_to_closest is pointing to the new sorted configurations vector.
 		bool query_closest_point(
 			const Reference_point& source, 
 			Ref_p_vec& target_configurations,
@@ -248,15 +249,39 @@ namespace mms{
 
 				TIMED_TRACE_ENTER("query_closest_point");
 
-				Reference_point closest_point;
+				for (Ref_p_vec::iterator it = target_configurations.begin(); it != target_configurations.end(); it++) {
+					 it->set_cached_aerial_time(source);
+				}
+
+				less_than_cached_aerial_time<K> less_than;
+				std::sort(target_configurations.begin(), target_configurations.end(), less_than);
+				
+				Ref_p closest_point;
 				bool path_found = false;
 				Motion_sequence seq1, seq2;
 				Motion_sequence *current = &seq1, *shortest = &seq2, *temp = NULL;
-				double shortest_time = INFINITY, current_time;
+				double shortest_time = INFINITY, current_time, current_aerial_time = 0;
+
+				cout << endl << "Time: " << global_tm.timer.time() << " SOURCE POINT: ";
+				source.print();
+				cout << endl;
 
 				for (Ref_p_vec::iterator it = target_configurations.begin(); it != target_configurations.end(); it++) {
 					current_time = 0;
-					cout << "Time: " << global_tm.timer.time() << " Query point: " << (it - target_configurations.begin()) << endl << endl;
+
+					int point_index = (it - target_configurations.begin());
+
+					double current_aerial_time = it->get_cached_aerial_time();
+					cout << endl << "Time: " << global_tm.timer.time() << " Query point: " << point_index << " ";
+					it->print();
+					cout << endl << "AERIAL TIME TO POINT: "<< current_aerial_time << endl;
+
+					if (current_aerial_time > shortest_time) {
+						//since vector is already sorted, all points from here are further. End of iterations.
+						TIMED_TRACE_ACTION("query_closest_point", "aerial_time > shortest_time, finishing query");
+						break;
+					}
+
 					if (!query(source, *it, *current, current_time, shortest_time)) {
 						continue;
 					}
@@ -319,6 +344,7 @@ namespace mms{
 			return;
 		}
 	private:
+
 		void generate_connectors()
 		{
 			generate_connectors_random();
