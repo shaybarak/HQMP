@@ -23,11 +23,16 @@ Socket_client*            socket_client_ptr = NULL;
 Player*					  player;
 bool                      finished_game = false;
 
+void sleep(double remaining_time) {
+	if (remaining_time > 0) {
+		cout << "Sleeping for the remaining " << remaining_time << endl;
+		boost::posix_time::seconds sleep_time(remaining_time - timer.time());
+		boost::this_thread::sleep(sleep_time);
+	}
+}
+
 void plan(double remaining_time)
 {
-	//here you should implement your planner
-	//instead we just sleep for the remaining time
-
 	CGAL::Timer timer;
 	timer.start();
 
@@ -92,9 +97,7 @@ void static_planner(double remaining_time)
 	CGAL::Timer timer;
 	timer.start();
 	plan(remaining_time);
-	cout << "Planned " << timer.time() << ", sleeping for the remaining " << remaining_time - timer.time() << endl;
-	boost::posix_time::seconds sleep_time(remaining_time - timer.time());
-	boost::this_thread::sleep(sleep_time);
+	sleep(remaining_time - timer.time());
 	return;
 }
 
