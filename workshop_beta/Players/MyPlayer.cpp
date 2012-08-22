@@ -4,7 +4,7 @@
 MyPlayer::MyPlayer(Env* env, Configuration* config) :
 	Player(env, config),
 	planner(env->get_workspace(),
-	env->get_robot_a()),
+	        env->get_robot_a()),
 	pending_motion_end(env->get_source_configuration_a()) {
 }
 
