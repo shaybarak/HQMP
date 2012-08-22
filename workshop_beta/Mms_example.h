@@ -384,7 +384,7 @@ private: //query related methods
     //(4) find fsc containing source point and target point
     int source_fsc_id = line_ptr->free_space_location_hint(ref_p);
     int target_fsc_id = line_ptr->free_space_location_hint(Reference_point(location, closest_rotation));
-    if (source_fsc_id != target_fsc_id)
+     if ( (source_fsc_id == NO_ID) || (target_fsc_id == NO_ID) || (source_fsc_id != target_fsc_id) )
       return Reference_point();
 
     //(5) plan path on line

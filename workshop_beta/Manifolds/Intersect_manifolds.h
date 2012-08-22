@@ -37,6 +37,9 @@ void intersect (typename Fixed_angle_manifold<Kernel>& layer,
   
   typename Reference_point<Kernel> ref_point(p, angle);
   int connector_cell_id = connector.free_space_location_hint(ref_point);
+  if (connector_cell_id == NO_ID)
+    return;
+
 
   intersected_ids.first = layer_cell_id;
   intersected_ids.second= connector_cell_id;
