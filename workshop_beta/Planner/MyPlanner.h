@@ -115,10 +115,18 @@ namespace mms{
 			//connect source and target to graph
 			////////////////////////////////////
 			Motion_sequence source_motion_sequence, target_motion_sequence;
-			Reference_point perturbed_source = connect_to_graph(source, source_motion_sequence);
 
-			motion_time += Motion_sequence::step_time(
-				(Motion_sequence::MS_base_ptr)*source_motion_sequence.get_sequence().begin());
+			Reference_point perturbed_source = connect_to_graph(source, source_motion_sequence);
+			if (perturbed_source == Reference_point()) {
+				TIMED_TRACE_ACTION("query", "failed to connect source to pre-processed configuration space");
+				TIMED_TRACE_EXIT("query");
+				return false;
+			}
+
+			if (!source_motion_sequence.get_sequence().empty()) {
+				motion_time += Motion_sequence::step_time(
+					(Motion_sequence::MS_base_ptr)*source_motion_sequence.get_sequence().begin());
+			}
 
 			if (motion_time >= motion_time_limit) {
 				TIMED_TRACE_ACTION("query", "connecting source, not the closest point");
@@ -126,24 +134,19 @@ namespace mms{
 				return false;
 			}
 
-			if (perturbed_source == Reference_point()) {
-				TIMED_TRACE_ACTION("query", "failed to connect source to pre-processed configuration space");
+			Reference_point perturbed_target = connect_to_graph(target, target_motion_sequence);
+			if (perturbed_target == Reference_point()) {
+				TIMED_TRACE_ACTION("query", "failed to connect target to pre-processed configuration space");
 				TIMED_TRACE_EXIT("query");
 				return false;
 			}
-
-			Reference_point perturbed_target = connect_to_graph(target, target_motion_sequence);
-			motion_time += Motion_sequence::step_time(
-				(Motion_sequence::MS_base_ptr)*target_motion_sequence.get_sequence().begin());
+			if (!target_motion_sequence.get_sequence().empty()) {
+				motion_time += Motion_sequence::step_time(
+					(Motion_sequence::MS_base_ptr)*target_motion_sequence.get_sequence().begin());
+			}
 
 			if (motion_time >= motion_time_limit) {
 				TIMED_TRACE_ACTION("query", "connecting target, not the closest point");
-				TIMED_TRACE_EXIT("query");
-				return false;
-			}
-
-			if (perturbed_target == Reference_point()) {
-				TIMED_TRACE_ACTION("query", "failed to connect target to pre-processed configuration space");
 				TIMED_TRACE_EXIT("query");
 				return false;
 			}
@@ -282,7 +285,7 @@ namespace mms{
 					int point_index = it->second;
 
 					double current_aerial_time = it->first;
-					Reference_point target = target_configurations[point_index];
+					Reference_point target(target_configurations[point_index]);
 
 					cout << endl << "Time: " << global_tm.timer.time() << " Query point: " << point_index << " ";
 					target.print();
@@ -520,11 +523,14 @@ namespace mms{
 			if (rotation == closest_rotation)
 			{
 				//no motion to do
+				TIMED_TRACE_EXIT("connect_to_graph: no motion to do");
 				return ref_p;
 			}
 
-			if (layer_ptr->is_free(location) == false)
+			if (layer_ptr->is_free(location) == false) {
+				TIMED_TRACE_EXIT("connect_to_graph: cannot connect layer");
 				return Reference_point();
+			}
 
 			//(3) construct point predicate toward that layer
 			C_space_line::Constraint constraint(location);
@@ -534,8 +540,10 @@ namespace mms{
 			//(4) find fsc containing source point and target point
 			int source_fsc_id = line_ptr->free_space_location_hint(ref_p);
 			int target_fsc_id = line_ptr->free_space_location_hint(Reference_point(location, closest_rotation));
-			if (source_fsc_id != target_fsc_id)
+			if (source_fsc_id != target_fsc_id) {
+				TIMED_TRACE_EXIT("connect_to_graph: no fsc contains source and target");
 				return Reference_point();
+			}
 
 			//(5) plan path on line
 			std::vector<K::FT> tau_path;
