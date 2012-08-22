@@ -29,7 +29,7 @@ public:
 	void clear()
 	{
 		BOOST_FOREACH(MS_base_ptr motion_step_ptr, motion_sequence)
-          delete motion_step_ptr;
+			delete motion_step_ptr;
 		motion_sequence.clear();
 	}
 
@@ -139,7 +139,7 @@ public:
 		std::reverse(motion_sequence.begin(), motion_sequence.end());
 	}
 
-	
+
 
 	double motion_time_between(int first_index, int last_index) {
 		return motion_time_between(
@@ -166,13 +166,13 @@ public:
 		int last_index,
 		const double translational_speed,
 		const double rotational_speed) {
-		
-		double t = 0;
-		
-		for (int i=first_index; i<=last_index; i++) {
-			t += step_time(motion_sequence[i], translational_speed, rotational_speed);
-		}
-		return t;
+
+			double t = 0;
+
+			for (int i=first_index; i<=last_index; i++) {
+				t += step_time(motion_sequence[i], translational_speed, rotational_speed);
+			}
+			return t;
 	}
 
 	static double step_time(MS_base_ptr& motion_step_ptr) {
