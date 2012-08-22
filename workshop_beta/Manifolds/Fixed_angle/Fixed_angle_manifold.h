@@ -94,6 +94,8 @@ public:
       return ;
  
     // 1: clear cache
+    for (Cache::iterator iter = _cache.begin() ; iter != _cache.end(); ++iter)
+		delete (iter->second);
     _cache.clear();
  
     // 2: allocate new memory and copy the elements    
