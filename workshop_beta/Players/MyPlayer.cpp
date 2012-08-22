@@ -70,12 +70,13 @@ bool MyPlayer::buffer_motion_ahead() {
 	TIMED_TRACE_ENTER("buffer_motion_ahead");
 	CGAL_precondition(!env->get_target_configurations().empty());
 	Ref_p_vec::iterator next_target;
+	int target_index;
 
 	// Plan a motion to the closest remaining target
 	bool path_found = planner.query_closest_point(
 		pending_motion_end, 
 		env->get_target_configurations(),
-		next_target,
+		target_index,
 		// Append it to the buffered motion plan
 		pending_motion);
 
@@ -85,8 +86,10 @@ bool MyPlayer::buffer_motion_ahead() {
 		return false;
 	}
 	
-	env->get_target_configurations().erase(next_target);
+	next_target = env->get_target_configurations().begin() + target_index;
 	pending_motion_end = *next_target;
+	env->get_target_configurations().erase(next_target);
+	
 	TIMED_TRACE_EXIT("buffer_motion_ahead");
 	return true;
 }

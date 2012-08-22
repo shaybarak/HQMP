@@ -237,6 +237,13 @@ namespace mms{
 			return true;
 		}
 
+
+		struct less_than_pair_double_int {
+			bool operator()(const pair<double, int>& p1, const pair<double, int>& p2) const {
+				return (p1.first < p2.first);
+			}
+		};
+
 		//Returns closest point to target, according to motion_Sequence.motion_time.
 		//Sets the motion_sequence to the point to motion_sequence.
 		//This method mutates target_configurations vector, as it sorts it according to distances from source.
@@ -244,18 +251,21 @@ namespace mms{
 		bool query_closest_point(
 			const Reference_point& source, 
 			Ref_p_vec& target_configurations,
-			Ref_p_vec::iterator& iter_to_closest,
+			int& closest_target_index,
 			Motion_sequence& motion_sequence) {
 
 				TIMED_TRACE_ENTER("query_closest_point");
 
-				for (Ref_p_vec::iterator it = target_configurations.begin(); it != target_configurations.end(); it++) {
-					 it->set_cached_aerial_time(source);
+				std::vector<pair<double, int>> aerialTimeToIndex;
+
+				for (unsigned int i=0; i<target_configurations.size(); i++) {
+					double aerial_time = source.get_aerial_time(target_configurations[i]);
+					aerialTimeToIndex.push_back(pair<double, int>(aerial_time, i));
 				}
 
-				less_than_cached_aerial_time<K> less_than;
-				std::sort(target_configurations.begin(), target_configurations.end(), less_than);
-				
+				less_than_pair_double_int less_than;
+				std::sort(aerialTimeToIndex.begin(), aerialTimeToIndex.end(), less_than);
+
 				Ref_p closest_point;
 				bool path_found = false;
 				Motion_sequence seq1, seq2;
@@ -266,14 +276,16 @@ namespace mms{
 				source.print();
 				cout << endl;
 
-				for (Ref_p_vec::iterator it = target_configurations.begin(); it != target_configurations.end(); it++) {
+				for (std::vector<pair<double, int>>::iterator it = aerialTimeToIndex.begin(); it!=aerialTimeToIndex.end(); it++) {
 					current_time = 0;
+					 
+					int point_index = it->second;
 
-					int point_index = (it - target_configurations.begin());
+					double current_aerial_time = it->first;
+					Reference_point target = target_configurations[point_index];
 
-					double current_aerial_time = it->get_cached_aerial_time();
 					cout << endl << "Time: " << global_tm.timer.time() << " Query point: " << point_index << " ";
-					it->print();
+					target.print();
 					cout << endl << "AERIAL TIME TO POINT: "<< current_aerial_time << endl;
 
 					if (current_aerial_time > shortest_time) {
@@ -282,7 +294,7 @@ namespace mms{
 						break;
 					}
 
-					if (!query(source, *it, *current, current_time, shortest_time)) {
+					if (!query(source, target, *current, current_time, shortest_time)) {
 						continue;
 					}
 					path_found = true;
@@ -296,7 +308,7 @@ namespace mms{
 						current = shortest;
 						shortest = temp;
 						shortest_time = current_time;
-						iter_to_closest = it;
+						closest_target_index = point_index;
 					} else {
 						current->clear();
 					}

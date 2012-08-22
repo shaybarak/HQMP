@@ -27,6 +27,7 @@ void NaivePlayer::plan_future_motion_seq(){
         Ref_p_vec::iterator iter_to_closest;
         Motion total_motion;
         bool path_found;
+		int target_index;
        
         if (env->get_target_configurations().empty()){
                 //No more motion to plot
@@ -40,11 +41,12 @@ void NaivePlayer::plan_future_motion_seq(){
         path_found = planner.query_closest_point(
                         last_point_in_path,
                         env->get_target_configurations(),
-                        iter_to_closest,
+                        target_index,
                         total_motion);
 	
  
         if (path_found){
+			iter_to_closest = env->get_target_configurations().begin() + target_index;
 			last_point_in_path = *iter_to_closest;
             //Erase next target
             env->get_target_configurations().erase(iter_to_closest);

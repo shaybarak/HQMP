@@ -34,7 +34,6 @@ public:
 	}
 	Reference_point(const Reference_point<K>& other) 
 		: _p(other.get_location()), _r(other.get_rotation()) {
-			cached_aerial_time = other.get_cached_aerial_time();
 	}
 
 	//assignment operator
@@ -44,7 +43,6 @@ public:
 		{
 			_p = other.get_location();
 			_r = other.get_rotation();
-			cached_aerial_time = other.get_cached_aerial_time();
 		}
 		return *this;
 	}
@@ -152,36 +150,12 @@ public:
 		return time;
 	}
 
-	/* Following methods and members:
-	 * set_cached_aerial_time, 
-	 * get_cached_aerial_time, 
-	 * less_than_cached_aerial_time 
-	 * and the member cached_aerial_time 
-	 * have no meaning in the context of single point, but only in the context of vector of points that references some target.
-	 * They were added here only for easy sorting of such vector and later iterating over it's values.
-	 * Do not use this methods for different purposes.
-	 */
-	void set_cached_aerial_time(const Reference_point& other) {
-		cached_aerial_time = get_aerial_time(other);
-	}
-
-	double get_cached_aerial_time() const{
-		return cached_aerial_time;
-	}
-
 
 private:
-	double cached_aerial_time;
 	Point    _p;    //location
 	Rotation _r;    //rotation
 }; //Reference_point
 
-template <typename K>
-struct less_than_cached_aerial_time {
-	bool operator()(const Reference_point<K>& p1,const Reference_point<K>& p2) const {
-		return (p1.get_cached_aerial_time() < p2.get_cached_aerial_time());
-	}
-};
 
 template <typename K>
 struct Less_than_reference_point
