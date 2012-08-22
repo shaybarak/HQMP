@@ -88,6 +88,7 @@ public:
 		  }
 		  else
 		  {
+			  Color current_time_frame_color = time_frame_ptr->get_color();
 			  is_moveable = (time_frame_ptr->get_color() == color);
 			  remaining_time = time_frame_ptr->remaining_time();
 			  
