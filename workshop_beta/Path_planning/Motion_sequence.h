@@ -79,6 +79,51 @@ public:
 		return;
 	}
 
+	// Same as above but adds to the front of the sequence
+	// (bad class design makes it difficult to have one method group to take care of both cases)
+	void add_motion_step_front(const MS_base_ptr& motion_step)
+	{
+		CGAL_precondition ( (motion_sequence.empty()) || 
+			(motion_sequence.front()->source() == motion_step->target()) );
+
+		motion_sequence.push_front(motion_step);
+		return;
+	}
+
+	// Same as above but adds to the front of the sequence
+	// (bad class design makes it difficult to have one method group to take care of both cases)
+	void add_motion_sequence_front(const Self& other_motion_sequence)
+	{
+		const Motion& other_motion = other_motion_sequence.get_sequence();
+		BOOST_FOREACH(MS_base_ptr motion_step_ptr, other_motion)
+		{
+			//ptr needs to be copied as each Motion_sequence class is in charge of deleting it's own MS_base_ptr
+			CGAL_precondition (motion_step_ptr->type() != MS_base::UNINITIALIZED);
+			switch (motion_step_ptr->type())
+			{
+			case (MS_base::TRANSLATION) : 
+				{
+					MS_translational* motion_step_ptr_copy = new MS_translational(* static_cast<MS_translational*> (motion_step_ptr));
+					add_motion_step_front(motion_step_ptr_copy);
+					break;
+				}
+			case (MS_base::ROTATION):
+				{
+					MS_rotational* motion_step_ptr_copy = new MS_rotational(* static_cast<MS_rotational*> (motion_step_ptr));
+					add_motion_step_front(motion_step_ptr_copy);
+					break;
+				}
+			case (MS_base::STATIC):
+				{
+					MS_static* motion_step_ptr_copy = new MS_static(* static_cast<MS_static*> (motion_step_ptr));
+					add_motion_step_front(motion_step_ptr_copy);
+					break;
+				}
+			}
+		}
+		return;
+	}
+
 	const Motion& get_sequence() const
 	{
 		return motion_sequence;
