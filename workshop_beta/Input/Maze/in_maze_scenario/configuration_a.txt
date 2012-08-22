@@ -38,13 +38,13 @@ host_port 1101                          #1102
 # when paths are saved as a series of images, they are saved in this 
 # path under a directory path_i where i is the query number
 ###################################################################
-where_to_save_path_folder ../images/
+where_to_save_path_folder ./
 
 ###################################################################
 # save_path
 # should path produced be saved as a series of images
 ###################################################################
-save_path 0
+save_path 1
 
 
 
@@ -58,7 +58,7 @@ save_path 0
 # slices_granularity is the number of slices.
 # common vaues: 5,10,20,40,90,180,270,360
 ###################################################################
-slices_granularity 5
+slices_granularity 360
 
 ###################################################################
 # use_filtering 
