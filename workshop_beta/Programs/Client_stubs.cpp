@@ -26,7 +26,7 @@ bool                      finished_game = false;
 void sleep(double remaining_time) {
 	if (remaining_time > 0) {
 		cout << "Sleeping for the remaining " << remaining_time << endl;
-		boost::posix_time::seconds sleep_time(remaining_time - timer.time());
+		boost::posix_time::seconds sleep_time(remaining_time);
 		boost::this_thread::sleep(sleep_time);
 	}
 }
