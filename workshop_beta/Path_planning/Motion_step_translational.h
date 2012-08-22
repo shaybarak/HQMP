@@ -2,6 +2,7 @@
 #define MOTION_STEP_TRANSLATIONAL_H
 
 #include "Path_planning\Motion_step_base.h"
+#include "FSC.h"
 
 template <typename K>
 class Motion_step_translational : public Motion_step_base<K>
@@ -12,45 +13,60 @@ public:
   typedef Base::Reference_point         Reference_point;
   typedef typename K::Point_2           Point;  
   typedef Rotation<typename K::FT>      Rotation;
+  typedef Smart_polygon_with_holes<K>	Cell;
+
 private:
-  Reference_point s,t;
+  Reference_point	s, t;
+  Cell*				c;
+
 public:
   Motion_step_translational () : Base(UNINITIALIZED)
   {}
+  
   Motion_step_translational ( const Reference_point& source,
-                              const Reference_point& target)
-                              :Base(TRANSLATION), s(source), t(target)
+                              const Reference_point& target,
+							  Cell* cell)
+                              :Base(TRANSLATION), s(source), t(target), cell(cell)
   {
     CGAL_precondition(is_legal_motion());
   }
+  
   Motion_step_translational(const Point& source,
                             const Point& target,
-                            const Rotation& rotation)
-                            :Base(TRANSLATION), s(source, rotation), t(target, rotation)
+                            const Rotation& rotation,
+							Cell* cell)
+                            :Base(TRANSLATION), s(source, rotation), t(target, rotation), c(cell)
   {
     CGAL_precondition(is_legal_motion());
   }
+  
   Motion_step_translational(const Self& other)
       :Base(TRANSLATION)
   {
       if (&other == this)
           return;
-      s = other.source();
-      t = other.target();
+      s = other.s;
+      t = other.t;
+	  c = other.c;
       return;
   }  
-public:
+
   Reference_point source() const 
   {
     CGAL_precondition (motion_type != UNINITIALIZED);
     return s;
   }
+  
   Reference_point target() const 
   {
     CGAL_precondition (motion_type != UNINITIALIZED);
     return t;
   }
-public:
+
+  Cell* cell() const {
+	  return c;
+  }
+
   double approximate_motion_time(double translational_speed) //unit per second
   {
     CGAL_precondition (motion_type != UNINITIALIZED);
@@ -64,12 +80,13 @@ public:
     double  t= d / translational_speed;
     return t;      
   }
+  
   void reverse_motion_step()
   {
       std::swap(s,t);
       return;
   }
-public:
+
   void read(std::istream& is)
   {
     motion_type = TRANSLATION;
@@ -79,6 +96,7 @@ public:
     
     return;
   }
+  
   void write(std::ostream& os)
   {
     CGAL_precondition (motion_type != UNINITIALIZED);
@@ -87,6 +105,7 @@ public:
     t.write(os);
     return;
   }
+
 private:
   bool is_legal_motion()
   {
