@@ -88,9 +88,12 @@ public:
 		  }
 		  else
 		  {
-			  is_moveable = (time_frame_ptr->get_color() == 
-                              color);
+			  is_moveable = (time_frame_ptr->get_color() == color);
 			  remaining_time = time_frame_ptr->remaining_time();
+			  
+			  if (is_moveable == false && current_time_frame_color != Time_frame::GRAY)
+				  remaining_time += get_gray_sleep_time();
+
 			  CGAL_postcondition (remaining_time >= 0);
 		  }
 

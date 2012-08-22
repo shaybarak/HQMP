@@ -144,7 +144,7 @@ void server_main(int argc, char* argv[])
   Time_frame::Interval_color                player_a_color = PLAYER_A_COLOR;
   Time_frame::Interval_color                player_b_color = PLAYER_B_COLOR;
   Time_frame                                time_frame( player_a_color, //player a is red
-                                                        syncronizer.get_colored_sleep_time());
+                                                        get_colored_sleep_time());
   File_names                                file_names(&time_frame);
   Targets_manager                           target_configurations_manager(env.get_target_configurations(),
                                                                           env.get_additional_target_configurations());

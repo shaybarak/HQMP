@@ -1,6 +1,9 @@
 #include "stdafx.h"
 #include "Time_frame.h"
 
+double get_colored_sleep_time() {return 29;}
+double get_gray_sleep_time() {return 1;}
+
 void Time_frame::start()
 {
   timer.start();

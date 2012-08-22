@@ -86,7 +86,7 @@ public:
       target_configurations_manager_ptr->activate_additional_target_configurations();
     }
 
-    boost::posix_time::seconds colored_sleep_time(get_colored_sleep_time());
+    boost::posix_time::seconds colored_sleep_time(time_frame->remaining_time());
     boost::this_thread::sleep(colored_sleep_time);
 
     std::cout <<"in synchronizer thread : " <<boost::this_thread::get_id()<<std::endl;
@@ -97,7 +97,7 @@ public:
     //wait untill interval is over and change color
     std::cout <<"in synchronizer thread : " <<boost::this_thread::get_id()<<std::endl;
     std::cout <<"before gray sleep"<<std::endl;
-    boost::posix_time::seconds gray_sleep_time(get_gray_sleep_time());
+    boost::posix_time::seconds gray_sleep_time(time_frame->remaining_time());
     boost::this_thread::sleep(gray_sleep_time);
 
     std::cout <<"in synchronizer thread : " <<boost::this_thread::get_id()<<std::endl;
@@ -152,7 +152,7 @@ public:
       // (3)
       std::cout <<"in synchronizer thread : " <<boost::this_thread::get_id()<<std::endl;
       std::cout <<"before colored_sleep"<<std::endl;
-      boost::posix_time::seconds colored_sleep_time(get_colored_sleep_time());
+      boost::posix_time::seconds colored_sleep_time(time_frame->remaining_time());
       boost::this_thread::sleep(colored_sleep_time);
 
       std::cout <<"in synchronizer thread : " <<boost::this_thread::get_id()<<std::endl;
@@ -163,7 +163,7 @@ public:
       //wait untill interval is over and change color
       std::cout <<"in synchronizer thread : " <<boost::this_thread::get_id()<<std::endl;
       std::cout <<"before gray sleep"<<std::endl;
-      boost::posix_time::seconds gray_sleep_time(get_gray_sleep_time());
+      boost::posix_time::seconds gray_sleep_time(time_frame->remaining_time());
       boost::this_thread::sleep(gray_sleep_time);
 
       std::cout <<"in synchronizer thread : " <<boost::this_thread::get_id()<<std::endl;
@@ -178,24 +178,7 @@ public:
   {
     thread.join();
   }
-public:
-  double get_colored_sleep_time()
-  {
-	  //noam: changed per our group
-	  if (configuration.get_colored_sleep_time() == -1) {
-		return 60;
-	  }
-	  return configuration.get_colored_sleep_time();
-  }
-  
-  double get_gray_sleep_time()
-  {
-	  //noam: changed per our group
-	  if (configuration.get_gray_sleep_time() == -1) {
-		return 1;
-	  }
-	  return configuration.get_gray_sleep_time();
-  }
+
 private:
   boost::thread thread;
 }; //Syncronizer

@@ -3,6 +3,9 @@
 
 #include <boost/thread/mutex.hpp>
 
+double get_colored_sleep_time();
+double get_gray_sleep_time();
+
 class Time_frame
 {
 public:
