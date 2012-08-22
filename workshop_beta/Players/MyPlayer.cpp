@@ -81,7 +81,7 @@ bool MyPlayer::buffer_motion_ahead() {
 		pending_motion);
 
 	if (!path_found) {
-		TIMED_TRACE_ACTION("query", "path not found");
+		TIMED_TRACE_ACTION("buffer_motion_ahead", "path not found");
 		TIMED_TRACE_EXIT("buffer_motion_ahead");
 		return false;
 	}
