@@ -58,7 +58,7 @@ save_path 1
 # slices_granularity is the number of slices.
 # common vaues: 5,10,20,40,90,180,270,360
 ###################################################################
-slices_granularity 2
+slices_granularity 270
 
 ###################################################################
 # use_filtering 
@@ -81,7 +81,7 @@ use_region_of_interest 1
 # max_num_of_intra_connections
 # the number of intra connections generated
 ###################################################################
-max_num_of_intra_connections 64
+max_num_of_intra_connections 640
 
 #=================================================================#
 # parameters for determinig size of features in the free space	  #
