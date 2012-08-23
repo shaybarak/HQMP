@@ -101,6 +101,23 @@ namespace mms{
 			TIMED_TRACE_EXIT("preprocess");
 			return;
 		}
+
+		//do preprocess for additional points
+		void additional_preprocess (Ref_p_vec ref_points)
+		{
+			TIMED_TRACE_ENTER("additional_preprocess");
+			TIMED_TRACE_ACTION("additional_preprocess",  "generate_additional_rotations START");
+			generate_additional_rotations(ref_points);
+			TIMED_TRACE_ACTION("additional_preprocess", "generate_additional_rotations FINISH, add_layers START");
+			BOOST_FOREACH (Rotation rotation, _rotations)
+				add_layer(rotation);
+			TIMED_TRACE_ACTION("additional_preprocess", "add_layers FINISH, generate_additional_connectors START");
+			generate_additional_connectors(ref_points);
+			TIMED_TRACE_ACTION("additional_preprocess", "generate_additional_connectors FINISH");
+			TIMED_TRACE_EXIT("additional_preprocess");
+			return;
+		}
+
 		// Return whether the planner was initialized
 		bool initialized() {
 			return _initialized;
@@ -348,6 +365,32 @@ namespace mms{
 			return;
 		}
 
+		//generates rotation both 
+		void generate_additional_rotations(Ref_p_vec ref_points)
+        {
+            Ref_p_vec::iterator iter;
+            std::vector<Rotation> tmp_rotations;
+           
+            for (iter = ref_points.begin(); iter != ref_points.end(); iter++){
+                tmp_rotations.push_back((*iter).get_rotation());
+            }
+ 
+            //maybe some rotations are the same as approximation is not good enough, remove duplicates
+            Less_than_rotation<K::FT> less_than;
+            std::sort(tmp_rotations.begin(),tmp_rotations.end(), less_than);
+            std::vector<Rotation>::iterator new_end = std::unique(tmp_rotations.begin(), tmp_rotations.end());
+ 
+            //insert unique rotations (except maybe last) to the vector
+            _rotations.clear();
+            _rotations.insert(_rotations.begin(), tmp_rotations.begin(), new_end);
+ 
+            //maybe last rotation is zero like the first rotation
+            if (_rotations.back() == _rotations.front())
+                            _rotations.pop_back();
+ 
+            return;
+        }
+
 		void add_layer(const Rotation& rotation)
 		{
 			//create layer
@@ -434,6 +477,76 @@ namespace mms{
 			return;
 
 		}
+
+
+		void generate_additional_connectors(Ref_p_vec ref_points){
+                       
+			Ref_p_vec::iterator iter;
+			for(iter = ref_points.begin(); iter != ref_points.end(); iter++){
+				generate_connector_to_point(*iter);
+			}
+		}
+ 
+        void generate_connector_to_point(Ref_p ref_point)
+        {
+       
+            Rotation r  = ref_point.get_rotation();
+            int layer_id = _layers.get_containing_manifold_id(r);
+            Layer* layer_ptr = _layers.get_manifold(layer_id);
+            Point p = ref_point.get_location();
+             
+            int cell_id  = layer_ptr->get_containing_cell(p);
+            if (cell_id == NO_ID)
+                    return;// this should NOT be NO_ID but there is a patch in the configuration space of the angle primitive due to a bug in polygon_est_2
+ 
+ 
+            C_space_line* c_space_line_ptr;
+            C_space_line::Constraint constraint;
+            ////////////////////////////////////////////////////////////////
+            //choose roi
+            ////////////////////////////////////////////////////////////////
+            double cell_size_ratio = get_size_percentage(layer_ptr->get_fsc(cell_id).cell() );
+            CGAL_precondition (cell_size_ratio >=0 && cell_size_ratio <=1);
+ 
+            if (configuration.get_use_region_of_interest() &&
+                    cell_size_ratio < 1 )
+            {
+                    double small_rotation(configuration.get_rotation_range()/2);
+                    CGAL_precondition(small_rotation < 180);
+                    double half_range_double = small_rotation + cell_size_ratio * (180 - small_rotation);
+                    Rotation half_range = to_rotation<K::FT>(half_range_double, DEG);
+                    Rotation_range range(r*(-half_range), r*half_range);      
+ 
+                    constraint = C_space_line::Constraint(p, range);
+ 
+            }
+            else
+            {
+                    constraint = C_space_line::Constraint(p);
+            }
+ 
+            ////////////////////////////////////////////////////////////////
+            //attempt to filter
+            ////////////////////////////////////////////////////////////////
+            if (filter_out(constraint))
+                    return;
+ 
+            ////////////////////////////////////////////////////////////////
+            //create connector
+            ////////////////////////////////////////////////////////////////
+            c_space_line_ptr = new C_space_line (constraint, _ak);
+            c_space_line_ptr->decompose(_robot, _decomposed_workspace);
+            int c_space_line_id = _lines.add_manifold(c_space_line_ptr);
+ 
+            ////////////////////////////////////////////////////////////////
+            //update connectivity graph
+            ////////////////////////////////////////////////////////////////
+            update_connectivity_graph(c_space_line_id);
+            return;
+ 
+        }
+ 
+
 	private: //filtering methods
 		bool filter_out(typename C_space_line::Constraint& constraint)
 		{
