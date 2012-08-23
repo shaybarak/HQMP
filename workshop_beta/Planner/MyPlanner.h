@@ -114,11 +114,13 @@ namespace mms{
 			TIMED_TRACE_ENTER("additional_preprocess");
 			TIMED_TRACE_ACTION("additional_preprocess",  "generate_additional_rotations START");
 			generate_additional_rotations(ref_points);
+			PRINT_ROTATIONS();
 			TIMED_TRACE_ACTION("additional_preprocess", "generate_additional_rotations FINISH, add_layers START");
 			BOOST_FOREACH (Rotation rotation, _rotations)
 				add_layer(rotation);
 			TIMED_TRACE_ACTION("additional_preprocess", "add_layers FINISH, generate_additional_connectors START");
 			generate_additional_connectors(ref_points);
+			PRINT_CONNECTORS();
 			TIMED_TRACE_ACTION("additional_preprocess", "generate_additional_connectors FINISH");
 			TIMED_TRACE_EXIT("additional_preprocess");
 			return;
