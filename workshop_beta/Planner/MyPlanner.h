@@ -56,6 +56,26 @@ namespace mms{
 		typedef Graph<Fsc_indx, Less_than_fsc_indx<K> > Connectivity_graph;
 		typedef Random_utils<K>                         Random_utils;  
 
+////////////////////////////////////////////////////////////////////////////////////////////////
+//added for voronoi, will be refactored later
+// typedefs for defining the adaptor
+		//typedef CGAL::Exact_predicates_inexact_constructions_kernel                  VDK;
+		typedef CGAL::Delaunay_triangulation_2<K>                                    DT;
+		typedef CGAL::Delaunay_triangulation_adaptation_traits_2<DT>                 AT;
+		typedef CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<DT> AP;
+		typedef CGAL::Voronoi_diagram_2<DT,AT,AP>                                    VD;
+		//
+		//typedef AT::Site_2                    Site_2;
+		//typedef AT::Point_2                   Point_2;
+
+		//typedef VD::Locate_result             Locate_result;
+		//typedef VD::Vertex_handle             Vertex_handle;
+		//typedef VD::Face_handle               Face_handle;
+		//typedef VD::Halfedge_handle           Halfedge_handle;
+		//typedef VD::Ccb_halfedge_circulator   Ccb_halfedge_circulator;
+
+///////////////////////////////////////////////////////////////////////////////////////////////
+
 	private:
 		Polygon_vec&            _workspace;
 		Polygon_vec             _decomposed_workspace;
@@ -130,6 +150,35 @@ namespace mms{
 		bool initialized() {
 			return _initialized;
 		}
+
+		bool ensure_targets_connected(Ref_p& source, Ref_p_vec& target_configurations) {
+			TIMED_TRACE_ENTER("ensure_targets_connected");
+			Reference_point perturbed_source = connect_to_graph(source, source_motion_sequence);
+			if (perturbed_source == Reference_point()) {
+				TIMED_TRACE_EXIT("ensure_all_targets_connected: failed to connect source to pre-processed configuration space");
+				return false;
+			}
+			
+			BOOST_FOREACH(Ref_p target, target_configurations) {
+				Reference_point perturbed_target = connect_to_graph(target, target_motion_sequence);
+
+				Fsc_indx source_fsc_indx (get_containig_fsc(perturbed_source));
+				CGAL_postcondition (source_fsc_indx != Fsc_indx());
+				Fsc_indx target_fsc_indx (get_containig_fsc(perturbed_target));
+				CGAL_postcondition (target_fsc_indx != Fsc_indx());
+
+				std::list<Fsc_indx> fsc_indx_path;
+				if (_graph.is_in_same_cc(source_fsc_indx, target_fsc_indx)) {
+					return true;
+					
+				}
+			}
+			TIMED_TRACE_EXIT("ensure_targets_connected");
+			return false;
+		}
+
+
+
 		//query
 		bool query( const Reference_point& source, const Reference_point& target,
 			Motion_sequence& motion_sequence, double& motion_time, double motion_time_limit) 
@@ -168,7 +217,7 @@ namespace mms{
 			}
 
 			if (motion_time >= motion_time_limit) {
-				TIMED_TRACE_ACTION("query: connecting target, not the closest point");
+				TIMED_TRACE_EXIT("query: connecting target, not the closest point");
 				return false;
 			}
 
@@ -245,7 +294,7 @@ namespace mms{
 			plan_path(fsc_ptr, curr_ref_p, perturbed_target, motion_sequence);
 			motion_time += motion_sequence.motion_time_between(time_index, motion_sequence.get_sequence().size()-1);
 			if (motion_time >= motion_time_limit) {
-				TIMED_TRACE_ACTION("query: connecting perturbed target, not the closest point");
+				TIMED_TRACE_EXIT("query: connecting perturbed target, not the closest point");
 				return false;
 			}
 
@@ -341,6 +390,7 @@ namespace mms{
 				return path_found;
 		}
 
+
 	private: //layer methods
 		void generate_rotations(const unsigned int num_of_angles)
 		{
@@ -408,6 +458,8 @@ namespace mms{
 		void generate_connectors()
 		{
 			generate_connectors_random();
+			//VD vd(
+
 		}
 		void generate_connectors_random()
 		{

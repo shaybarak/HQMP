@@ -32,6 +32,16 @@
 #include <CGAL/Arithmetic_kernel.h>
 #include <CGAL/Algebraic_kernel_d_1.h>
 
+//////////////////
+// Additionals  //
+//////////////////
+#include <CGAL/Exact_predicates_inexact_constructions_kernel.h>
+#include <CGAL/Delaunay_triangulation_2.h>
+#include <CGAL/Voronoi_diagram_2.h>
+#include <CGAL/Delaunay_triangulation_adaptation_traits_2.h>
+#include <CGAL/Delaunay_triangulation_adaptation_policies_2.h>
+
+
 
 //////////////////
 // Kernel       //
