@@ -143,6 +143,7 @@ void client_stubs_main(int argc, char* argv[])
 			input_reader.read_reference_points<Rational_kernel>(
 				scene_status.updated_target_configurations_filename,
 				std::back_inserter(env.get_target_configurations()));
+			player->additional_targets_preprocessing(env.get_additional_target_configurations());
 			read_additional_configurations = false;
 			finished_game = false;
 		}   

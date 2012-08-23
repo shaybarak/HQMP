@@ -17,6 +17,7 @@ public:
 	virtual void plan(double deadline) = 0;
 	virtual void move(double deadline, Motion& motion_sequence) = 0;
 	virtual bool is_game_over() = 0;
+	virtual void additional_targets_preprocessing(Ref_p_vec additional_targets) = 0;
 
 protected:
 	Env* env;
