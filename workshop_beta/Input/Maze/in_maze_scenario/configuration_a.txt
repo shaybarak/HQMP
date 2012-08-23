@@ -58,7 +58,7 @@ save_path 1
 # slices_granularity is the number of slices.
 # common vaues: 5,10,20,40,90,180,270,360
 ###################################################################
-slices_granularity 360
+slices_granularity 2
 
 ###################################################################
 # use_filtering 
