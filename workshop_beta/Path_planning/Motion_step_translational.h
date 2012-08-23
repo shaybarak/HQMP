@@ -26,7 +26,7 @@ public:
   Motion_step_translational ( const Reference_point& source,
                               const Reference_point& target,
 							  Cell* cell)
-                              :Base(TRANSLATION), s(source), t(target), cell(cell)
+                              :Base(TRANSLATION), s(source), t(target), c(cell)
   {
     CGAL_precondition(is_legal_motion());
   }

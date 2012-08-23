@@ -43,10 +43,12 @@ void plan_path___fixed_angle (const Fsc* fsc_ptr,
                               const typename Fsc::Ref_p& target,
                               Motion_sequence<typename Fsc::K>& motion_sequence)
 {
-  typedef typename Fsc::K           K;
-  typedef typename Fsc::Ref_p       Ref_p;
-  typedef typename Ref_p::Point     Point;
-  typedef typename Ref_p::Rotation  Rot;
+  typedef typename Fsc::K				K;
+  typedef typename Fsc::Ref_p			Ref_p;
+  typedef typename Ref_p::Point			Point;
+  typedef typename Ref_p::Rotation		Rot;
+  typedef Motion_step_translational<K>	MS_translational;
+  typedef MS_translational::Cell		Cell;
   
   CGAL_precondition(fsc_ptr->get_constraint_type() == FIXED_ANGLE);
   CGAL_precondition(fsc_ptr->contains(source));
@@ -73,7 +75,7 @@ void plan_path___fixed_angle (const Fsc* fsc_ptr,
 
   while (next != point_path.end())
   {
-    Motion_step_translational<K>* motion_step_ptr = new Motion_step_translational<K>(*curr, *next, fsc_rotation, fsc_ptr->get_free_space_feature<Fixed_angle_fsc<K>>());
+    Motion_step_translational<K>* motion_step_ptr = new MS_translational(*curr, *next, fsc_rotation, fsc_ptr->get_free_space_feature<Cell*>());
     motion_sequence.add_motion_step(motion_step_ptr);
     ++curr;
     ++next;
@@ -87,6 +89,9 @@ void plan_path__fixed_point ( const Fsc* fsc_ptr,
                               const typename Fsc::Ref_p& target,
                               Motion_sequence<typename Fsc::K>& motion_sequence)
 {
+  typedef typename Fsc::K				K;
+  typedef Motion_step_rotational<K>		MS_rotational;
+
   CGAL_precondition(fsc_ptr->get_constraint_type() == FIXED_POINT);
   CGAL_precondition(fsc_ptr->contains(source));
   CGAL_precondition(fsc_ptr->contains(target));

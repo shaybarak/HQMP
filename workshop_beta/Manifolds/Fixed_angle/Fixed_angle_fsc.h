@@ -10,7 +10,7 @@ template <typename Kernel>
 class Fixed_angle_fsc : public Fsc_base<Smart_polygon_with_holes<Kernel> >
 {
 public:
-  typedef Fsc_base<Smart_polygon_with_holes<Kernel> >         Base;
+  typedef Fsc_base<Smart_polygon_with_holes<Kernel> >       Base;
 public:
   Fixed_angle_fsc( const Cell& cell)
     : Base (cell)
