@@ -143,8 +143,7 @@ namespace mms{
 
 			Reference_point perturbed_source = connect_to_graph(source, source_motion_sequence);
 			if (perturbed_source == Reference_point()) {
-				TIMED_TRACE_ACTION("query", "failed to connect source to pre-processed configuration space");
-				TIMED_TRACE_EXIT("query");
+				TIMED_TRACE_EXIT("query: failed to connect source to pre-processed configuration space");
 				return false;
 			}
 
@@ -154,15 +153,13 @@ namespace mms{
 			}
 
 			if (motion_time >= motion_time_limit) {
-				TIMED_TRACE_ACTION("query", "connecting source, not the closest point");
-				TIMED_TRACE_EXIT("query");
+				TIMED_TRACE_EXIT("query: connecting source, not the closest point");
 				return false;
 			}
 
 			Reference_point perturbed_target = connect_to_graph(target, target_motion_sequence);
 			if (perturbed_target == Reference_point()) {
-				TIMED_TRACE_ACTION("query", "failed to connect target to pre-processed configuration space");
-				TIMED_TRACE_EXIT("query");
+				TIMED_TRACE_EXIT("query: failed to connect target to pre-processed configuration space");
 				return false;
 			}
 			if (!target_motion_sequence.get_sequence().empty()) {
@@ -171,8 +168,7 @@ namespace mms{
 			}
 
 			if (motion_time >= motion_time_limit) {
-				TIMED_TRACE_ACTION("query", "connecting target, not the closest point");
-				TIMED_TRACE_EXIT("query");
+				TIMED_TRACE_ACTION("query: connecting target, not the closest point");
 				return false;
 			}
 
@@ -191,8 +187,7 @@ namespace mms{
 				_graph.find_path( source_fsc_indx, target_fsc_indx, fsc_indx_path);
 
 			if (fsc_indx_path.empty()) {
-				TIMED_TRACE_ACTION("query", "fsc index path is empty");
-				TIMED_TRACE_EXIT("query");
+				TIMED_TRACE_EXIT("query: fsc index path is empty");
 				return false;
 			}
 
@@ -250,8 +245,7 @@ namespace mms{
 			plan_path(fsc_ptr, curr_ref_p, perturbed_target, motion_sequence);
 			motion_time += motion_sequence.motion_time_between(time_index, motion_sequence.get_sequence().size()-1);
 			if (motion_time >= motion_time_limit) {
-				TIMED_TRACE_ACTION("query", "connecting perturbed target, not the closest point");
-				TIMED_TRACE_EXIT("query");
+				TIMED_TRACE_ACTION("query: connecting perturbed target, not the closest point");
 				return false;
 			}
 
