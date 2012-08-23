@@ -1,8 +1,23 @@
 #include "stdafx.h"
 #include "Time_frame.h"
 
-double get_colored_sleep_time() {return 29;}
-double get_gray_sleep_time() {return 1;}
+double get_colored_sleep_time()
+  {
+	  //noam: changed per our group
+	  if (configuration.get_colored_sleep_time() == -1) {
+		return 60;
+	  }
+	  return configuration.get_colored_sleep_time();
+  }
+  
+  double get_gray_sleep_time()
+  {
+	  //noam: changed per our group
+	  if (configuration.get_gray_sleep_time() == -1) {
+		return 1;
+	  }
+	  return configuration.get_gray_sleep_time();
+  }
 
 void Time_frame::start()
 {
