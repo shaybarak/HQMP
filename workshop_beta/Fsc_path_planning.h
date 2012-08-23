@@ -73,7 +73,7 @@ void plan_path___fixed_angle (const Fsc* fsc_ptr,
 
   while (next != point_path.end())
   {
-    Motion_step_translational<K>* motion_step_ptr = new Motion_step_translational<K>(*curr, *next, fsc_rotation, fsc_ptr->get_free_space_feature());
+    Motion_step_translational<K>* motion_step_ptr = new Motion_step_translational<K>(*curr, *next, fsc_rotation, fsc_ptr->get_free_space_feature<Fixed_angle_fsc<K>>());
     motion_sequence.add_motion_step(motion_step_ptr);
     ++curr;
     ++next;
