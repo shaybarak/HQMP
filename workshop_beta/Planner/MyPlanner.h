@@ -56,25 +56,6 @@ namespace mms{
 		typedef Graph<Fsc_indx, Less_than_fsc_indx<K> > Connectivity_graph;
 		typedef Random_utils<K>                         Random_utils;  
 
-////////////////////////////////////////////////////////////////////////////////////////////////
-//added for voronoi, will be refactored later
-// typedefs for defining the adaptor
-		//typedef CGAL::Exact_predicates_inexact_constructions_kernel                  VDK;
-		typedef CGAL::Delaunay_triangulation_2<K>                                    DT;
-		typedef CGAL::Delaunay_triangulation_adaptation_traits_2<DT>                 AT;
-		typedef CGAL::Delaunay_triangulation_caching_degeneracy_removal_policy_2<DT> AP;
-		typedef CGAL::Voronoi_diagram_2<DT,AT,AP>                                    VD;
-		//
-		//typedef AT::Site_2                    Site_2;
-		//typedef AT::Point_2                   Point_2;
-
-		//typedef VD::Locate_result             Locate_result;
-		//typedef VD::Vertex_handle             Vertex_handle;
-		//typedef VD::Face_handle               Face_handle;
-		//typedef VD::Halfedge_handle           Halfedge_handle;
-		//typedef VD::Ccb_halfedge_circulator   Ccb_halfedge_circulator;
-
-///////////////////////////////////////////////////////////////////////////////////////////////
 
 	private:
 		Polygon_vec&            _workspace;
@@ -109,6 +90,7 @@ namespace mms{
 		{
 			TIMED_TRACE_ENTER("preprocess");
 			CGAL_precondition(!_initialized);
+
 			TIMED_TRACE_ACTION("preprocess",  "generate_rotation START");
 			
 			generate_rotations(num_of_angles);
@@ -411,8 +393,9 @@ namespace mms{
 			_rotations.insert(_rotations.begin(), tmp_rotations.begin(), new_end);
 
 			//maybe last rotation is zero like the first rotation
-			if (_rotations.back() == _rotations.front())
+			if (_rotations.back() == _rotations.front() && _rotations.size() >1) {
 				_rotations.pop_back();
+			}
 
 			return;
 		}
@@ -436,15 +419,21 @@ namespace mms{
             _rotations.clear();
             _rotations.insert(_rotations.begin(), tmp_rotations.begin(), new_end);
  
-            //maybe last rotation is zero like the first rotation
-            if (_rotations.back() == _rotations.front())
-                            _rotations.pop_back();
+           //maybe last rotation is zero like the first rotation
+			if (_rotations.back() == _rotations.front() && _rotations.size() >1) {
+				_rotations.pop_back();
+			}
  
             return;
         }
 
 		void add_layer(const Rotation& rotation)
 		{
+			//if layere already exists, return
+			if (_layers.get_containing_manifold_id(rotation) != NO_ID) {
+				return;
+			}
+
 			//create layer
 			Layer* layer_ptr = new Layer (Layer::Constraint(rotation));
 			layer_ptr->decompose(_robot, _decomposed_workspace);
@@ -458,7 +447,8 @@ namespace mms{
 		void generate_connectors()
 		{
 			generate_connectors_random();
-			//VD vd(
+
+
 
 		}
 		void generate_connectors_random()
@@ -466,6 +456,7 @@ namespace mms{
 			for (int i(0); i < configuration.get_max_num_of_intra_connections(); ++i)
 				generate_connector_random();
 		}
+
 		void generate_connector_random()
 		{
 			////////////////////////////////////////////////////////////////

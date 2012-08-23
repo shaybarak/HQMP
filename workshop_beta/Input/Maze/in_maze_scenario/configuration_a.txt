@@ -15,6 +15,7 @@ source_configuration_b_file_name source_b.txt
 target_configurations_file_name target_configurations_easy.txt
 additional_target_configurations_file_name additional_target_configurations.txt
 all_target_configurations_file_name all_configurations.txt
+additional_sample_points_file_name additional_sample_points_a.txt
 
 
 rotational_speed 45                     #rotations per seconds
@@ -58,7 +59,7 @@ save_path 1
 # slices_granularity is the number of slices.
 # common vaues: 5,10,20,40,90,180,270,360
 ###################################################################
-slices_granularity 40
+slices_granularity 360
 
 ###################################################################
 # use_filtering 
@@ -81,7 +82,7 @@ use_region_of_interest 1
 # max_num_of_intra_connections
 # the number of intra connections generated
 ###################################################################
-max_num_of_intra_connections 64
+max_num_of_intra_connections 640
 
 #=================================================================#
 # parameters for determinig size of features in the free space	  #

@@ -27,6 +27,9 @@ private:
   Reference_point       _source_configuration_b;
   Reference_point_vec   _target_configurations;
   Reference_point_vec   _additional_target_configurations;
+
+  Reference_point_vec   _additional_sample_points;
+
 public:
  
   Environment (int argc, char* argv[])
@@ -66,6 +69,12 @@ public:
 
     std::string additional_target_configurations_file_name = configuration.get_additional_target_configurations_file_name();
     reader.read_reference_points<K> (additional_target_configurations_file_name, std::back_inserter(_additional_target_configurations));
+
+	//noam: additions for our group
+	std::string additional_sample_points_file_name = configuration.get_additional_sample_points_file_name();
+    reader.read_reference_points<K> (additional_sample_points_file_name, std::back_inserter(_additional_sample_points));
+
+
   }
 
   //draw functions
@@ -85,6 +94,10 @@ public:
   Reference_point&      get_source_configuration_b() {return _source_configuration_b;}
   Reference_point_vec&  get_target_configurations() {return _target_configurations;}
   Reference_point_vec&  get_additional_target_configurations () {return _additional_target_configurations;}
+
+  Reference_point_vec&  get_additional_sample_points () {return _additional_sample_points;}
+
 }; //Environment
 
 #endif //ENVIRONMENT_H
+

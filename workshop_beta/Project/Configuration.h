@@ -88,6 +88,9 @@ public: //get
   void set_gray_sleep_time(const int _gray_sleep_time);
   int get_colored_sleep_time();
   int get_gray_sleep_time();
+  void set_additional_sample_points_file_name(const std::string& additional_sample_points_configurations_file_name);
+  std::string get_additional_sample_points_file_name();
+
 
 private:
   std::string _robot_file_name_a;
@@ -131,6 +134,7 @@ private:
   //noam: changes per our group
   int _colored_sleep_time;
   int _gray_sleep_time;
+  std::string _additional_sample_points_file_name;
 
 
 }; //Configuration

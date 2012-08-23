@@ -68,6 +68,13 @@ bool MyPlayer::initialize() {
 
 	planner.preprocess();
 
+	//TODO: remove, only here for debugging
+	additional_samples.clear();
+	additional_samples = env->get_additional_sample_points();
+	if (!additional_samples.empty()) {
+		planner.additional_preprocess(env->get_additional_sample_points());
+	}
+
 	return true;
 }
 
