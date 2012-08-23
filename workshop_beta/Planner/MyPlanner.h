@@ -53,7 +53,7 @@ namespace mms{
 		typedef Fixed_point_manifold_container<K, AK, AK_conversions> C_space_lines;
 		typedef typename C_space_lines::Manifold                      C_space_line;
 
-		typedef Graph<Fsc_indx, Less_than_fsc_indx<K> > Connectiivity_graph;
+		typedef Graph<Fsc_indx, Less_than_fsc_indx<K> > Connectivity_graph;
 		typedef Random_utils<K>                         Random_utils;  
 
 	private:
@@ -62,7 +62,7 @@ namespace mms{
 		CGAL::Bbox_2            _workspace_bbox;
 		Extended_polygon&       _robot;
 
-		Connectiivity_graph     _graph;
+		Connectivity_graph     _graph;
 
 		std::vector<Rotation>   _rotations;
 		Layers                  _layers;
@@ -90,12 +90,18 @@ namespace mms{
 			TIMED_TRACE_ENTER("preprocess");
 			CGAL_precondition(!_initialized);
 			TIMED_TRACE_ACTION("preprocess",  "generate_rotation START");
+			
 			generate_rotations(num_of_angles);
+			PRINT_ROTATIONS();
+			
 			TIMED_TRACE_ACTION("preprocess", "generate_rotation FINISH, add_layers START");
 			BOOST_FOREACH (Rotation rotation, _rotations)
 				add_layer(rotation);
 			TIMED_TRACE_ACTION("preprocess", "add_layers FINISH, generate_connectors START");
+			
 			generate_connectors();    
+			PRINT_CONNECTORS();
+
 			_initialized = true;
 			TIMED_TRACE_ACTION("preprocess", "generate_connectors FINISH");
 			TIMED_TRACE_EXIT("preprocess");
@@ -754,7 +760,28 @@ namespace mms{
 			return;
 		}
 
+		//debugging methods
+		void print_rotations() {
+			cout << "Generated " << _rotations.size() << " rotations:" << endl;
+			BOOST_FOREACH(Rotation rotation, _rotations) {
+				cout << rotation.to_angle() << ", ";
+			}
+			cout << endl;
+		}
+
+		void print_connectors() {
+			cout << "Generated " << _lines.manifold_id_iterator_end() << " connectors:" << endl; 
+			for (int i = _lines.manifold_id_iterator_begin(); i < _lines.manifold_id_iterator_end(); i++) {
+				print_point_nice<K>(_lines.get_manifold(i)->constraint().restriction());
+				cout << " ";
+			}
+			cout << endl;
+		}
+
 	}; 
+
+	
+
 
 } //mms
 #endif //MY_PLANNER_H
