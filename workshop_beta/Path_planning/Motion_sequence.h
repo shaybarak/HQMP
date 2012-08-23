@@ -243,7 +243,7 @@ public:
 					Ref_point between_point = Ref_point::get_point_between(source, target, ratio);
 					MS_base_ptr cut_step, remaining_step;
 					if (next_step->type() == MS_base::TRANSLATION) {
-						Ms_translational.Cell* cell = static_cast<MS_translational*>(next_step)->cell();
+						Ms_translational::Cell* cell = static_cast<MS_translational*>(next_step)->cell();
 						cut_step = new MS_translational(source, between_point, cell);
 						remaining_step = new MS_translational(between_point, target, cell);
 					} else if (next_step->type() == MS_base::ROTATION) {
