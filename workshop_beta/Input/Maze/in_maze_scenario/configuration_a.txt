@@ -82,7 +82,7 @@ use_region_of_interest 1
 # max_num_of_intra_connections
 # the number of intra connections generated
 ###################################################################
-max_num_of_intra_connections 640
+max_num_of_intra_connections 6400
 
 #=================================================================#
 # parameters for determinig size of features in the free space	  #
