@@ -77,7 +77,6 @@ namespace mms{
 
 		Random_utils            _rand;
 		AK                      _ak;
-		Ref_p_vec				targets;
 
 	public:
 		//constructor
@@ -95,11 +94,11 @@ namespace mms{
 			TIMED_TRACE_ENTER("preprocess");
 			generate_random_rotations(num_of_angles);
 			PRINT_ROTATIONS();
-			BOOST_FOREACH (Rotation rotation, _rotations)
+			BOOST_FOREACH (Rotation rotation, _rotations) {
 				add_layer(rotation);
+			}
 			generate_random_connectors();    
 			PRINT_CONNECTORS();
-			PRINT_CONNECTIVITY_GRAPH();
 			TIMED_TRACE_EXIT("preprocess");
 			return;
 		}
@@ -107,16 +106,16 @@ namespace mms{
 		//do preprocess for additional points
 		void preprocess_targets(Ref_p_vec& ref_points) {
 			TIMED_TRACE_ENTER("preprocess_targets");
-			BOOST_FOREACH(Ref_p target, ref_points) {
-				targets.push_back(target);
-			}
+
 			generate_target_rotations(ref_points);
 			PRINT_ROTATIONS();
-			BOOST_FOREACH (Rotation rotation, _rotations)
+			BOOST_FOREACH (Rotation rotation, _rotations) {
 				add_layer(rotation);
+			}
 			generate_target_connectors(ref_points);
 			PRINT_CONNECTORS();
-			PRINT_CONNECTIVITY_GRAPH();
+			PRINT_CONNECTIVITY_GRAPH(ref_points);
+
 			TIMED_TRACE_EXIT("preprocess_targets");
 			return;
 		}
@@ -146,7 +145,6 @@ namespace mms{
 			TIMED_TRACE_EXIT("ensure_targets_connected");
 			return false;
 		}
-
 
 
 		//query
@@ -430,6 +428,43 @@ namespace mms{
 			return OK;
 		}
 
+		void additional_preprocessing(Ref_p& source, Ref_p_vec& targets) {
+			TIMED_TRACE_ENTER("additional_reprocessing");
+			int iter_limit = 1000;
+
+			for (int i=0; i<iter_limit; i++) {
+				cout << "Iteration #" << i << endl;
+
+				Fsc_indx source_fsc_indx(get_containig_fsc(source));
+				int source_cc_id = _graph.get_cc_id(source_fsc_indx);
+				Fsc_indx target_fsc_indx;
+				CGAL_postcondition(source_fsc_indx != Fsc_indx());
+				
+				//Check whether any target is connected to the source
+				BOOST_FOREACH(Ref_p target, targets) {
+					target_fsc_indx = get_containig_fsc(target);
+					int target_cc_id = _graph.get_cc_id(target_fsc_indx);
+					if (source_cc_id == target_cc_id) {
+						cout << "Connected source: " ;
+						source.print();
+						cout << " to target ";
+						target.print();
+						cout << endl;
+						TIMED_TRACE_EXIT("additional_reprocessing");
+						return;
+					}
+				}
+
+				//add batch of connectors. TODO: refine!!!
+				generate_random_connectors();
+				PRINT_CONNECTORS();
+				//PRINT_CONNECTIVITY_GRAPH(targets);
+			}
+			TIMED_TRACE_EXIT("additional_preprocessing: graph is not connected");
+		}
+
+///////////////////////////////////////////////////////////////////////////////////////////////////
+
 	private: //layer methods
 
 		void generate_random_rotations(const unsigned int num_of_angles) {
@@ -478,12 +513,15 @@ namespace mms{
 			update_connectivity_graph_vertices(*layer_ptr, layer_id);
 			return;
 		}
+		
 	private:
 
 		void generate_random_connectors() {
+			TIMED_TRACE_ENTER("generate_random_connectors");
 			for (int i(0); i < configuration.get_max_num_of_intra_connections(); ++i) {
 				generate_connector();
 			}
+			TIMED_TRACE_EXIT("generate_random_connectors");
 		}
 
 		void generate_target_connectors(Ref_p_vec& ref_points) {
@@ -539,7 +577,7 @@ namespace mms{
 			}
 
 			// Filter out random points that don't contribute to connectivity
-			if (ref_point != NULL && filter_out(constraint)) {
+			if (ref_point == NULL && filter_out(constraint)) {
 				return;
 			}
 
@@ -778,15 +816,16 @@ namespace mms{
 			cout << endl;
 		}
 
-		void print_connectivity_graph() {
+		void print_connectivity_graph(Ref_p_vec& targets) {
 			_graph.print();
 			_graph.print_connected_components();
 			BOOST_FOREACH(Ref_p target, targets) {
-				pair<int,int> layer_fsc = _layers.get_containig_fsc(target);
+				pair<int, int> layer_fsc = _layers.get_containig_fsc(target);
+				//pair<int, int> line_fsc = _lines.get_containig_fsc(target);
 				cout << "target: ";
 				target.print();
-				cout << " layer id: " << layer_fsc.first << " layer fsc id: " << layer_fsc.second
-					/*<< " line id: " << line_fsc.first << " line fsc id: " << line_fsc.second*/ << endl;
+				cout << " layer id: " << layer_fsc.first << " layer fsc id: " << layer_fsc.second << endl;
+					//<< " line id: " << line_fsc.first << " line fsc id: " << line_fsc.second << endl;
 			}
 
 		}

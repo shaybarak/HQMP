@@ -6,10 +6,10 @@
 #define TIMED_TRACE_EXIT(x) timed_trace(x, __FILE__ ,__LINE__, "EXITING")
 #define TIMED_TRACE_ACTION(x, y) timed_trace(x, __FILE__, __LINE__, y)
 
-//Use only in XxxPlanner.cpp
+
 #define PRINT_ROTATIONS() print_rotations()
 #define PRINT_CONNECTORS() print_connectors()
-#define PRINT_CONNECTIVITY_GRAPH() print_connectivity_graph()
+#define PRINT_CONNECTIVITY_GRAPH(x) print_connectivity_graph(x)
 
 #else
 #define TIMED_TRACE_ENTER(x)
@@ -17,7 +17,7 @@
 #define TIMED_TRACE_ACTION(x, y)
 #define PRINT_ROTATIONS()
 #define PRINT_CONNECTORS()
-#define PRINT_CONNECTIVITY_GRAPH()
+#define PRINT_CONNECTIVITY_GRAPH(x)
 
 #endif
 

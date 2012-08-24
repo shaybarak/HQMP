@@ -98,6 +98,7 @@ bool MyPlayer::buffer_motion_ahead() {
 
 	if (!path_found) {
 		TIMED_TRACE_ACTION("buffer_motion_ahead", "path not found");
+		planner.additional_preprocessing(pending_motion_end, env->get_target_configurations());
 		TIMED_TRACE_EXIT("buffer_motion_ahead");
 		return false;
 	}
