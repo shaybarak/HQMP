@@ -102,3 +102,5 @@ bool NaivePlayer::is_game_over() {
 		// No planned pending motion
 		remaining_motion.empty());
 }
+
+void NaivePlayer::additional_targets_preprocessing(Ref_p_vec& additional_targets) {}

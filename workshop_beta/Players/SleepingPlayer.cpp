@@ -16,3 +16,5 @@ void SleepingPlayer::move(double deadline, Motion& motion_sequence) {
 bool SleepingPlayer::is_game_over() {
 	return false;
 }
+
+void SleepingPlayer::additional_targets_preprocessing(Ref_p_vec& additional_targets) {}
