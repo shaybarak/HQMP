@@ -67,8 +67,12 @@ public:
   void reverse_motion_step()
   {
       std::swap(s,t);
-      o = (o == CGAL::CLOCKWISE) ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE; //swap orientation
+      reverse_orientation();
       return;
+  }
+  void reverse_orientation()
+  {
+	  o = (o == CGAL::CLOCKWISE) ? CGAL::COUNTERCLOCKWISE : CGAL::CLOCKWISE; //swap orientation
   }
   double get_angular_difference_in_deg()
   {
