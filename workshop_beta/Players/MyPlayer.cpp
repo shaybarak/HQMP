@@ -108,6 +108,6 @@ bool MyPlayer::buffer_motion_ahead() {
 	return true;
 }
 
-void MyPlayer::additional_targets_preprocessing(Ref_p_vec additional_targets){
+void MyPlayer::additional_targets_preprocessing(Ref_p_vec& additional_targets){
 	   planner.additional_preprocess(additional_targets);
 }
