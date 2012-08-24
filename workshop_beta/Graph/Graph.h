@@ -216,7 +216,7 @@ public:
     //print edges
     std::cout << "graph edges : ";
     boost::graph_traits<Boost_graph>::edge_iterator ei, ei_end;
-    for (tie(ei, ei_end) = edges(*_graph); ei != ei_end; ++ei)
+    for (boost::tie(ei, ei_end) = edges(*_graph); ei != ei_end; ++ei)
         std::cout << "(" << index[source(*ei, *_graph)] 
                   << "," << index[target(*ei, *_graph)] << ") ";
     std::cout << std::endl;

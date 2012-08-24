@@ -15,4 +15,5 @@ void timed_trace(const char* function_name, const char* full_path, int line, con
 		<< filename << ":" << line << " - "
 		// function_name, action
 		<< function_name << ", " << action << std::endl;
+
 };

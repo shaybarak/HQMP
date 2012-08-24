@@ -70,6 +70,7 @@ namespace mms{
 
 		Random_utils            _rand;
 		AK                      _ak;
+		Ref_p_vec				targets;
 
 	public:
 		//constructor
@@ -91,6 +92,7 @@ namespace mms{
 				add_layer(rotation);
 			generate_random_connectors();    
 			PRINT_CONNECTORS();
+			PRINT_CONNECTIVITY_GRAPH();
 			TIMED_TRACE_EXIT("preprocess");
 			return;
 		}
@@ -98,12 +100,16 @@ namespace mms{
 		//do preprocess for additional points
 		void preprocess_targets(Ref_p_vec& ref_points) {
 			TIMED_TRACE_ENTER("preprocess_targets");
+			BOOST_FOREACH(Ref_p target, ref_points) {
+				targets.push_back(target);
+			}
 			generate_target_rotations(ref_points);
 			PRINT_ROTATIONS();
 			BOOST_FOREACH (Rotation rotation, _rotations)
 				add_layer(rotation);
 			generate_target_connectors(ref_points);
 			PRINT_CONNECTORS();
+			PRINT_CONNECTIVITY_GRAPH();
 			TIMED_TRACE_EXIT("preprocess_targets");
 			return;
 		}
@@ -693,7 +699,21 @@ namespace mms{
 			cout << endl;
 		}
 
-	};
+		void print_connectivity_graph() {
+			_graph.print();
+			_graph.print_connected_components();
+			BOOST_FOREACH(Ref_p target, targets) {
+				pair<int,int> layer_fsc = _layers.get_containig_fsc(target);
+				cout << "target: ";
+				target.print();
+				cout << " layer id: " << layer_fsc.first << " layer fsc id: " << layer_fsc.second
+					/*<< " line id: " << line_fsc.first << " line fsc id: " << line_fsc.second*/ << endl;
+			}
 
+		}
+
+	}; 
+
+	
 } //mms
 #endif //MY_PLANNER_H

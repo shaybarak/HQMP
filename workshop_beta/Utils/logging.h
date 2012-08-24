@@ -9,6 +9,7 @@
 //Use only in XxxPlanner.cpp
 #define PRINT_ROTATIONS() print_rotations()
 #define PRINT_CONNECTORS() print_connectors()
+#define PRINT_CONNECTIVITY_GRAPH() print_connectivity_graph()
 
 #else
 #define TIMED_TRACE_ENTER(x)
@@ -16,6 +17,7 @@
 #define TIMED_TRACE_ACTION(x, y)
 #define PRINT_ROTATIONS()
 #define PRINT_CONNECTORS()
+#define PRINT_CONNECTIVITY_GRAPH()
 
 #endif
 
