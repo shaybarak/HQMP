@@ -136,9 +136,7 @@
     <ClInclude Include="..\Planner\MyPlanner.h" />
     <ClInclude Include="..\Planner\NaivePlanner.h" />
     <ClInclude Include="..\Players\MyPlayer.h" />
-    <ClInclude Include="..\Players\NaivePlayer.h" />
     <ClInclude Include="..\Players\Player.h" />
-    <ClInclude Include="..\Players\SleepingPlayer.h" />
     <ClInclude Include="..\Project\CgalTypedefs.h" />
     <ClInclude Include="..\Project\CompilationFlags.h" />
     <ClInclude Include="..\Project\Configuration.h" />
@@ -183,9 +181,7 @@
     <ClCompile Include="..\Manager\File_names.cpp" />
     <ClCompile Include="..\Manager\Time_frame.cpp" />
     <ClCompile Include="..\Players\MyPlayer.cpp" />
-    <ClCompile Include="..\Players\NaivePlayer.cpp" />
     <ClCompile Include="..\Players\Player.cpp" />
-    <ClCompile Include="..\Players\SleepingPlayer.cpp" />
     <ClCompile Include="..\Programs\Client_stubs.cpp" />
     <ClCompile Include="..\Programs\Path_planner.cpp" />
     <ClCompile Include="..\Project\Configuration.cpp" />

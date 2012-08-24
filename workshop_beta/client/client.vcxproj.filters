@@ -252,9 +252,6 @@
     <ClInclude Include="..\Players\Player.h">
       <Filter>Header Files\Players</Filter>
     </ClInclude>
-    <ClInclude Include="..\Players\SleepingPlayer.h">
-      <Filter>Header Files\Players</Filter>
-    </ClInclude>
     <ClInclude Include="..\Project\CgalTypedefs.h">
       <Filter>Header Files\Project</Filter>
     </ClInclude>
@@ -369,9 +366,6 @@
     <ClInclude Include="..\heuristic_utils.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="..\Players\NaivePlayer.h">
-      <Filter>Header Files\Players</Filter>
-    </ClInclude>
     <ClInclude Include="..\Planner\NaivePlanner.h">
       <Filter>Header Files\Planner</Filter>
     </ClInclude>
@@ -419,9 +413,6 @@
     <ClCompile Include="..\Players\Player.cpp">
       <Filter>Source Files\Players</Filter>
     </ClCompile>
-    <ClCompile Include="..\Players\SleepingPlayer.cpp">
-      <Filter>Source Files\Players</Filter>
-    </ClCompile>
     <ClCompile Include="..\Programs\Client_stubs.cpp">
       <Filter>Source Files\Programs</Filter>
     </ClCompile>
@@ -433,9 +424,6 @@
     </ClCompile>
     <ClCompile Include="main.cpp">
       <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="..\Players\NaivePlayer.cpp">
-      <Filter>Source Files\Players</Filter>
     </ClCompile>
     <ClCompile Include="..\Utils\logging.cpp">
       <Filter>Source Files\Utils</Filter>
