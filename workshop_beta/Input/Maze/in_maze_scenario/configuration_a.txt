@@ -15,7 +15,8 @@ source_configuration_b_file_name source_b.txt
 target_configurations_file_name target_configurations_easy.txt
 additional_target_configurations_file_name additional_target_configurations.txt
 all_target_configurations_file_name all_configurations.txt
-additional_sample_points_file_name additional_sample_points_a.txt
+
+#additional_sample_points_file_name additional_sample_points_a.txt
 
 
 rotational_speed 45                     #rotations per seconds
@@ -82,7 +83,7 @@ use_region_of_interest 1
 # max_num_of_intra_connections
 # the number of intra connections generated
 ###################################################################
-max_num_of_intra_connections 6400
+max_num_of_intra_connections 64
 
 #=================================================================#
 # parameters for determinig size of features in the free space	  #
