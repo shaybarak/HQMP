@@ -5,7 +5,8 @@ MyPlayer::MyPlayer(Env* env, Configuration* config) :
 	Player(env, config),
 	planner(env->get_workspace(),
 			env->get_robot_a()),
-	pending_motion_end(env->get_source_configuration_a()) {
+	pending_motion_end(env->get_source_configuration_a()),
+	planner_initialized(false) {
 }
 
 // Spend as much time preprocessing and planning
@@ -57,7 +58,7 @@ bool MyPlayer::is_game_over() {
 // Initializes the underlying planner.
 // Returns true iff the planner was initialized on this invocation.
 bool MyPlayer::initialize() {
-	if (planner.initialized()) {
+	if (planner_initialized) {
 		return false;
 	}
 
@@ -75,6 +76,7 @@ bool MyPlayer::initialize() {
 		planner.additional_preprocess(env->get_additional_sample_points());
 	}
 
+	planner_initialized = true;
 	return true;
 }
 

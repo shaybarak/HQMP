@@ -21,6 +21,7 @@ protected:
 private:
 	Motion pending_motion;
 	Planner::Reference_point pending_motion_end;
+	bool planner_initialized;
 	bool initialize();
 	bool buffer_motion_ahead();
 };
