@@ -75,8 +75,8 @@ public:
     return CGAL::object_cast<T>(_constraint_obj);
   }
 
-public: //dbg
-  bool contains(Ref_p ref_p) const
+public:
+  bool contains(Ref_p& ref_p) const
   { 
     if (_type == NOT_VALID)
       return false;
@@ -114,7 +114,6 @@ public: //dbg
 
       return true;
     }
-    CGAL_precondition(false);
     return false;
   }
 };  //FSC
