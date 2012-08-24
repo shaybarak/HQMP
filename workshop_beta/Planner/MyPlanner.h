@@ -54,7 +54,7 @@ namespace mms{
 		typedef typename C_space_lines::Manifold                      C_space_line;
 
 		typedef Graph<Fsc_indx, Less_than_fsc_indx<K> > Connectivity_graph;
-		typedef Random_utils<K>                         Random_utils;  
+		typedef Random_utils<K>                         Random_utils;
 
 	private:
 		Polygon_vec&             _workspace;
@@ -345,7 +345,6 @@ namespace mms{
 				return path_found;
 		}
 
-
 	private: //layer methods
 
 		void generate_random_rotations(const unsigned int num_of_angles) {
@@ -370,7 +369,8 @@ namespace mms{
 			//maybe some rotations are the same as approximation is not good enough, remove duplicates 
 			Less_than_rotation<K::FT> less_than;
 			std::sort(_rotations.begin(), _rotations.end(), less_than);
-			std::unique(_rotations.begin(), _rotations.end());
+			std::vector<Rotation>::iterator unique_end = std::unique(_rotations.begin(), _rotations.end());
+			_rotations.erase(unique_end, _rotations.end());
 
 			//maybe last rotation is zero like the first rotation
 			if (_rotations.size() > 1 && _rotations.back() == _rotations.front()) {
