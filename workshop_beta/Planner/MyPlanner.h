@@ -11,10 +11,17 @@
 #include "FSC.h"
 #include "Graph\Graph.h"
 #include "Fsc_path_planning.h"
+#include "Path_planning\ShortestPathInPolygon.h"
 
 typedef Environment<> Env;
 typedef Env::Reference_point              Ref_p;
 typedef Env::Reference_point_vec          Ref_p_vec;
+
+enum VALIDATION {
+	OK,				// Motion step is valid
+	PATH_BLOCKED,	// Path is blocked but destination is otherwise reachable
+	DST_BLOCKED,	// Destination is unreachable at the moment
+};
 
 namespace mms{
 
@@ -349,6 +356,78 @@ namespace mms{
 				motion_sequence.add_motion_sequence(*shortest);
 				TIMED_TRACE_EXIT("query_closest_point");
 				return path_found;
+		}
+
+		VALIDATION validate_step(MS_translational& ms, Extended_polygon& robot, Extended_polygon& obstacle) {
+			// Find the layer that the step was plotted in
+			Layer* layer = _layers.get_manifold(ms.target().get_rotation());
+			
+			// Make a copy of the original layer (without FSC cache)
+			Layer updatedLayer();
+			updatedLayer.copy(*layer, false);
+
+			// Add the dynamic obstacle to the layer copy
+			updatedLayer.add_obstacle(robot, obstacle);
+			
+			// Check that the destination is reachable
+			int target_fsc_id = updatedLayer.get_containing_cell(ms.target());
+			if (target_fsc_id == NO_ID) {
+				return DST_BLOCKED;
+			}
+
+			// Check that there is still a path between the source and the destination
+			int source_fsc_id = updatedLayer.get_containing_cell(ms.source());
+			if (source_fsc_id != target_fsc_id) {
+				return PATH_BLOCKED;
+			}
+
+			// Verify that target is still visible from source
+			Polygon& fsc_polygon = updatedLayer.get_fsc(target_fsc_id).cell().polygon();
+			if (!is_in_polygon<K>(K::Segment_2(ms.source(), ms.target()), fsc_polygon, true)) {
+				return PATH_BLOCKED;
+			}
+
+			return OK;
+		}
+
+		VALIDATION validate_step(MS_rotational& ms, Extended_polygon& robot, Extended_polygon& obstacle) {
+			// Find the original line that the step was taken from
+			C_space_line* line = _lines.get_manifold(ms.target().get_location());
+
+			// Make a copy of the original line
+			// Make a copy of the original layer (without FSC cache)
+			Line updatedLine();
+			updatedLine.copy(*line, false);
+
+			// Add the dynamic obstacle to the layer copy
+			updatedLine.add_obstacle(robot, obstacle);
+			
+			// Check that the destination is reachable
+			int target_fsc_id = updatedLine.get_containing_cell(ms.target());
+			if (target_fsc_id == NO_ID) {
+				return DST_BLOCKED;
+			}
+
+			// Check that there is still a path between the source and the destination
+			int source_fsc_id = updatedLayer.get_containing_cell(ms.source());
+			CGAL_precondition(source_fsc_id != NO_ID);
+			if (source_fsc_id != target_fsc_id) {
+				return PATH_BLOCKED;
+			}
+
+			// Find correct rotation orientation
+			Fsc& fsc = updatedLayer.get_fsc(target_fsc_id);
+			std::vector<typename K::FT> tau_path;
+			plan_path_in_interval<K>(FixedPoint::get_parametrization_theta<K>(ms.source().get_rotation()),
+				FixedPoint::get_parametrization_theta<K>(ms.target().get_rotation()),
+				fsc.cell(),
+				std::back_inserter(tau_path));
+			CGAL::Orientation orientation = get_orientation(tau_path[0], tau_path[1], tau_path[2]);
+			// Flip orientation if necessary
+			if (ms.orientation() != orientation) {
+				ms.reverse_orientation();
+			}
+			return OK;
 		}
 
 	private: //layer methods
