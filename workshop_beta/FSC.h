@@ -76,7 +76,7 @@ public:
   }
 
 public:
-  bool contains(Ref_p& ref_p) const
+  bool contains(Ref_p ref_p) const
   { 
     if (_type == NOT_VALID)
       return false;
