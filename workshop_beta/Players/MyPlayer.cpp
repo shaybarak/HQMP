@@ -65,7 +65,7 @@ bool MyPlayer::initialize() {
 	//Allow additional preprocessing to source point and all initial targets
 	Ref_p_vec additional_samples = env->get_target_configurations();
 	additional_samples.push_back(env->get_source_configuration_a());
-	planner.additional_preprocess(additional_samples);
+	planner.preprocess_targets(additional_samples);
 
 	planner.preprocess();
 
@@ -73,7 +73,7 @@ bool MyPlayer::initialize() {
 	additional_samples.clear();
 	additional_samples = env->get_additional_sample_points();
 	if (!additional_samples.empty()) {
-		planner.additional_preprocess(env->get_additional_sample_points());
+		planner.preprocess_targets(env->get_additional_sample_points());
 	}
 
 	planner_initialized = true;
@@ -111,5 +111,5 @@ bool MyPlayer::buffer_motion_ahead() {
 }
 
 void MyPlayer::additional_targets_preprocessing(Ref_p_vec& additional_targets) {
-	   planner.additional_preprocess(additional_targets);
+	   planner.preprocess_targets(additional_targets);
 }
