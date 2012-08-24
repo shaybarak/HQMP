@@ -4,7 +4,7 @@
 MyPlayer::MyPlayer(Env* env, Configuration* config) :
 	Player(env, config),
 	planner(env->get_workspace(),
-	        env->get_robot_a()),
+			env->get_robot_a()),
 	pending_motion_end(env->get_source_configuration_a()) {
 }
 
@@ -62,9 +62,9 @@ bool MyPlayer::initialize() {
 	}
 
 	//Allow additional preprocessing to source point and all initial targets
-    Ref_p_vec additional_samples = env->get_target_configurations();
-    additional_samples.push_back(env->get_source_configuration_a());
-    planner.additional_preprocess(additional_samples);
+	Ref_p_vec additional_samples = env->get_target_configurations();
+	additional_samples.push_back(env->get_source_configuration_a());
+	planner.additional_preprocess(additional_samples);
 
 	planner.preprocess();
 
