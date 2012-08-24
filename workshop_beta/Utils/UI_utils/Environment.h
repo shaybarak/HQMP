@@ -72,7 +72,9 @@ public:
 
 	//noam: additions for our group
 	std::string additional_sample_points_file_name = configuration.get_additional_sample_points_file_name();
-    reader.read_reference_points<K> (additional_sample_points_file_name, std::back_inserter(_additional_sample_points));
+	if (additional_sample_points_file_name != "") {
+		reader.read_reference_points<K> (additional_sample_points_file_name, std::back_inserter(_additional_sample_points));
+	}
 
 
   }
