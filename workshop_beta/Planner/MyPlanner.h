@@ -299,8 +299,6 @@ namespace mms{
 
 		//Returns closest point to target, according to motion_Sequence.motion_time.
 		//Sets the motion_sequence to the point to motion_sequence.
-		//This method mutates target_configurations vector, as it sorts it according to distances from source.
-		//Returned itarator  iter_to_closest is pointing to the new sorted configurations vector.
 		bool query_closest_point(
 			const Reference_point& source, 
 			Ref_p_vec& target_configurations,
