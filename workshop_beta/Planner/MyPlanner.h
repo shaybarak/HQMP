@@ -76,10 +76,10 @@ namespace mms{
 		MyPlanner  (Polygon_vec &workspace, Extended_polygon& robot)
 			: _workspace (workspace), _robot(robot),
 			_graph(0,true), _rand(time(NULL)) {
-			compute_workspace_bbox();
-			//the minkowski sum algorithm works faster on polygons are convex
-			//hence we decompose the workspace obstacles to convex polygons
-			decompose_workspace_into_convex_polygons();
+				compute_workspace_bbox();
+				//the minkowski sum algorithm works faster on polygons are convex
+				//hence we decompose the workspace obstacles to convex polygons
+				decompose_workspace_into_convex_polygons();
 		}
 
 		//preprocess
@@ -115,7 +115,7 @@ namespace mms{
 				TIMED_TRACE_EXIT("ensure_all_targets_connected: failed to connect source to pre-processed configuration space");
 				return false;
 			}
-			
+
 			BOOST_FOREACH(Ref_p target, target_configurations) {
 				Reference_point perturbed_target = connect_to_graph(target, target_motion_sequence);
 
@@ -127,7 +127,7 @@ namespace mms{
 				std::list<Fsc_indx> fsc_indx_path;
 				if (_graph.is_in_same_cc(source_fsc_indx, target_fsc_indx)) {
 					return true;
-					
+
 				}
 			}
 			TIMED_TRACE_EXIT("ensure_targets_connected");
@@ -304,7 +304,7 @@ namespace mms{
 
 				for (std::vector<pair<double, int>>::iterator it = aerialTimeToIndex.begin(); it!=aerialTimeToIndex.end(); it++) {
 					current_time = 0;
-					 
+
 					int point_index = it->second;
 
 					double current_aerial_time = it->first;
@@ -346,7 +346,7 @@ namespace mms{
 		}
 
 
-private: //layer methods
+	private: //layer methods
 
 		void generate_random_rotations(const unsigned int num_of_angles) {
 			_rotations.clear();
@@ -436,7 +436,7 @@ private: //layer methods
 
 			C_space_line* c_space_line_ptr; 
 			C_space_line::Constraint constraint;
-			
+
 			// Choose roi
 			double cell_size_ratio = get_size_percentage(layer_ptr->get_fsc(cell_id).cell() );
 			CGAL_precondition (cell_size_ratio >=0 && cell_size_ratio <=1);
@@ -468,7 +468,7 @@ private: //layer methods
 			return;
 		}
 
-private: //filtering methods
+	private: //filtering methods
 		bool filter_out(typename C_space_line::Constraint& constraint)
 		{
 			if (configuration.get_use_filtering() == false)
@@ -693,10 +693,7 @@ private: //filtering methods
 			cout << endl;
 		}
 
-	}; 
-
-	
-
+	};
 
 } //mms
 #endif //MY_PLANNER_H
