@@ -40,8 +40,8 @@ namespace mms{
 		typedef std::vector<typename Polygon>           Polygon_vec;
 		typedef CGAL::Polygon_set_2<K>                  Polygon_set;
 
-		typedef Motion_step_rotational<K>               Motion_step_rotational;
-		typedef Motion_step_translational<K>            Motion_step_translational;
+		typedef Motion_step_rotational<K>               MS_rotational;
+		typedef Motion_step_translational<K>            MS_translational;
 		typedef Motion_sequence<K>                      Motion_sequence;
 
 		typedef Fsc_indx<K>                             Fsc_indx;
@@ -590,7 +590,7 @@ private: //filtering methods
 
 			//(6) convert point path to Motion_step_rotational
 			CGAL::Orientation orientation = get_orientation(tau_path[0], tau_path[1], tau_path[2]);  
-			Motion_step_rotational* motion_step_ptr = new Motion_step_rotational( location, 
+			MS_rotational* motion_step_ptr = new MS_rotational( location, 
 				ref_p.get_rotation(), closest_rotation, 
 				orientation);
 			motion_sequence.add_motion_step(motion_step_ptr);
