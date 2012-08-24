@@ -30,6 +30,7 @@ private:
   typedef std::vector<typename K::Point_2>  Point_vec;
   typedef typename Point_vec::iterator      Point_vec_iter;
   typedef std::list<typename K::Point_2>    Point_list;
+  typedef typename K::Segment_2       Segment_2;
 private:
   bool                  _initialized;
   Polygon_with_holes    _polygon;
@@ -51,9 +52,19 @@ public:
     //lazy construction: do nothing
   }
 
-  //get shortest path
-  void shortest_path(const Point & source,const Point & target, Point_list& path)
+  //get shortest path in polygon with holes
+  void shortest_path(const Point & source,const Point & target, Point_list& path, const Polygon_with_holes& polygon)
   {
+	
+	 //If there is a straight-line solution, return with it immediately.
+	Segment_2 seg(source, target);
+	bool is_seg_in_polygon = is_in_polygon(seg, polygon,false);
+	 if (is_seg_in_polygon){
+		path.push_front(target);
+		path.push_front(source);
+		return;
+	} 
+
 	TIMED_TRACE_ENTER("shortest_path (Path_planning folder)");
     if (!_initialized)
     {
@@ -100,6 +111,74 @@ public:
   return;
 
   }
+
+  //get shortest path
+  void shortest_path(const Point & source,const Point & target, Point_list& path, const Polygon& polygon)
+  {
+	
+	//If there is a straight-line solution, return with it immediately.
+	bool is_convex = polygon.is_convex();
+	if (is_convex){
+		path.push_front(target);
+		path.push_front(source);
+		return;
+	}else{
+		Segment_2 seg(source, target);
+		bool is_seg_in_polygon = is_in_polygon(seg, polygon,false);
+		if (is_seg_in_polygon){
+			path.push_front(target);
+			path.push_front(source);
+			return;
+		} 
+	}
+
+	TIMED_TRACE_ENTER("shortest_path (Path_planning folder)");
+    if (!_initialized)
+    {
+      this->init_graph();
+      _initialized=true;
+    }
+
+	TIMED_TRACE_ACTION("shortest_path", "start check source");
+    //check if source is in graph
+    if (_graph.is_in_graph(source) == false)
+    {
+      //add vertex
+      this->insert_vertex(source);
+      _vertices.push_back(source);
+      //insert relevant edges to graph
+      BOOST_FOREACH(Point v, _vertices)
+      {
+        if (source !=v)
+          if (is_in_polygon<K>(K::Segment_2(source,v),_polygon,true))
+            this->insert_edge(source,v);
+      }
+    }
+	TIMED_TRACE_ACTION("shortest_path", "finish check source");
+
+	TIMED_TRACE_ACTION("shortest_path", "start check target");
+    //check if target is in graph
+    if (_graph.is_in_graph(target) == false)
+    {
+      //add vertex
+      this->insert_vertex(target);
+      _vertices.push_back(target);
+      //insert relevant edges to graph
+      BOOST_FOREACH(Point v, _vertices)
+      {
+        if (target !=v)
+          if (is_in_polygon<K>(K::Segment_2(target,v),_polygon,true))
+            this->insert_edge(target,v);
+      }
+    }
+	TIMED_TRACE_ACTION("shortest_path", "finish check target");
+
+  _graph.find_path(source,target, path);
+  TIMED_TRACE_EXIT("shortest_path (Path_planning folder)");
+  return;
+
+  }
+
 private:
   void add_polygon_vertices(const Polygon& pgn)
   {

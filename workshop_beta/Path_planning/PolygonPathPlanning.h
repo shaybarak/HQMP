@@ -10,7 +10,7 @@ void plan_path_in_polygon( const typename K::Point_2& source,
                            std::list<typename K::Point_2>& point_path)
 {
     Shortest_path_in_polygon<K> path_in_polygon(polygon);
-    path_in_polygon.shortest_path(source,target,point_path);
+    path_in_polygon.shortest_path(source,target,point_path,polygon);
     return;
 }
 template <typename K>
@@ -20,7 +20,7 @@ void plan_path_in_polygon( const typename K::Point_2& source,
                            std::list<typename K::Point_2>& point_path)
 {
   Shortest_path_in_polygon<K> path_in_polygon(polygon);
-  path_in_polygon.shortest_path(source,target,point_path);
+  path_in_polygon.shortest_path(source,target,point_path,polygon);
   return;
 }
 #endif //POLYGON_PATH_PLANNING_H
