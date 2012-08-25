@@ -9,7 +9,7 @@ NaivePlayer::NaivePlayer(Env* env, Configuration* config) :
 	planned(false) {
 }
  
-void NaivePlayer::plan(double deadline) {
+bool NaivePlayer::plan(double deadline) {
 		// Don't allow more than one planning turn
 		if (!planned) {
 				// Assume we have enough time to preprocess
@@ -17,6 +17,7 @@ void NaivePlayer::plan(double deadline) {
 				planned = true;
 		}
 		plan_future_motion_seq();
+		return true;
 }
  
  
@@ -56,7 +57,7 @@ void NaivePlayer::plan_future_motion_seq(){
  
  
  
-void NaivePlayer::move(double deadline, Motion& motion_sequence) {
+bool NaivePlayer::move(double deadline, Motion& motion_sequence) {
  
 		CGAL::Timer timer;
 		timer.start();
@@ -67,14 +68,16 @@ void NaivePlayer::move(double deadline, Motion& motion_sequence) {
 			remaining_motion.cut(deadline - timer.time(), configuration.get_translational_speed(), configuration.get_rotational_speed(), motion_sequence);
 			std::cout << "Cut to " << motion_sequence.get_sequence().size() << " and " << remaining_motion.get_sequence().size() << endl;
 			if (!motion_sequence.empty()){
-					q_s = motion_sequence.get_sequence().back()->target();
+				q_s = motion_sequence.get_sequence().back()->target();
+				return true;
+			} else {
+				return false;
 			}
-			return;
 		}
  
 		if (env->get_target_configurations().empty()) {
 				// No more motion to plot
-				return;
+				return false;
 		}
  
 		plan(deadline);
@@ -84,14 +87,15 @@ void NaivePlayer::move(double deadline, Motion& motion_sequence) {
 			remaining_motion.cut(deadline - timer.time(), configuration.get_translational_speed(), configuration.get_rotational_speed(), motion_sequence);
 			std::cout << "Cut to " << motion_sequence.get_sequence().size() << " and " << remaining_motion.get_sequence().size() << endl;
 			if (!motion_sequence.empty()){
-					q_s = motion_sequence.get_sequence().back()->target();
+				q_s = motion_sequence.get_sequence().back()->target();
+				return true;
+			} else {
+				return false;
 			}
-			return;
 		}
- 
 
-		 // TODO maybe the motion is empty because the path is (temporarily) blocked, fix this in a later iteration
-		return;           
+		// TODO maybe the motion is empty because the path is (temporarily) blocked, fix this in a later iteration
+		return false;
 }
 
 // Returns whether the player thinks that the game is over.

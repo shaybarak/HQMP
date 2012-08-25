@@ -10,7 +10,7 @@ MyPlayer::MyPlayer(Env* env, Configuration* config) :
 }
 
 // Spend as much time preprocessing and planning
-void MyPlayer::plan(double deadline) {
+bool MyPlayer::plan(double deadline) {
 	TIMED_TRACE_ENTER("plan");
 	initialize();
 	CGAL::Timer timer;
@@ -22,14 +22,16 @@ void MyPlayer::plan(double deadline) {
 	while (deadline - timer.time() > 0) {
 		if (!buffer_motion_ahead()) {
 			// Stop when no additional planning is possible
-			break;
+			TIMED_TRACE_EXIT("plan");
+			return false;
 		}
 	}
 	TIMED_TRACE_EXIT("plan");
+	return true;
 }
 
 // Generate next movement
-void MyPlayer::move(double deadline, Motion& motion_sequence) {
+bool MyPlayer::move(double deadline, Motion& motion_sequence) {
 	initialize();
 	CGAL::Timer timer;
 	timer.start();
@@ -38,12 +40,13 @@ void MyPlayer::move(double deadline, Motion& motion_sequence) {
 		// No pending motion, buffer some more
 		if (!buffer_motion_ahead()) {
 			// Could not generate additional motion at this time, skip this turn
-			return;
+			return false;
 		}
 	}
 	
 	// Extract longest possible motion out of pending motion (under deadline)
 	pending_motion.cut(deadline - timer.time(), motion_sequence);
+	return true;
 }
 
 // Returns whether the player thinks that the game is over.

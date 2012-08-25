@@ -7,9 +7,6 @@
 
 #include <boost/thread/thread.hpp>
 
-#include "..\Players\Player.h"
-#include "..\Players\SleepingPlayer.h"
-#include "..\Players\NaivePlayer.h"
 #include "..\Players\MyPlayer.h"
 #include "..\Utils\logging.h"
 
@@ -41,26 +38,17 @@ void plan(double remaining_time)
 		return;
 	
 	while((timer.time() < remaining_time) && !finished_game) {
-		player->plan(remaining_time - timer.time());
+		if (!(player->plan(remaining_time - timer.time()))) {
+			TIMED_TRACE_ACTION("plan", "cannot plan anymore this turn");
+			break;
+		}
 	}
 
 	return;
 }
 
-void construct_motion(double remaining_time, Motion& motion_sequence)
-{
-	//construct a motion, 
-	//make sure that you have enough time to complete the motion 
-	//or else no write approval will granted
-
-	player->move(remaining_time, motion_sequence);
-	finished_game = player->is_game_over();
-
-	return;
-}
-
 // Returns whether this method should be called again this turn
-// (if the remaining time permits)
+// (if remaining time permits)
 bool move(double remaining_time)
 {
 	if (finished_game) {
@@ -68,28 +56,31 @@ bool move(double remaining_time)
 	}
 
 	Motion motion_sequence;
-	construct_motion(remaining_time, motion_sequence);
+	bool can_move_again = player->move(remaining_time, motion_sequence);
+	finished_game = player->is_game_over();
+	if (!can_move_again) {
+		return false;
+	}
 
 	double motion_length(motion_sequence.motion_time());
-	if (motion_length == 0) //no motion
+	if (motion_length == 0) {
+		TIMED_TRACE_ACTION("move", "generated zero length motion (BUG?)");
 		return false;
+	}
 	std::string path_filename;
 
 	TIMED_TRACE_ACTION("move", "requesting to write move");
-	if (request_to_write(*socket_client_ptr, motion_length, path_filename))
-	{
+	if (request_to_write(*socket_client_ptr, motion_length, path_filename)) {
 		TIMED_TRACE_ACTION("move", "request granted");
 		//request granted
 		ofstream out(path_filename.c_str());
 		motion_sequence.write(out);
-	}
-	else
-	{
+	} else {
 		TIMED_TRACE_ACTION("move", "request denied");
 		// TODO handle movement failures correctly
 	}
 
-	return true;
+	return can_move_again;
 }
 
 void static_planner(double remaining_time)
