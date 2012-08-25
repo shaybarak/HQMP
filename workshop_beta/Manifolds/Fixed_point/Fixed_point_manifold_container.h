@@ -120,7 +120,7 @@ public:
 
     return std::make_pair(manifold_id,fsc_id);
   }
-private:
+public:
   Manifold* get_manifold(const Point& p)
   {
     Converter_iter iter = point_to_id.find(p);    
