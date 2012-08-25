@@ -826,7 +826,13 @@ namespace mms{
 				cout << " layer id: " << layer_fsc.first << " layer fsc id: " << layer_fsc.second << endl;
 					//<< " line id: " << line_fsc.first << " line fsc id: " << line_fsc.second << endl;
 			}
+		}
 
+		void print_workspace() {
+			cout << "WORKSPACE:" << endl;
+			print_polygon_vector(_workspace);
+			cout << "DECOMPOSED WORKSPACE:" << endl;
+			print_polygon_vector(_decomposed_workspace);
 		}
 
 	}; 

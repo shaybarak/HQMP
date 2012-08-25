@@ -10,14 +10,17 @@
 #define PRINT_ROTATIONS() print_rotations()
 #define PRINT_CONNECTORS() print_connectors()
 #define PRINT_CONNECTIVITY_GRAPH(x) print_connectivity_graph(x)
+#define PRINT_WORKSPACE() print_workspace()
 
 #else
+
 #define TIMED_TRACE_ENTER(x)
 #define TIMED_TRACE_EXIT(x)
 #define TIMED_TRACE_ACTION(x, y)
 #define PRINT_ROTATIONS()
 #define PRINT_CONNECTORS()
 #define PRINT_CONNECTIVITY_GRAPH(x)
+#define PRINT_WORKSAPCE()
 
 #endif
 
