@@ -43,10 +43,12 @@ namespace mms{
 		typedef CGAL::Polygon_with_holes_2<K>           Polygon_with_holes;
 		typedef typename Extended_polygon<K>            Extended_polygon;
 		typedef typename Smart_polygon_with_holes<K>    Smart_polygon;
+		typedef typename K::Segment_2				    Segment;
 
 		typedef std::vector<typename Polygon>           Polygon_vec;
 		typedef CGAL::Polygon_set_2<K>                  Polygon_set;
 
+		typedef Motion_step_base<K>						MS_base;
 		typedef Motion_step_rotational<K>               MS_rotational;
 		typedef Motion_step_translational<K>            MS_translational;
 		typedef Motion_sequence<K>                      Motion_sequence;
@@ -330,65 +332,82 @@ namespace mms{
 				return path_found;
 		}
 
+		VALIDATION validate_step(MS_base& ms, Extended_polygon& robot, Extended_polygon& obstacle) {
+			if (ms.type() == MS_base::TRANSLATION) {
+				return validate_step(static_cast<MS_translational&>(ms), robot, obstacle);
+			} else if (ms.type() == MS_base::ROTATION) {
+				return validate_step(static_cast<MS_rotational&>(ms), robot, obstacle);
+			} else {
+				return OK;
+			}
+		}
+
 		VALIDATION validate_step(MS_translational& ms, Extended_polygon& robot, Extended_polygon& obstacle) {
+			TIMED_TRACE_ENTER("validate_step translational");
 			// Find the layer that the step was plotted in
 			Layer* layer = _layers.get_manifold(ms.target().get_rotation());
-			
-			// Make a copy of the original layer (without FSC cache)
-			Layer updatedLayer();
+
+			// Make a copy of the original layer
+			Layer updatedLayer = Layer(Fixed_angle_constraint<K>());
 			updatedLayer.copy(*layer, false);
 
 			// Add the dynamic obstacle to the layer copy
-			updatedLayer.add_obstacle(robot, obstacle);
-			
+			updatedLayer.add_obstacle(robot, obstacle.get_absolute_polygon());
+
 			// Check that the destination is reachable
-			int target_fsc_id = updatedLayer.get_containing_cell(ms.target());
+			int target_fsc_id = updatedLayer.get_containing_cell(ms.target().get_location());
 			if (target_fsc_id == NO_ID) {
+				TIMED_TRACE_EXIT("validate_step: DST_BLOCKED");
 				return DST_BLOCKED;
 			}
 
 			// Check that there is still a path between the source and the destination
-			int source_fsc_id = updatedLayer.get_containing_cell(ms.source());
+			int source_fsc_id = updatedLayer.get_containing_cell(ms.source().get_location());
 			if (source_fsc_id != target_fsc_id) {
+				TIMED_TRACE_EXIT("validate_step: PATH_BLOCKED");
 				return PATH_BLOCKED;
 			}
 
 			// Verify that target is still visible from source
-			Polygon& fsc_polygon = updatedLayer.get_fsc(target_fsc_id).cell().polygon();
-			if (!is_in_polygon<K>(K::Segment_2(ms.source(), ms.target()), fsc_polygon, true)) {
+			Smart_polygon& fsc_polygon = updatedLayer.get_fsc(target_fsc_id).cell();
+			if (!is_in_polygon(Segment(ms.source().get_location(), ms.target().get_location()), fsc_polygon.polygon(), true)) {
+				TIMED_TRACE_EXIT("validate_step: PATH_BLOCKED");
 				return PATH_BLOCKED;
 			}
 
+			TIMED_TRACE_EXIT("validate_step: OK");
 			return OK;
 		}
 
 		VALIDATION validate_step(MS_rotational& ms, Extended_polygon& robot, Extended_polygon& obstacle) {
+			TIMED_TRACE_ENTER("validate_step rotational");
 			// Find the original line that the step was taken from
 			C_space_line* line = _lines.get_manifold(ms.target().get_location());
 
 			// Make a copy of the original line
-			// Make a copy of the original layer (without FSC cache)
-			Line updatedLine();
+			C_space_line updatedLine = C_space_line(Fixed_point_constraint<K>(), _ak);
 			updatedLine.copy(*line, false);
 
 			// Add the dynamic obstacle to the layer copy
-			updatedLine.add_obstacle(robot, obstacle);
-			
+			updatedLine.add_obstacle(robot, obstacle.get_absolute_polygon());
+
 			// Check that the destination is reachable
-			int target_fsc_id = updatedLine.get_containing_cell(ms.target());
+			int target_fsc_id = updatedLine.get_fsc_id(ms.target());
 			if (target_fsc_id == NO_ID) {
+				TIMED_TRACE_EXIT("validate_step: DST_BLOCKED");
 				return DST_BLOCKED;
 			}
 
 			// Check that there is still a path between the source and the destination
-			int source_fsc_id = updatedLayer.get_containing_cell(ms.source());
+			int source_fsc_id = updatedLine.get_fsc_id(ms.source());
 			CGAL_precondition(source_fsc_id != NO_ID);
 			if (source_fsc_id != target_fsc_id) {
+				TIMED_TRACE_EXIT("validate_step: PATH_BLOCKED");
 				return PATH_BLOCKED;
 			}
 
 			// Find correct rotation orientation
-			Fsc& fsc = updatedLayer.get_fsc(target_fsc_id);
+			C_space_line::Fsc& fsc = updatedLine.get_fsc(target_fsc_id);
 			std::vector<typename K::FT> tau_path;
 			plan_path_in_interval<K>(FixedPoint::get_parametrization_theta<K>(ms.source().get_rotation()),
 				FixedPoint::get_parametrization_theta<K>(ms.target().get_rotation()),
@@ -399,11 +418,12 @@ namespace mms{
 			if (ms.orientation() != orientation) {
 				ms.reverse_orientation();
 			}
+			TIMED_TRACE_EXIT("validate_step: OK");
 			return OK;
 		}
 
 		void additional_preprocessing(Ref_p& source, Ref_p_vec& targets) {
-			TIMED_TRACE_ENTER("additional_reprocessing");
+			TIMED_TRACE_ENTER("additional_preprocessing");
 			int iter_limit = 1000;
 
 			for (int i=0; i<iter_limit; i++) {
@@ -413,7 +433,7 @@ namespace mms{
 				int source_cc_id = _graph.get_cc_id(source_fsc_indx);
 				Fsc_indx target_fsc_indx;
 				CGAL_postcondition(source_fsc_indx != Fsc_indx());
-				
+
 				//Check whether any target is connected to the source
 				BOOST_FOREACH(Ref_p target, targets) {
 					target_fsc_indx = get_containig_fsc(target);
@@ -424,7 +444,7 @@ namespace mms{
 						cout << " to target ";
 						target.print();
 						cout << endl;
-						TIMED_TRACE_EXIT("additional_reprocessing");
+						TIMED_TRACE_EXIT("additional_preprocessing");
 						return;
 					}
 				}
@@ -437,7 +457,7 @@ namespace mms{
 			TIMED_TRACE_EXIT("additional_preprocessing: graph is not connected");
 		}
 
-///////////////////////////////////////////////////////////////////////////////////////////////////
+		///////////////////////////////////////////////////////////////////////////////////////////////////
 
 	private: //layer methods
 
@@ -487,7 +507,7 @@ namespace mms{
 			update_connectivity_graph_vertices(*layer_ptr, layer_id);
 			return;
 		}
-		
+
 	private:
 
 		void generate_random_connectors() {
@@ -799,7 +819,7 @@ namespace mms{
 				cout << "target: ";
 				target.print();
 				cout << " layer id: " << layer_fsc.first << " layer fsc id: " << layer_fsc.second << endl;
-					//<< " line id: " << line_fsc.first << " line fsc id: " << line_fsc.second << endl;
+				//<< " line id: " << line_fsc.first << " line fsc id: " << line_fsc.second << endl;
 			}
 		}
 
@@ -812,6 +832,6 @@ namespace mms{
 
 	}; 
 
-	
+
 } //mms
 #endif //MY_PLANNER_H
