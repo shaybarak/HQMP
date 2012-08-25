@@ -25,7 +25,8 @@ bool MyPlayer::plan(double deadline) {
 		// Spend some time doing additional preprocessing
 		// TODO different handling for additional preprocessing when path not found and when no targets remain
 		// TODO consider renaming this method to enhance_connectivity
-		planner.additional_preprocessing(pending_motion_end, env->get_target_configurations());
+		// TODO fix that additional_preprocessing uses _rotations which is invalidated elsewhere
+		//planner.additional_preprocessing(pending_motion_end, env->get_target_configurations());
 		// Try again on the next call to plan
 		query_again = true;
 	}
@@ -51,9 +52,34 @@ bool MyPlayer::move(double deadline, Motion& motion_sequence) {
 			TIMED_TRACE_ACTION("move", "additional motion found");
 		}
 	}
+
+	bool step_was_cut = false;
+	while (!step_was_cut && (deadline - timer.time() > 0)) {
+		// Get the next step
+		step_was_cut = pending_motion.cut_step(deadline - timer.time(), motion_sequence);
+		MS_base* step = motion_sequence.back();
+		
+		// Validate it
+		Extended_polygon robot_a = env->get_robot_a();
+		robot_a.move_absolute(step->source());
+		Extended_polygon robot_b = env->get_robot_b();
+		robot_b.move_absolute(dynamic_obstacle);
+		VALIDATION vResult = planner.validate_step(*step, robot_a, robot_b);
+		switch (vResult) {
+		case OK:
+			// Step is valid
+			continue;
+		case PATH_BLOCKED:
+			// Path is blocked but destination is free
+		case DST_BLOCKED:
+			// Destination is blocked
+			// Reject the remaining motion
+			// TODO find the entire gap and find a path around it
+			pending_motion.add_motion_step_front(step);
+			motion_sequence.pop_back();
+		}
+	}
 	
-	// Extract longest possible motion out of pending motion (under deadline)
-	pending_motion.cut_motion(deadline - timer.time(), motion_sequence);
 	return true;
 }
 

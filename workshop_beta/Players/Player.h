@@ -3,9 +3,10 @@
 #include "Path_planning\Motion_sequence.h"
 #include "Planner\MyPlanner.h"
 
-typedef Environment<>                     Env;
-typedef mms::MyPlanner<>				  Planner;
-typedef Motion_sequence<Planner::K>		  Motion;
+typedef Environment<>                   Env;
+typedef mms::MyPlanner<>				Planner;
+typedef Motion_sequence<Planner::K>		Motion;
+typedef Motion::MS_base					Step;
 
 /**
  * Base class for all tournament player implementations.

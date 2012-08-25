@@ -9,6 +9,8 @@
  */
 class MyPlayer : protected Player {
 	typedef Planner::Reference_point	Reference_point;
+	typedef Planner::Extended_polygon	Extended_polygon;
+	typedef Planner::MS_base			MS_base;
 
 public:
 	MyPlayer(Env* env, Configuration* config);
