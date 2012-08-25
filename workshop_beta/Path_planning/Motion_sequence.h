@@ -131,6 +131,22 @@ public:
 		return motion_sequence;
 	}
 
+	MS_base_ptr front() {
+		return motion_sequence.front();
+	}
+
+	MS_base_ptr back() {
+		return motion_sequence.back();
+	}
+
+	void pop_front() {
+		motion_sequence.pop_front();
+	}
+
+	void pop_back() {
+		motion_sequence.pop_back();
+	}
+
 	void reverse_motion_sequence()
 	{
 		BOOST_FOREACH (MS_base_ptr motion_step, motion_sequence)
@@ -138,8 +154,6 @@ public:
 
 		std::reverse(motion_sequence.begin(), motion_sequence.end());
 	}
-
-
 
 	double motion_time_between(int first_index, int last_index) {
 		return motion_time_between(
