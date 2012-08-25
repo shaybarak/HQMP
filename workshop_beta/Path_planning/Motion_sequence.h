@@ -222,52 +222,74 @@ public:
 	// Given a movement time, returns the part of the motion sequence that can be performed within this time.
 	// Motion steps that were cut are returned to the caller and removed from the original sequence.
 	// This method may break down a single step into two steps to fit part of it into the new motion.
-	void cut(double remaining_time, // Time left in seconds
+	void cut_motion(double remaining_time, // Time left in seconds
 		const double translational_speed, // Unit per second
 		const double rotational_speed, // Full rotation per second
 		Motion_sequence& output) {
 			while ((remaining_time > 0) && !motion_sequence.empty()) {
-				MS_base_ptr next_step = motion_sequence.front();
-				double next_step_time = step_time(next_step, translational_speed, rotational_speed);
-
-				if (remaining_time > next_step_time) {
-					// Add the step to the cut
-					output.motion_sequence.push_back(next_step);
-					motion_sequence.pop_front();
-
-				} else {
-					// Cut the step according to the remaining time
-					Ref_point source = next_step->source();
-					Ref_point target = next_step->target();
-					double ratio = remaining_time / next_step_time;
-					Ref_point between_point = Ref_point::get_point_between(source, target, ratio);
-					MS_base_ptr cut_step, remaining_step;
-					if (next_step->type() == MS_base::TRANSLATION) {
-						cut_step = new MS_translational(source, between_point);
-						remaining_step = new MS_translational(between_point, target);
-					} else if (next_step->type() == MS_base::ROTATION) {
-						CGAL::Orientation orientation = static_cast<MS_rotational*>(next_step)->orientation();
-						cut_step = new MS_rotational(source, between_point, orientation);
-						remaining_step = new MS_rotational(between_point, target, orientation);
-					}
-					// Add the part of the step that can be made in the remaining time
-					output.motion_sequence.push_back(cut_step);
-					// Return the rest of the step to the remaining motion sequence
-					motion_sequence.pop_front();
-					motion_sequence.push_front(remaining_step);
+				if (!cut_step(remaining_time, translational_speed, rotational_speed, output)) {
+					break;
 				}
+			}
+	}
+
+	void cut_motion(double remaining_time, Motion_sequence& output) {
+		cut_motion(remaining_time, configuration.get_translational_speed(), configuration.get_rotational_speed(), output);
+	}
+
+	// Given a movement time, appends the part of the next step in the motion sequence
+	// that can be performed within this time into the output motion sequence.
+	// Prefers not to cut the step if possible, but if there's no choice then
+	// the remainder of the step is returned to the front of the original motion sequence.
+	// Returns true iff a complete step was returned (false if a step was cut).
+	bool cut_step(double& remaining_time,	// Time left in seconds, updated to account for step time
+		const double translational_speed,	// Unit per second
+		const double rotational_speed,		// Full rotation per second
+		Motion_sequence& output) {			// Output the step here
+			MS_base_ptr next_step = motion_sequence.front();
+			double next_step_time = step_time(next_step, translational_speed, rotational_speed);
+
+			if (remaining_time > next_step_time) {
+				// Add the step to the cut
+				output.motion_sequence.push_back(next_step);
+				motion_sequence.pop_front();
 
 				remaining_time -= next_step_time;
+				return true;
+
+			} else {
+				// Cut the step according to the remaining time
+				Ref_point source = next_step->source();
+				Ref_point target = next_step->target();
+				double ratio = remaining_time / next_step_time;
+				Ref_point between_point = Ref_point::get_point_between(source, target, ratio);
+				MS_base_ptr cut_step, remaining_step;
+				if (next_step->type() == MS_base::TRANSLATION) {
+					cut_step = new MS_translational(source, between_point);
+					remaining_step = new MS_translational(between_point, target);
+				} else if (next_step->type() == MS_base::ROTATION) {
+					CGAL::Orientation orientation = static_cast<MS_rotational*>(next_step)->orientation();
+					cut_step = new MS_rotational(source, between_point, orientation);
+					remaining_step = new MS_rotational(between_point, target, orientation);
+				}
+				// Add the part of the step that can be made in the remaining time
+				output.motion_sequence.push_back(cut_step);
+				// Return the rest of the step to the remaining motion sequence
+				motion_sequence.pop_front();
+				motion_sequence.push_front(remaining_step);
+
+				remaining_time = 0;
+				return false;
 			}
+	}
+
+	void cut_step(double remaining_time, Motion_sequence& output) {
+		cut_step(remaining_time, configuration.get_translational_speed(), configuration.get_rotational_speed(), output);
 	}
 
 	// Whether this motion sequence is empty
 	bool empty() {
 		return motion_sequence.empty();
-	}
-
-	void cut(double remaining_time, Motion_sequence& output) {
-		cut(remaining_time, configuration.get_translational_speed(), configuration.get_rotational_speed(), output);
 	}
 
 private:

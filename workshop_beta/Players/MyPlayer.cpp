@@ -45,7 +45,7 @@ bool MyPlayer::move(double deadline, Motion& motion_sequence) {
 	}
 	
 	// Extract longest possible motion out of pending motion (under deadline)
-	pending_motion.cut(deadline - timer.time(), motion_sequence);
+	pending_motion.cut_motion(deadline - timer.time(), motion_sequence);
 	return true;
 }
 

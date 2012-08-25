@@ -65,7 +65,7 @@ bool NaivePlayer::move(double deadline, Motion& motion_sequence) {
 
 		if (!remaining_motion.empty()) {
 			// Continue a previous motion
-			remaining_motion.cut(deadline - timer.time(), configuration.get_translational_speed(), configuration.get_rotational_speed(), motion_sequence);
+			remaining_motion.cut_motion(deadline - timer.time(), configuration.get_translational_speed(), configuration.get_rotational_speed(), motion_sequence);
 			std::cout << "Cut to " << motion_sequence.get_sequence().size() << " and " << remaining_motion.get_sequence().size() << endl;
 			if (!motion_sequence.empty()){
 				q_s = motion_sequence.get_sequence().back()->target();
@@ -84,7 +84,7 @@ bool NaivePlayer::move(double deadline, Motion& motion_sequence) {
 
 		if (!remaining_motion.empty()) {
 			// Cut it according to the deadline
-			remaining_motion.cut(deadline - timer.time(), configuration.get_translational_speed(), configuration.get_rotational_speed(), motion_sequence);
+			remaining_motion.cut_motion(deadline - timer.time(), configuration.get_translational_speed(), configuration.get_rotational_speed(), motion_sequence);
 			std::cout << "Cut to " << motion_sequence.get_sequence().size() << " and " << remaining_motion.get_sequence().size() << endl;
 			if (!motion_sequence.empty()){
 				q_s = motion_sequence.get_sequence().back()->target();
