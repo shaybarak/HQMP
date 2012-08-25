@@ -283,8 +283,8 @@ public:
 			}
 	}
 
-	void cut_step(double remaining_time, Motion_sequence& output) {
-		cut_step(remaining_time, configuration.get_translational_speed(), configuration.get_rotational_speed(), output);
+	bool cut_step(double remaining_time, Motion_sequence& output) {
+		return cut_step(remaining_time, configuration.get_translational_speed(), configuration.get_rotational_speed(), output);
 	}
 
 	// Whether this motion sequence is empty
