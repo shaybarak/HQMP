@@ -45,7 +45,7 @@ bool MyPlayer::move(double deadline, Motion& motion_sequence) {
 		TIMED_TRACE_ACTION("move", "no pending movement");
 		if (!plan(deadline)) {
 			// Could not generate additional motion at this time, skip this turn
-			TIMED_TRACE_ACTION("move", "nothing to do");
+			TIMED_TRACE_ACTION("move", "could not find additional motion");
 			return false;
 		} else {
 			TIMED_TRACE_ACTION("move", "additional motion found");
