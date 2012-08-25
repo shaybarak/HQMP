@@ -392,8 +392,7 @@ namespace mms{
 			// Find the original line that the step was taken from
 			C_space_line* line = _lines.get_manifold(ms.target().get_location());
 
-			// Make a copy of the original line
-			// Make a copy of the original layer (without FSC cache)
+			// Make a copy of the original line (without FSC cache)
 			Line updatedLine();
 			updatedLine.copy(*line, false);
 
