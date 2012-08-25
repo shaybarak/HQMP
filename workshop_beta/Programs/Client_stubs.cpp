@@ -81,7 +81,7 @@ bool move(double remaining_time)
 		TIMED_TRACE_ACTION("move", "request granted");
 		//request granted
 		ofstream out(path_filename.c_str());
-		motion_sequence.write(out);    
+		motion_sequence.write(out);
 	}
 	else
 	{
