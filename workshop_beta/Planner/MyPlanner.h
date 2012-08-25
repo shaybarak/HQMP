@@ -120,32 +120,6 @@ namespace mms{
 			return;
 		}
 
-		bool ensure_targets_connected(Ref_p& source, Ref_p_vec& target_configurations) {
-			TIMED_TRACE_ENTER("ensure_targets_connected");
-			Reference_point perturbed_source = connect_to_graph(source, source_motion_sequence);
-			if (perturbed_source == Reference_point()) {
-				TIMED_TRACE_EXIT("ensure_all_targets_connected: failed to connect source to pre-processed configuration space");
-				return false;
-			}
-
-			BOOST_FOREACH(Ref_p target, target_configurations) {
-				Reference_point perturbed_target = connect_to_graph(target, target_motion_sequence);
-
-				Fsc_indx source_fsc_indx (get_containig_fsc(perturbed_source));
-				CGAL_postcondition (source_fsc_indx != Fsc_indx());
-				Fsc_indx target_fsc_indx (get_containig_fsc(perturbed_target));
-				CGAL_postcondition (target_fsc_indx != Fsc_indx());
-
-				std::list<Fsc_indx> fsc_indx_path;
-				if (_graph.is_in_same_cc(source_fsc_indx, target_fsc_indx)) {
-					return true;
-
-				}
-			}
-			TIMED_TRACE_EXIT("ensure_targets_connected");
-			return false;
-		}
-
 
 		//query
 		bool query( const Reference_point& source, const Reference_point& target,
@@ -392,7 +366,8 @@ namespace mms{
 			// Find the original line that the step was taken from
 			C_space_line* line = _lines.get_manifold(ms.target().get_location());
 
-			// Make a copy of the original line (without FSC cache)
+			// Make a copy of the original line
+			// Make a copy of the original layer (without FSC cache)
 			Line updatedLine();
 			updatedLine.copy(*line, false);
 
