@@ -28,15 +28,13 @@ void sleep(double remaining_time) {
 	}
 }
 
-void plan(double remaining_time)
-{
+void plan(double remaining_time) {
 	CGAL::Timer timer;
 	timer.start();
 
-
 	if (finished_game)  //update this flag when you finished all queries
 		return;
-	
+
 	while((timer.time() < remaining_time) && !finished_game) {
 		if (!(player->plan(remaining_time - timer.time()))) {
 			TIMED_TRACE_ACTION("plan", "cannot plan anymore this turn");
@@ -49,8 +47,7 @@ void plan(double remaining_time)
 
 // Returns whether this method should be called again this turn
 // (if remaining time permits)
-bool move(double remaining_time)
-{
+bool move(double remaining_time) {
 	if (finished_game) {
 		return false;
 	}
@@ -83,8 +80,7 @@ bool move(double remaining_time)
 	return can_move_again;
 }
 
-void static_planner(double remaining_time)
-{
+void static_planner(double remaining_time) {
 	CGAL::Timer timer;
 	timer.start();
 	plan(remaining_time);
@@ -92,8 +88,7 @@ void static_planner(double remaining_time)
 	return;
 }
 
-void moveable_planner(double remaining_time)
-{
+void moveable_planner(double remaining_time) {
 	CGAL::Timer timer;
 	timer.start();
 	TIMED_TRACE_ENTER("moveable_planner");
@@ -109,8 +104,7 @@ void moveable_planner(double remaining_time)
 	return;
 }
 
-void client_stubs_main(int argc, char* argv[])
-{
+void client_stubs_main(int argc, char* argv[]) {
 	////////////////////////////////////////////////////////////
 	Env env(argc,argv);
 	Input_reader input_reader;
@@ -129,8 +123,7 @@ void client_stubs_main(int argc, char* argv[])
 		Scene_status scene_status = get_scene_status(*socket_client_ptr); 
 		player->set_dynamic_obstacle_config(
 			input_reader.read_reference_point<Rational_kernel>(scene_status.quasi_dynamic_obs_location_filename));
-		if (scene_status.updated_target_configurations && (read_additional_configurations))
-		{
+		if (scene_status.updated_target_configurations && (read_additional_configurations)) {
 			input_reader.read_reference_points<Rational_kernel>(
 				scene_status.updated_target_configurations_filename,
 				std::back_inserter(env.get_target_configurations()));
