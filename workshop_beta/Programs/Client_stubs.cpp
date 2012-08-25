@@ -61,7 +61,7 @@ bool move(double remaining_time) {
 
 	double motion_length(motion_sequence.motion_time());
 	if (motion_length == 0) {
-		TIMED_TRACE_ACTION("move", "generated zero length motion (BUG?)");
+		TIMED_TRACE_ACTION("move", "generated zero length motion");
 		return false;
 	}
 	std::string path_filename;
