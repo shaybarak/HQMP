@@ -10,8 +10,8 @@
 class MyPlayer : protected Player {
 public:
 	MyPlayer(Env* env, Configuration* config);
-	virtual void plan(double deadline);
-	virtual void move(double deadline, Motion& motion_sequence);
+	virtual bool plan(double deadline);
+	virtual bool move(double deadline, Motion& motion_sequence);
 	virtual bool is_game_over();
 	virtual void additional_targets_preprocessing(Ref_p_vec& additional_targets);
 
