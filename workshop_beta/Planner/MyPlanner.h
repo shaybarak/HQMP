@@ -12,6 +12,7 @@
 #include "Graph\Graph.h"
 #include "Fsc_path_planning.h"
 #include "Path_planning\ShortestPathInPolygon.h"
+#include <CGAL/Boolean_set_operations_2.h>
 
 typedef Environment<> Env;
 typedef Env::Reference_point              Ref_p;
@@ -54,7 +55,9 @@ namespace mms{
 		typedef Motion_sequence<K>                      Motion_sequence;
 
 		typedef Fsc_indx<K>                             Fsc_indx;
+		typedef std::vector<typename Fsc_indx>			Fsc_indx_vec;
 		typedef FSC<K, AK, AK_conversions>              Fsc;
+		
 
 		typedef Fixed_angle_manifold_container<K>       Layers;
 		typedef typename Layers::Manifold               Layer;
@@ -115,8 +118,7 @@ namespace mms{
 				add_layer(rotation);
 			}
 			generate_target_connectors(ref_points);
-			PRINT_CONNECTORS();
-			PRINT_CONNECTIVITY_GRAPH(ref_points);
+			PRINT_CONNECTIVITY_GRAPH();
 
 			TIMED_TRACE_EXIT("preprocess_targets");
 			return;
@@ -422,42 +424,88 @@ namespace mms{
 			return OK;
 		}
 
-		void additional_preprocessing(Ref_p& source, Ref_p_vec& targets) {
-			TIMED_TRACE_ENTER("additional_preprocessing");
-			int iter_limit = 1000;
-
-			for (int i=0; i<iter_limit; i++) {
-				cout << "Iteration #" << i << endl;
-
-				Fsc_indx source_fsc_indx(get_containig_fsc(source));
-				int source_cc_id = _graph.get_cc_id(source_fsc_indx);
-				Fsc_indx target_fsc_indx;
-				CGAL_postcondition(source_fsc_indx != Fsc_indx());
-
-				//Check whether any target is connected to the source
-				BOOST_FOREACH(Ref_p target, targets) {
-					target_fsc_indx = get_containig_fsc(target);
-					int target_cc_id = _graph.get_cc_id(target_fsc_indx);
-					if (source_cc_id == target_cc_id) {
-						cout << "Connected source: " ;
-						source.print();
-						cout << " to target ";
-						target.print();
-						cout << endl;
-						TIMED_TRACE_EXIT("additional_preprocessing");
-						return;
+		bool create_connecting_points(Ref_p_vec& connecting_points) {
+			PRINT_CONNECTIVITY_GRAPH();
+			std::vector<Fsc_indx_vec> ccs_vec = _graph.get_connected_components();
+			Fsc_indx_vec fsc_indx_vec, fsc_indx_vec1, fsc_indx_vec2;
+			Layer *layer_ptr1, *layer_ptr2;
+			Point p;
+			int fa_fsc_index = 1;
+			int fa_fsc_count = 0;
+  
+			for (std::vector<Fsc_indx_vec>::iterator cc_iter = ccs_vec.begin() ; cc_iter != ccs_vec.end(); cc_iter++) {
+				fsc_indx_vec = *cc_iter;
+				for (Fsc_indx_vec::iterator fsc_iter = fsc_indx_vec.begin(); fsc_iter != fsc_indx_vec.end(); fsc_iter++) {
+					if (fsc_iter->_type == FIXED_ANGLE) {
+						fa_fsc_count++;
 					}
 				}
-
-				//add batch of connectors. TODO: refine!!!
-				generate_random_connectors();
-				PRINT_CONNECTORS();
-				//PRINT_CONNECTIVITY_GRAPH(targets);
 			}
+
+			//go over all connectivity components
+			for (std::vector<Fsc_indx_vec>::iterator cc_iter1 = ccs_vec.begin() ; cc_iter1 != ccs_vec.end(); cc_iter1++) {
+				//iterate over all fsc within connectivity component
+				fsc_indx_vec1 = *cc_iter1;
+				for (Fsc_indx_vec::iterator fsc_iter1 = fsc_indx_vec1.begin(); fsc_iter1 != fsc_indx_vec1.end(); fsc_iter1++) {
+					if (fsc_iter1->_type == FIXED_POINT) {
+						continue;
+					}
+					int ccp_count = 0;
+					cout << "fsc " << fa_fsc_index << " of " << fa_fsc_count << " ";
+					print_fixed_angle_fsc(*fsc_iter1);		
+					fa_fsc_index++;
+					layer_ptr1 = _layers.get_manifold(fsc_iter1->_manifold_id);
+					Polygon_with_holes& pgn1 = layer_ptr1->get_fsc(fsc_iter1->_fsc_id).cell().polygon();
+					
+					for (std::vector<Fsc_indx_vec>::iterator cc_iter2 = cc_iter1+1 ; cc_iter2 != ccs_vec.end(); cc_iter2++) {
+						fsc_indx_vec2 = *cc_iter2;
+						for (Fsc_indx_vec::iterator fsc_iter2 = fsc_indx_vec2.begin(); fsc_iter2 != fsc_indx_vec2.end(); fsc_iter2++) {
+							if (fsc_iter2->_type == FIXED_POINT) {
+								continue;
+							}	
+
+							//don't try to connect components from same fixed_angle_manifold
+							if (fsc_iter1->_manifold_id == fsc_iter2->_manifold_id) {
+								continue;
+							}
+							
+							layer_ptr2 = _layers.get_manifold(fsc_iter2->_manifold_id);
+							Polygon_with_holes& pgn2 = layer_ptr2->get_fsc(fsc_iter2->_fsc_id).cell().polygon();
+
+							//now try to create ref_point
+							if (!CGAL::do_intersect(pgn1, pgn2)) {
+								continue;
+							}
+							bool generated = _rand.generate_random_point_in_polygons(p, pgn1, pgn2, 1000);
+							if (!generated) {
+								cout << "Failed generating point, skipping connection" << endl;
+								continue;
+							}
+							Ref_p generated_point(p, layer_ptr1->constraint().restriction());
+							connecting_points.push_back(generated_point);
+							ccp_count++;
+						}
+					}
+					if (ccp_count != 0) {
+						cout << " created " << ccp_count << " points";
+					}
+					cout << endl;
+				}
+			}
+			return false;
+		}
+
+		void additional_preprocessing(Ref_p& source, Ref_p_vec& targets) {
+			TIMED_TRACE_ENTER("additional_reprocessing");
+
+			Ref_p_vec connecting_points;
+			create_connecting_points(connecting_points);
+			generate_target_connectors(connecting_points);
+			cout << "GENERATING " << connecting_points.size() << "CONNECTORS" << endl;
 			TIMED_TRACE_EXIT("additional_preprocessing: graph is not connected");
 		}
 
-		///////////////////////////////////////////////////////////////////////////////////////////////////
+	///////////////////////////////////////////////////////////////////////////////////////////////////
 
 	private: //layer methods
 
@@ -810,17 +858,17 @@ namespace mms{
 			cout << endl;
 		}
 
-		void print_connectivity_graph(Ref_p_vec& targets) {
-			_graph.print();
+		void print_connectivity_graph() {
+			//_graph.print();
 			_graph.print_connected_components();
-			BOOST_FOREACH(Ref_p target, targets) {
-				pair<int, int> layer_fsc = _layers.get_containig_fsc(target);
-				//pair<int, int> line_fsc = _lines.get_containig_fsc(target);
-				cout << "target: ";
-				target.print();
-				cout << " layer id: " << layer_fsc.first << " layer fsc id: " << layer_fsc.second << endl;
-				//<< " line id: " << line_fsc.first << " line fsc id: " << line_fsc.second << endl;
-			}
+		}
+
+		void print_fixed_angle_fsc(Fsc_indx& fsc_indx) {
+			Layer* layer_ptr = _layers.get_manifold(fsc_indx._manifold_id);
+			Polygon_with_holes& pgn = layer_ptr->get_fsc(fsc_indx._fsc_id).cell().polygon();
+			cout << "manifold id: " << fsc_indx._manifold_id << " fsc id: " << fsc_indx._fsc_id
+				<< " angle = " << layer_ptr->constraint().restriction().to_angle();
+			//print_my_polygon_with_holes(pgn, 10);
 		}
 
 		void print_workspace() {
@@ -830,6 +878,29 @@ namespace mms{
 			print_polygon_vector(_decomposed_workspace);
 		}
 
+		void print_my_polygon(Polygon polygon, int vertex_limit) {
+			cout <<"Polygon vertices: " << polygon.size() << endl;
+			int vertex_index = 0;
+			for (Polygon::Vertex_const_iterator vi = polygon.vertices_begin(); vi!= polygon.vertices_end (); ++vi) {
+				if (vertex_index = vertex_limit) {
+					cout << (polygon.size() - vertex_limit) << " more..." << endl;
+					break;
+				}
+				std::cout << "(" << CGAL::to_double(vi->x()) << "  ,  " << CGAL::to_double(vi->y()) << ")" << std::endl; 
+				vertex_index++;
+			}
+		}
+
+		void print_my_polygon_with_holes(Polygon_with_holes polygon, int vertex_limit) {
+			cout << "********************" << endl;
+			cout <<"Polygon outer boundary: " << endl;
+			print_my_polygon(polygon.outer_boundary(), vertex_limit);
+			cout <<"Polygon holes: " << endl;
+			for (Polygon_with_holes::Hole_const_iterator hi = polygon.holes_begin(); hi!= polygon.holes_end(); ++hi) {
+				print_my_polygon((*hi), vertex_limit);
+			}
+			cout << "********************" << endl;
+		}
 	}; 
 
 
