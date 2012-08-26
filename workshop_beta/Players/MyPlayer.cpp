@@ -107,11 +107,14 @@ bool MyPlayer::initialize() {
 	planner.preprocess();
 
 	// TODO: remove, only here for debugging
-	additional_samples.clear();
-	additional_samples = env->get_additional_sample_points();
-	if (!additional_samples.empty()) {
-		planner.preprocess_targets(env->get_additional_sample_points());
-	}
+	planner.additional_preprocessing(env->get_source_configuration_a(), env->get_target_configurations());
+
+	// TODO: remove, only here for debugging
+	//additional_samples.clear();
+	//additional_samples = env->get_additional_sample_points();
+	//if (!additional_samples.empty()) {
+	//	planner.preprocess_targets(env->get_additional_sample_points());
+	//}
 
 	planner_initialized = true;
 	return true;
