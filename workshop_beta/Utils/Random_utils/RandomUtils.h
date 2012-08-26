@@ -98,6 +98,28 @@ public: //random point in a two-dimensional area
     }while (is_in_polygon<K>(p,pgn,true) == false);
     return p;
   }
+
+  bool generate_random_point_in_polygons(Point& p, const Polygon_with_holes& pgn1, const Polygon_with_holes& pgn2, int guess_limit = 100) {
+	  CGAL::Bbox_2  bbox1(pgn1.outer_boundary().bbox());
+	  CGAL::Bbox_2  bbox2(pgn2.outer_boundary().bbox());
+	  CGAL::Bbox_2 bbox_intersect(
+		  (std::max)(bbox1.xmin(), bbox2.xmin()),
+		  (std::max)(bbox1.ymin(), bbox2.ymin()),
+		  (std::min)(bbox2.xmax(), bbox2.xmax()),
+		  (std::min)(bbox2.ymax(), bbox2.ymax()));
+
+	  int i = 0;
+
+	  do {
+		  if (i == guess_limit) {
+			  return false;
+		  }
+		  p = get_random_point(bbox_intersect.xmin (), bbox_intersect.xmax (),
+			  bbox_intersect.ymin (), bbox_intersect.ymax ());
+	  } while ((is_in_polygon<K>(p,pgn1,true) && is_in_polygon<K>(p,pgn2,true)) == false);
+	  return true;
+  }
+
   Point get_random_point_in_polygon_set (const Polygon_set& pgn_set)
   {
     //TODO implement better    
