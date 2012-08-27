@@ -424,15 +424,10 @@ namespace mms{
 			return OK;
 		}
 
-		bool create_connecting_points(Ref_p_vec& connecting_points) {
-			PRINT_CONNECTIVITY_GRAPH();
-			std::vector<Fsc_indx_vec> ccs_vec = _graph.get_connected_components();
-			Fsc_indx_vec fsc_indx_vec, fsc_indx_vec1, fsc_indx_vec2;
-			Layer *layer_ptr1, *layer_ptr2;
-			Point p;
-			int fa_fsc_index = 1;
+		int get_fixed_angle_fsc_count() {
+			Fsc_indx_vec fsc_indx_vec;
 			int fa_fsc_count = 0;
-  
+			std::vector<Fsc_indx_vec> ccs_vec = _graph.get_connected_components();
 			for (std::vector<Fsc_indx_vec>::iterator cc_iter = ccs_vec.begin() ; cc_iter != ccs_vec.end(); cc_iter++) {
 				fsc_indx_vec = *cc_iter;
 				for (Fsc_indx_vec::iterator fsc_iter = fsc_indx_vec.begin(); fsc_iter != fsc_indx_vec.end(); fsc_iter++) {
@@ -441,6 +436,18 @@ namespace mms{
 					}
 				}
 			}
+			return fa_fsc_count;
+		}
+
+		bool create_connecting_points(Ref_p_vec& connecting_points) {
+			TIMED_TRACE_ENTER("create_connecting_points");
+			PRINT_CONNECTIVITY_GRAPH();
+			std::vector<Fsc_indx_vec> ccs_vec = _graph.get_connected_components();
+			Fsc_indx_vec fsc_indx_vec1, fsc_indx_vec2;
+			Layer *layer_ptr1, *layer_ptr2;
+			Point p;
+			int fa_fsc_count = get_fixed_angle_fsc_count();
+			int fa_fsc_index = 1;
 
 			//go over all connectivity components
 			for (std::vector<Fsc_indx_vec>::iterator cc_iter1 = ccs_vec.begin() ; cc_iter1 != ccs_vec.end(); cc_iter1++) {
@@ -451,7 +458,7 @@ namespace mms{
 						continue;
 					}
 					int ccp_count = 0;
-					cout << "fsc " << fa_fsc_index << " of " << fa_fsc_count << " ";
+					cout << "FA fsc " << fa_fsc_index << " of " << fa_fsc_count << " ";
 					print_fixed_angle_fsc(*fsc_iter1);		
 					fa_fsc_index++;
 					layer_ptr1 = _layers.get_manifold(fsc_iter1->_manifold_id);
@@ -492,6 +499,7 @@ namespace mms{
 					cout << endl;
 				}
 			}
+			TIMED_TRACE_ENTER("create_connecting_points");
 			return false;
 		}
 
@@ -859,7 +867,8 @@ namespace mms{
 		}
 
 		void print_connectivity_graph() {
-			//_graph.print();
+			cout << "nodes in graph: " << _graph.get_vertex_count() 
+				<< ", edges in graph: " << _graph.get_edge_count() << endl;
 			_graph.print_connected_components();
 		}
 
