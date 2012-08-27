@@ -105,15 +105,12 @@ bool MyPlayer::initialize() {
 	planner.preprocess_targets(additional_samples);
 
 	planner.preprocess();
-
-	planner.additional_preprocessing(env->get_source_configuration_a(), env->get_target_configurations());
-
-	// TODO: remove, only here for debugging
-	//additional_samples.clear();
-	//additional_samples = env->get_additional_sample_points();
-	//if (!additional_samples.empty()) {
-	//	planner.preprocess_targets(env->get_additional_sample_points());
-	//}
+	if(planner.exist_reachable_target(env->get_source_configuration_a(), env->get_target_configurations())) {
+		//TODO: remove
+		cout << "EXIST REACHABLE TARGET!!" << endl;
+	} else {
+		planner.additional_preprocessing(env->get_source_configuration_a(), env->get_target_configurations());
+	}
 
 	planner_initialized = true;
 	return true;

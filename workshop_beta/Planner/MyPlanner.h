@@ -124,6 +124,25 @@ namespace mms{
 			return;
 		}
 
+		bool exist_reachable_target(Ref_p& source, Ref_p_vec& targets) {
+			TIMED_TRACE_ENTER("exist_reachable_target");
+			Fsc_indx source_fsc_indx (get_containig_fsc(source));
+			Fsc_indx target_fsc_indx;
+				//TODO: change to my assertion
+			CGAL_postcondition (source_fsc_indx != Fsc_indx());
+			
+			BOOST_FOREACH(Ref_p target, targets) {
+				target_fsc_indx = get_containig_fsc(target);
+				//TODO: change to my assertion
+				CGAL_postcondition(target_fsc_indx != Fsc_indx());
+				if (_graph.is_in_same_cc(source_fsc_indx, target_fsc_indx)) {
+					TIMED_TRACE_EXIT("exist_reachable_target");
+					return true;
+				}
+			}
+			TIMED_TRACE_EXIT("exist_reachable_target");
+			return false;
+		}
 
 		//query
 		bool query( const Reference_point& source, const Reference_point& target,
