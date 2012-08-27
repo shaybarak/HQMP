@@ -198,6 +198,15 @@ public:
     _connected_components.print_connected_components();
     return;
   }
+
+	int get_vertex_count() {
+		return _graph->m_vertices.size();
+	}
+
+	int get_edge_count() {
+		return _graph->m_edges.size();
+	}
+
   //debug
   void print() const 
   {
