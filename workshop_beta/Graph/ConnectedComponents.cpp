@@ -93,7 +93,8 @@ bool Connected_components::is_in_same_connected_component(int elem_id1,int elem_
 /////////////////////
 void Connected_components::print_connected_components()
 {
-  std::cout   <<"There are "<< id_cc_map.size() <<" connected components"<<std::endl;
+  std::cout <<"There are "<< id_cc_map.size() <<" connected components and "
+			<< elem_cc_map.size() << " elements" << std::endl;
   std::cout   <<"cc id"<<"|"<<"cc elemnts"<<std::endl;
   std::cout   <<"-----"<<"|"<<"--------------------"<<std::endl;
   for (Int_cc_map::iterator iter = id_cc_map.begin(); iter != id_cc_map.end(); ++iter)
