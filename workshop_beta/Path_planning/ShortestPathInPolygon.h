@@ -31,6 +31,8 @@ private:
   typedef typename Point_vec::iterator      Point_vec_iter;
   typedef std::list<typename K::Point_2>    Point_list;
   typedef typename K::Segment_2       Segment_2;
+  typedef typename Polygon::Vertex_circulator      V_circulator;
+
 private:
   bool                  _initialized;
   Polygon_with_holes    _polygon;
@@ -55,7 +57,7 @@ public:
   //get shortest path in polygon with holes
   void shortest_path(const Point & source,const Point & target, Point_list& path, const Polygon_with_holes& polygon)
   {
-	
+
 	 //If there is a straight-line solution, return with it immediately.
 	Segment_2 seg(source, target);
 	bool is_seg_in_polygon = is_in_polygon(seg, polygon,false);
@@ -115,7 +117,7 @@ public:
   //get shortest path
   void shortest_path(const Point & source,const Point & target, Point_list& path, const Polygon& polygon)
   {
-	
+
 	//If there is a straight-line solution, return with it immediately.
 	bool is_convex = polygon.is_convex();
 	if (is_convex){
@@ -131,6 +133,9 @@ public:
 			return;
 		} 
 	}
+	//There is no straight line solution
+	follow_polygon_edges(source,target,polygon,path);
+	return;
 
 	TIMED_TRACE_ENTER("shortest_path (Path_planning folder)");
     if (!_initialized)
@@ -253,6 +258,60 @@ private:
     }
 	TIMED_TRACE_EXIT("init_graph");
   }
+
+void follow_polygon_edges(const Point &source,const Point & target,  const Polygon& polygon,Point_list& point_path){
+        
+	Point_list path1 ;
+	Point_list path2 ;
+	double path1_weight  = 0 , path2_weight  = 0 ;
+ 
+	K::FT sq_dist ;
+	K::FT approx_d;
+
+	V_circulator v1; 
+	V_circulator v2;  
+		
+	get_closest_reachable_vertex(source,polygon, v1);
+	get_closest_reachable_vertex(target,polygon,v2) ;  
+		
+	path1.push_front(source);
+	path2.push_front(target);
+	
+	V_circulator cur = v1;
+		
+	//go from v1 to v2 cw
+	while(cur != v2){
+		path1.push_back(*cur) ;
+		sq_dist = CGAL::squared_distance(*cur,*(cur+1));
+		approx_d = _sqrt_approximation(sq_dist) ;
+		path1_weight += CGAL::to_double(approx_d) ;
+		cur++;
+	}
+	//go from v1 to v2 ccw
+	while(cur != v1){
+		path2.push_front(*cur) ;
+		sq_dist = CGAL::squared_distance(*cur,*(cur+1));
+		approx_d = _sqrt_approximation(sq_dist) ;
+		path2_weight += CGAL::to_double(approx_d) ;
+		cur++;
+	}
+ 
+	path1.push_back(*v2);
+	path1.push_back(target);
+         
+	path2.push_front(*v1);
+	path2.push_front(source);
+		
+	//decide on path direction: cw or ccw
+	if (path1_weight < path2_weight){
+		point_path = path1 ;
+	}else {
+		point_path = path2 ;
+	}
+ 
+ }
+
+
 }; //Shortest_path_in_polygon
 
 #endif // SHORTEST_PATH_IN_POLYGON_H

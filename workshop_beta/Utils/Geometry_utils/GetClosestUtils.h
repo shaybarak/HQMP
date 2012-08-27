@@ -85,6 +85,31 @@ typename K::Point_2 get_closest_vertex(const typename K::Point_2& source,
   return closest;
 }
 
+//get the closest vertex that can be reached by a straight line
+template <typename K>
+void get_closest_reachable_vertex(const typename K::Point_2& source,
+                                       const CGAL::Polygon_2<K>& polygon,typename CGAL::Polygon_2<K>::Vertex_circulator& iter_to_closest)
+{
+  CGAL::Polygon_2<K>::Vertex_circulator start = polygon.vertices_circulator();
+  CGAL::Polygon_2<K>::Vertex_circulator vi = start;
+  K::FT      distance_sq (CGAL::squared_distance(source,*vi));
+
+  vi++;
+  for ( ; vi!=start ; ++vi)
+  {
+    K::FT tmp_distance_sq (CGAL::squared_distance(source,*vi));
+    if (tmp_distance_sq < distance_sq)
+    {
+		typename K::Segment_2 tmp_seg(source, *vi) ;
+		if ( is_in_polygon(tmp_seg, polygon,true)) {
+			distance_sq = tmp_distance_sq;
+			iter_to_closest = vi;
+		}
+    }
+  } 
+}
+
+
 template <typename K>
 typename K::Point_2 get_closest_point(const typename K::Point_2& p,
                                       const CGAL::Polygon_2<K>& polygon,
