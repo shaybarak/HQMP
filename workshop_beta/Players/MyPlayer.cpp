@@ -106,7 +106,6 @@ bool MyPlayer::initialize() {
 
 	planner.preprocess();
 
-	// TODO: remove, only here for debugging
 	planner.additional_preprocessing(env->get_source_configuration_a(), env->get_target_configurations());
 
 	// TODO: remove, only here for debugging
