@@ -11,6 +11,7 @@ class MyPlayer : protected Player {
 	typedef Planner::Reference_point	Reference_point;
 	typedef Planner::Extended_polygon	Extended_polygon;
 	typedef Planner::MS_base			MS_base;
+	typedef Env::Reference_point_vec	Reference_point_vec;
 
 public:
 	MyPlayer(Env* env, Configuration* config);
@@ -23,11 +24,16 @@ protected:
 	Planner planner;
 
 private:
-	Motion pending_motion;
-	Reference_point pending_motion_end;
-	// Caches whether the plan method should perform another planner query the next time it is called
+	// Buffer of motion planned ahead (to execute later)
+	std::deque<Motion> motion_buffer;
+	// End of buffered motion
+	Reference_point buffer_end;
+	// Targets in buffer
+	std::deque<Reference_point> buffered_targets;
+	// Caches whether the last query attempt succeeded
 	bool last_query_succeeded;
+
 	bool planner_initialized;
 	bool initialize();
-	bool buffer_motion_ahead(const Reference_point& source);
+	bool move_to_closest_target(Reference_point& source, Reference_point_vec& targets, Motion& motion);
 };

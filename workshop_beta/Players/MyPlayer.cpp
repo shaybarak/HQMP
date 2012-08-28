@@ -3,28 +3,31 @@
 
 MyPlayer::MyPlayer(Env* env, Configuration* config) :
 	Player(env, config),
-	planner(env->get_workspace(),
-			env->get_robot_a()),
-	pending_motion_end(env->get_source_configuration_a()),
+	// Initialize planner
+	planner(env->get_workspace(), env->get_robot_a()),
+	// End of buffer is the source configuration
+	buffer_end(env->get_source_configuration_a()),
+	// Remember to initialize the planner
 	planner_initialized(false),
 	last_query_succeeded(true) {
 }
 
-// Spend as much time preprocessing and planning
+// Perform preprocessing and buffering of future motion
 bool MyPlayer::plan(double deadline) {
 	TIMED_TRACE_ENTER("plan");
 	initialize();
 
 	// If last attempt to plan a path succeeded and there are remaining targets
 	if (last_query_succeeded && !env->get_target_configurations().empty()) {
-		// Plan another motion step
-		last_query_succeeded = buffer_motion_ahead(pending_motion_end);
-		// TODO if querying succeeded but only found a path to one remaining target, the next call will be a waste of time
-		// Consider adding a planner method that checks connectivity and use that for making decisions
+		// Plan additional motion to the next target
+		Motion new_motion;
+		last_query_succeeded = move_to_closest_target(buffer_end, env->get_target_configurations(), new_motion);
+		motion_buffer.push_back(new_motion);
+		buffered_targets.push_back(buffer_end);
 		return true;
 	} else {
 		// Spend some time doing additional preprocessing
-		planner.additional_preprocessing(pending_motion_end, env->get_target_configurations());
+		planner.additional_preprocessing(buffer_end, env->get_target_configurations());
 		// Try again on the next call to plan
 		last_query_succeeded = true;
 	}
@@ -39,7 +42,7 @@ bool MyPlayer::move(double deadline, Motion& motion_sequence) {
 	CGAL::Timer timer;
 	timer.start();
 
-	if (pending_motion.empty()) {
+	if (motion_buffer.empty()) {
 		// No pending motion, buffer some more
 		TIMED_TRACE_ACTION("move", "no pending movement");
 		if (!plan(deadline)) {
@@ -51,19 +54,24 @@ bool MyPlayer::move(double deadline, Motion& motion_sequence) {
 		}
 	}
 
-	bool step_was_cut = false;
-	while (!step_was_cut && (deadline - timer.time() > 0)) {
+	// Attempt to perform the first motion in the buffer
+	Motion& motion = motion_buffer.front();
+	MS_base* step = NULL;
+	bool blocked = false;
+	
+	while (!motion.empty() && (deadline - timer.time() > 0)) {
 		// Get the next step
-		step_was_cut = pending_motion.cut_step(deadline - timer.time(), motion_sequence);
-		MS_base* step = motion_sequence.back();
+		motion.cut_step(deadline - timer.time(), motion_sequence);
+		step = motion_sequence.back();
 		deadline -= Motion::step_time(step);
-		
+
 		// Validate it
 		Extended_polygon robot_a = env->get_robot_a();
 		robot_a.move_absolute(step->source());
 		Extended_polygon robot_b = env->get_robot_b();
 		robot_b.move_absolute(dynamic_obstacle);
 		VALIDATION vResult = planner.validate_step(*step, robot_a, robot_b);
+
 		switch (vResult) {
 		case OK:
 			// Step is valid
@@ -72,25 +80,35 @@ bool MyPlayer::move(double deadline, Motion& motion_sequence) {
 			// Path is blocked but destination is free
 		case DST_BLOCKED:
 			// Destination is blocked
-			// Reject the remaining motion
-			// TODO find the entire gap and find a path around it
-			pending_motion.add_motion_step_front(step);
+			// Return it to the buffer and remove it from the output
+			motion.add_motion_step_front(step);
 			motion_sequence.pop_back();
+			// TODO find the entire gap and find a path around it
 			// Right now we can't do anything useful with our remaining time
-			return false;
+			blocked = true;
+			break;
 		}
 	}
-	
-	return true;
+
+	if (step == NULL) {
+		return false;
+	}
+	if (motion.empty()) {
+		// Executed the entire motion
+		buffered_targets.pop_front();
+		motion_buffer.pop_front();
+	}
+
+	return !blocked;
 }
 
 // Returns whether the player thinks that the game is over.
 bool MyPlayer::is_game_over() {
 	return (
-		// No additional targets
+		// No target configurations left
 		env->get_target_configurations().empty() &&
-		// No planned pending motion
-		pending_motion.empty());
+		// No buffered targets left
+		buffered_targets.empty());
 }
 
 // Initializes the underlying planner.
@@ -110,38 +128,41 @@ bool MyPlayer::initialize() {
 	return true;
 }
 
-// Buffers additional motion, inserting it to the back of the pending motion.
-// Returns whether additional motion could be buffered.
-bool MyPlayer::buffer_motion_ahead(const Reference_point& source) {
+// Moves to the closest target (appending the motion).
+// Returns whether a motion was successfully found.
+// Updates source to the target selected.
+// Removes said target from targets.
+bool MyPlayer::move_to_closest_target(Reference_point& source, Reference_point_vec& targets, Motion& motion) {
 	TIMED_TRACE_ENTER("buffer_motion_ahead");
 	CGAL_precondition(!env->get_target_configurations().empty());
-	Ref_p_vec::iterator next_target;
+	Ref_p_vec::iterator target_reached;
 	int target_index;
 
 	// Verify that at least one target is reachable
-	if (!planner.exist_reachable_target(source, env->get_target_configurations())) {
+	if (!planner.exist_reachable_target(source, targets)) {
 		return false;
 	}
 
 	// Plan a motion to the closest remaining target
 	bool path_found = planner.query_closest_point(
 		source, 
-		env->get_target_configurations(),
+		targets,
 		target_index,
-		// Append it to the buffered motion plan
-		pending_motion);
+		// Append it to the output motion
+		motion);
+	ASSERT_CONDITION(path_found, "targets are connected but could not find path!");
 	
 	if (path_found) {
 		// Reached another target
-		next_target = env->get_target_configurations().begin() + target_index;
-		pending_motion_end = *next_target;
-		env->get_target_configurations().erase(next_target);
+		target_reached = targets.begin() + target_index;
+		source = *target_reached;
+		targets.erase(target_reached);
 	} else {
 		TIMED_TRACE_ACTION("buffer_motion_ahead", "path not found");
 	}
 	
 	TIMED_TRACE_EXIT("buffer_motion_ahead");
-	return path_found;
+	return true;
 }
 
 void MyPlayer::additional_targets_preprocessing(Ref_p_vec& additional_targets) {
