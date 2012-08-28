@@ -189,14 +189,14 @@ public:
 			return t;
 	}
 
-	static double step_time(MS_base_ptr& motion_step_ptr) {
+	static double step_time(MS_base_ptr motion_step_ptr) {
 		return step_time(
 			motion_step_ptr, 
 			configuration.get_translational_speed(), 
 			configuration.get_rotational_speed());
 	}
 
-	static double step_time( MS_base_ptr& motion_step_ptr,
+	static double step_time(MS_base_ptr motion_step_ptr,
 		const double translational_speed, //unit per second
 		const double rotational_speed) //full rotation per second
 	{

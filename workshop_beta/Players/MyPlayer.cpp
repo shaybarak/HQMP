@@ -58,6 +58,7 @@ bool MyPlayer::move(double deadline, Motion& motion_sequence) {
 		// Get the next step
 		step_was_cut = pending_motion.cut_step(deadline - timer.time(), motion_sequence);
 		MS_base* step = motion_sequence.back();
+		deadline -= Motion::step_time(step);
 		
 		// Validate it
 		Extended_polygon robot_a = env->get_robot_a();
