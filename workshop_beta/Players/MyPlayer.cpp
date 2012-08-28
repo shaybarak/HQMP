@@ -24,7 +24,7 @@ bool MyPlayer::plan(double deadline) {
 		last_query_succeeded = move_to_closest_target(buffer_end, env->get_target_configurations(), new_motion);
 		motion_buffer.push_back(new_motion);
 		buffered_targets.push_back(buffer_end);
-		return true;
+
 	} else {
 		// Spend some time doing additional preprocessing
 		planner.additional_preprocessing(buffer_end, env->get_target_configurations());
