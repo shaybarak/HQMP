@@ -173,28 +173,9 @@ namespace mms{
 				return false;
 			}
 
-			if (!source_motion_sequence.get_sequence().empty()) {
-				motion_time += Motion_sequence::step_time(
-					(Motion_sequence::MS_base_ptr)*source_motion_sequence.get_sequence().begin());
-			}
-
-			if (motion_time >= motion_time_limit) {
-				TIMED_TRACE_EXIT("query: connecting source, not the closest point");
-				return false;
-			}
-
 			Reference_point perturbed_target = connect_to_graph(target, target_motion_sequence);
 			if (perturbed_target == Reference_point()) {
 				TIMED_TRACE_EXIT("query: failed to connect target to pre-processed configuration space");
-				return false;
-			}
-			if (!target_motion_sequence.get_sequence().empty()) {
-				motion_time += Motion_sequence::step_time(
-					(Motion_sequence::MS_base_ptr)*target_motion_sequence.get_sequence().begin());
-			}
-
-			if (motion_time >= motion_time_limit) {
-				TIMED_TRACE_EXIT("query: connecting target, not the closest point");
 				return false;
 			}
 
@@ -225,13 +206,11 @@ namespace mms{
 
 			//(2) construct real motion sequence from connectivity graph
 			int             curr_fsc_indx = 0;
-			Reference_point curr_ref_p    = perturbed_source;
+			Reference_point curr_ref_p = perturbed_source;
 
 			std::list<Fsc_indx>::iterator curr, next;
 
-
-			//skip computing source step
-			int time_index = 1;
+			int time_index = 0;
 
 			next = curr = fsc_indx_path.begin();
 			++next;
@@ -252,7 +231,7 @@ namespace mms{
 				int current_size = motion_sequence.get_sequence().size();
 				motion_time += motion_sequence.motion_time_between(time_index, current_size-1);
 				if (motion_time >= motion_time_limit) {
-					TIMED_TRACE_EXIT("query, main loop, not the closest point");
+					TIMED_TRACE_EXIT("query: connecting fscs, not the closest point");
 					return false;
 				}
 
@@ -278,7 +257,6 @@ namespace mms{
 			delete fsc_ptr;
 
 			//(3) add target motion
-			//time for this step is already computed!
 			target_motion_sequence.reverse_motion_sequence();
 			motion_sequence.add_motion_sequence(target_motion_sequence);
 			TIMED_TRACE_EXIT("query");
@@ -345,10 +323,9 @@ namespace mms{
 					}
 					path_found = true;
 
-					std::cout << endl << "Found path to point, motion time: " << current_time << endl;
+					cout << "Best motion time till now: " << shortest_time << ", found path to point, motion time: " << current_time << endl;
 
-					if (current_time < shortest_time) {
-						cout << "Best time till now: " << shortest_time << endl << endl;
+					if (current_time < shortest_time) {	
 						// Exchange current and shortest
 						temp = current;
 						current = shortest;
