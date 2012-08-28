@@ -59,7 +59,7 @@ bool MyPlayer::move(double deadline, Motion& motion_output) {
 	MS_base* step = NULL;
 	bool blocked = false;
 	
-	while (!motion.empty() && (deadline - timer.time() > 0)) {
+	while (!motion.empty() && !blocked && (deadline - timer.time() > 0)) {
 		// Get the next step
 		motion.cut_step(deadline - timer.time(), motion_output);
 		step = motion_output.back();
