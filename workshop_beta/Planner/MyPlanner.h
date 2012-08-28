@@ -125,7 +125,7 @@ namespace mms{
 			return;
 		}
 
-		bool exist_reachable_target(Ref_p& source, Ref_p_vec& targets) {
+		bool exist_reachable_target(const Ref_p& source, const Ref_p_vec& targets) {
 			TIMED_TRACE_ENTER("exist_reachable_target");
 			Fsc_indx source_fsc_indx (get_containig_fsc(source));
 			Fsc_indx target_fsc_indx;

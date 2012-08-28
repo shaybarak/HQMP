@@ -7,7 +7,7 @@ MyPlayer::MyPlayer(Env* env, Configuration* config) :
 			env->get_robot_a()),
 	pending_motion_end(env->get_source_configuration_a()),
 	planner_initialized(false),
-	query_again(true) {
+	last_query_succeeded(true) {
 }
 
 // Spend as much time preprocessing and planning
@@ -16,19 +16,17 @@ bool MyPlayer::plan(double deadline) {
 	initialize();
 
 	// If last attempt to plan a path succeeded and there are remaining targets
-	if (query_again && !env->get_target_configurations().empty()) {
+	if (last_query_succeeded && !env->get_target_configurations().empty()) {
 		// Plan another motion step
-		query_again = buffer_motion_ahead(pending_motion_end);
+		last_query_succeeded = buffer_motion_ahead(pending_motion_end);
 		// TODO if querying succeeded but only found a path to one remaining target, the next call will be a waste of time
 		// Consider adding a planner method that checks connectivity and use that for making decisions
+		return true;
 	} else {
 		// Spend some time doing additional preprocessing
-		// TODO different handling for additional preprocessing when path not found and when no targets remain
-		// TODO consider renaming this method to enhance_connectivity
-		// TODO fix that additional_preprocessing uses _rotations which is invalidated elsewhere
-		//planner.additional_preprocessing(pending_motion_end, env->get_target_configurations());
+		planner.additional_preprocessing(pending_motion_end, env->get_target_configurations());
 		// Try again on the next call to plan
-		query_again = true;
+		last_query_succeeded = true;
 	}
 	
 	TIMED_TRACE_EXIT("plan");
@@ -106,14 +104,7 @@ bool MyPlayer::initialize() {
 	Ref_p_vec additional_samples = env->get_target_configurations();
 	additional_samples.push_back(env->get_source_configuration_a());
 	planner.preprocess_targets(additional_samples);
-
 	planner.preprocess();
-	if(planner.exist_reachable_target(env->get_source_configuration_a(), env->get_target_configurations())) {
-		//TODO: remove
-		cout << "EXIST REACHABLE TARGET!!" << endl;
-	} else {
-		planner.additional_preprocessing(env->get_source_configuration_a(), env->get_target_configurations());
-	}
 
 	planner_initialized = true;
 	return true;
@@ -126,6 +117,11 @@ bool MyPlayer::buffer_motion_ahead(const Reference_point& source) {
 	CGAL_precondition(!env->get_target_configurations().empty());
 	Ref_p_vec::iterator next_target;
 	int target_index;
+
+	// Verify that at least one target is reachable
+	if (!planner.exist_reachable_target(source, env->get_target_configurations())) {
+		return false;
+	}
 
 	// Plan a motion to the closest remaining target
 	bool path_found = planner.query_closest_point(

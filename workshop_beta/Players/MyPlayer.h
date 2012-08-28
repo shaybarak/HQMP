@@ -26,7 +26,7 @@ private:
 	Motion pending_motion;
 	Reference_point pending_motion_end;
 	// Caches whether the plan method should perform another planner query the next time it is called
-	bool query_again;
+	bool last_query_succeeded;
 	bool planner_initialized;
 	bool initialize();
 	bool buffer_motion_ahead(const Reference_point& source);
