@@ -152,14 +152,10 @@ bool MyPlayer::move_to_closest_target(Reference_point& source, Reference_point_v
 		motion);
 	ASSERT_CONDITION(path_found, "targets are connected but could not find path!");
 	
-	if (path_found) {
-		// Reached another target
-		target_reached = targets.begin() + target_index;
-		source = *target_reached;
-		targets.erase(target_reached);
-	} else {
-		TIMED_TRACE_ACTION("buffer_motion_ahead", "path not found");
-	}
+	// Reached another target
+	target_reached = targets.begin() + target_index;
+	source = *target_reached;
+	targets.erase(target_reached);
 	
 	TIMED_TRACE_EXIT("buffer_motion_ahead");
 	return true;
