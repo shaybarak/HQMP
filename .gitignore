@@ -175,5 +175,3 @@ player_[a-z]_[0-9]_path.txt
 *.exe
 initial_location.txt
 initial_status.txt
-in_maze_scenario/
-out_maze_scenario/
