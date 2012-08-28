@@ -764,7 +764,6 @@ namespace mms{
 		Reference_point connect_to_graph( const Reference_point& ref_p,
 			Motion_sequence& motion_sequence)
 		{
-			TIMED_TRACE_ENTER("connect_to_graph");
 			//(1) find closest base layer
 			Point location(ref_p.get_location());
 			Rotation rotation(ref_p.get_rotation());
@@ -794,7 +793,7 @@ namespace mms{
 			int source_fsc_id = line_ptr->free_space_location_hint(ref_p);
 			int target_fsc_id = line_ptr->free_space_location_hint(Reference_point(location, closest_rotation));
 			if (source_fsc_id != target_fsc_id) {
-				TIMED_TRACE_EXIT("connect_to_graph: cannor connect source to a target");
+				TIMED_TRACE_EXIT("connect_to_graph: cannot connect source to a target");
 				return Reference_point();
 			}
 
@@ -815,9 +814,9 @@ namespace mms{
 			motion_sequence.add_motion_step(motion_step_ptr);
 
 			delete line_ptr;
-			TIMED_TRACE_EXIT("connect_to_graph");
 			return Reference_point(location, closest_rotation);
 		}
+
 	private: //Fsc_indx related methods
 		Fsc_indx get_containig_fsc(const Reference_point& ref_p)
 		{
