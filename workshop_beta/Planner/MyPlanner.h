@@ -402,14 +402,14 @@ namespace mms{
 			updatedLine.add_obstacle(robot, obstacle.get_absolute_polygon());
 
 			// Check that the destination is reachable
-			int target_fsc_id = updatedLine.get_fsc_id(ms.target());
+			int target_fsc_id = updatedLine.free_space_location_hint(ms.target());
 			if (target_fsc_id == NO_ID) {
 				TIMED_TRACE_EXIT("validate_step: DST_BLOCKED");
 				return DST_BLOCKED;
 			}
 
 			// Check that there is still a path between the source and the destination
-			int source_fsc_id = updatedLine.get_fsc_id(ms.source());
+			int source_fsc_id = updatedLine.free_space_location_hint(ms.source());
 			CGAL_precondition(source_fsc_id != NO_ID);
 			if (source_fsc_id != target_fsc_id) {
 				TIMED_TRACE_EXIT("validate_step: PATH_BLOCKED");
