@@ -67,16 +67,13 @@ bool move(double remaining_time) {
 	std::string path_filename;
 
 	TIMED_TRACE_ACTION("move", "requesting to write move");
-	if (request_to_write(*socket_client_ptr, motion_length, path_filename)) {
-		TIMED_TRACE_ACTION("move", "request granted");
-		//request granted
-		ofstream out(path_filename.c_str());
-		motion_sequence.write(out);
-	} else {
-		TIMED_TRACE_ACTION("move", "request denied");
-		// TODO handle movement failures correctly
-	}
-
+	bool motion_write_successful = request_to_write(*socket_client_ptr, motion_length, path_filename);
+	// TODO graceful failure
+	ASSERT_CONDITION(motion_write_successful, "write request denied by server!");
+	
+	TIMED_TRACE_ACTION("move", "request granted");
+	ofstream out(path_filename.c_str());
+	motion_sequence.write(out);
 	return can_move_again;
 }
 
