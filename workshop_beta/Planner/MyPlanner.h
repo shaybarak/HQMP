@@ -598,7 +598,7 @@ namespace mms{
 			}
 		}
 
-		void generate_connector(Ref_p* ref_point = NULL, bool use_filter = true) {
+		bool generate_connector(Ref_p* ref_point = NULL, bool use_filter = true) {
 			Rotation r;
 			Point p;
 			Layer* layer_ptr;
