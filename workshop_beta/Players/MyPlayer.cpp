@@ -37,7 +37,7 @@ bool MyPlayer::plan(double deadline) {
 }
 
 // Generate next movement
-bool MyPlayer::move(double deadline, Motion& motion_sequence) {
+bool MyPlayer::move(double deadline, Motion& motion_output) {
 	initialize();
 	CGAL::Timer timer;
 	timer.start();
@@ -61,8 +61,8 @@ bool MyPlayer::move(double deadline, Motion& motion_sequence) {
 	
 	while (!motion.empty() && (deadline - timer.time() > 0)) {
 		// Get the next step
-		motion.cut_step(deadline - timer.time(), motion_sequence);
-		step = motion_sequence.back();
+		motion.cut_step(deadline - timer.time(), motion_output);
+		step = motion_output.back();
 		deadline -= Motion::step_time(step);
 
 		// Validate it
@@ -80,9 +80,10 @@ bool MyPlayer::move(double deadline, Motion& motion_sequence) {
 			// Path is blocked but destination is free
 		case DST_BLOCKED:
 			// Destination is blocked
-			// Return it to the buffer and remove it from the output
+			// Return it to the buffer
 			motion.add_motion_step_front(step);
-			motion_sequence.pop_back();
+			// Don't output this invalid step
+			motion_output.pop_back();
 			// TODO find the entire gap and find a path around it
 			// Right now we can't do anything useful with our remaining time
 			blocked = true;
@@ -98,7 +99,6 @@ bool MyPlayer::move(double deadline, Motion& motion_sequence) {
 		buffered_targets.pop_front();
 		motion_buffer.pop_front();
 	}
-
 	return !blocked;
 }
 
