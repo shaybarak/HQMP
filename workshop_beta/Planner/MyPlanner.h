@@ -95,6 +95,7 @@ namespace mms{
 		}
 
 		//preprocess
+		// TODO consider renaming to preprocess_random
 		void preprocess(const unsigned int num_of_angles = configuration.get_slices_granularity()) {
 			TIMED_TRACE_ENTER("preprocess");
 			generate_random_rotations(num_of_angles);
