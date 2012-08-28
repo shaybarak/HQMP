@@ -593,9 +593,11 @@ namespace mms{
 		}
 
 		void generate_target_connectors(Ref_p_vec& ref_points) {
+			TIMED_TRACE_ENTER("generate_target_connectors");
 			for (Ref_p_vec::iterator iter = ref_points.begin(); iter != ref_points.end(); iter++){
 				generate_connector(&(*iter), false);
 			}
+			TIMED_TRACE_ENTER("generate_target_connectors");
 		}
 
 		bool generate_connector(Ref_p* ref_point = NULL, bool use_filter = true) {
@@ -622,7 +624,7 @@ namespace mms{
 
 			int cell_id  = layer_ptr->get_containing_cell(p); 
 			if (cell_id == NO_ID) {
-				return; // this should NOT be NO_ID but there is a patch in the configuration space of the angle primitive due to a bug in polygon_set_2
+				return false; // this should NOT be NO_ID but there is a patch in the configuration space of the angle primitive due to a bug in polygon_set_2
 			}
 
 			C_space_line* c_space_line_ptr; 
@@ -646,7 +648,7 @@ namespace mms{
 
 			// Filter out random points that don't contribute to connectivity
 			if (use_filter && filter_out(constraint)) {
-				return;
+				return false;
 			}
 
 			// Create connector
@@ -656,7 +658,7 @@ namespace mms{
 
 			// Update connectivity graph
 			update_connectivity_graph(c_space_line_id);
-			return;
+			return true;
 		}
 
 	private: //filtering methods
