@@ -133,7 +133,7 @@ namespace mms{
 			
 			BOOST_FOREACH(Ref_p target, targets) {
 				target_fsc_indx = get_containig_fsc(target);
-				ASSERT_CONDITION (target_fsc_indx != Fsc_indx(), "Exist reachable target: Source is not connected to graph!");
+				ASSERT_CONDITION (target_fsc_indx != Fsc_indx(), "Exist reachable target: target is not connected to graph!");
 				if (_graph.is_in_same_cc(source_fsc_indx, target_fsc_indx)) {
 					TIMED_TRACE_EXIT("exist_reachable_target");
 					return true;
