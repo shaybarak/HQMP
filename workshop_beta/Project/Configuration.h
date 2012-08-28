@@ -4,7 +4,7 @@
 class Configuration
 {
 public: //constructors
-  Configuration() {}
+  Configuration(){};
 public: //set
   void set_robot_file_name_a (const std::string& robot_file_name_a);
   void set_robot_file_name_b (const std::string& robot_file_name_b);

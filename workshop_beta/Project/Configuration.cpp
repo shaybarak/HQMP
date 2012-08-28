@@ -5,6 +5,8 @@
 //	globals //
 //////////////
 Configuration configuration;
+	
+
 
 ///////////////////
 // set functions //
@@ -330,4 +332,3 @@ void Configuration::set_max_cc_to_cc_connections(const int max_cc_to_cc_connecti
 int Configuration::get_max_cc_to_cc_connections() {
 	return _max_cc_to_cc_connections;
 }
-

@@ -16,6 +16,8 @@ void Input_reader::read_configuration(const std::string& filename, Configuration
 
 	  configuration.set_colored_sleep_time(-1);
 	  configuration.set_gray_sleep_time(-1);
+	  configuration.set_max_cc_to_cc_connections(INT_MAX);
+	  configuration.set_max_fa_fsc_to_fa_fsc_connections(INT_MAX);
 
       while (! file.eof() )
       {        

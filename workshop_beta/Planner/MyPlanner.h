@@ -468,11 +468,13 @@ namespace mms{
 			Point p;
 			int fa_fsc_count = get_fixed_angle_fsc_count();
 			int fa_fsc_index = 1;
+			int fa_fsc_to_fa_fsc_count = 0;
 
 			//go over all connectivity components
 			for (std::vector<Fsc_indx_vec>::iterator cc_iter1 = ccs_vec.begin() ; cc_iter1 != ccs_vec.end(); cc_iter1++) {
 				//iterate over all fsc within connectivity component
 				fsc_indx_vec1 = *cc_iter1;
+				int cc_to_cc_count = 0;
 				for (Fsc_indx_vec::iterator fsc_iter1 = fsc_indx_vec1.begin(); fsc_iter1 != fsc_indx_vec1.end(); fsc_iter1++) {
 					if (fsc_iter1->_type == FIXED_POINT) {
 						continue;
@@ -511,6 +513,18 @@ namespace mms{
 							Ref_p generated_point(p, layer_ptr1->constraint().restriction());
 							connecting_points.push_back(generated_point);
 							ccp_count++;
+							cc_to_cc_count++;
+							
+							//create only up to parameter limit cross cc connectors
+							if (cc_to_cc_count >= configuration.get_max_cc_to_cc_connections()) {
+								//Assume this CC is well connected to outer loop's cc.
+								break;
+							}
+						}
+						//TODO: checking this condition twice, looks like bad programming...
+						if (cc_to_cc_count >= configuration.get_max_cc_to_cc_connections()) {
+							//Assume this CC is well connected to outer loop's cc.
+							break;
 						}
 					}
 					if (ccp_count != 0) {
