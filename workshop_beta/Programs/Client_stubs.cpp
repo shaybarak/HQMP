@@ -55,9 +55,6 @@ bool move(double remaining_time) {
 	Motion motion_sequence;
 	bool can_move_again = player->move(remaining_time, motion_sequence);
 	finished_game = player->is_game_over();
-	if (!can_move_again) {
-		return false;
-	}
 
 	double motion_length(motion_sequence.motion_time());
 	if (motion_length == 0) {

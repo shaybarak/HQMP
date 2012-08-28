@@ -78,6 +78,8 @@ bool MyPlayer::move(double deadline, Motion& motion_sequence) {
 			// TODO find the entire gap and find a path around it
 			pending_motion.add_motion_step_front(step);
 			motion_sequence.pop_back();
+			// Right now we can't do anything useful with our remaining time
+			return false;
 		}
 	}
 	
