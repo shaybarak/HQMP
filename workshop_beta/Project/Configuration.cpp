@@ -314,3 +314,20 @@ void Configuration::set_additional_sample_points_file_name(const std::string& ad
 std::string Configuration::get_additional_sample_points_file_name() {
 	return _additional_sample_points_file_name;
 }
+
+void Configuration::set_max_fa_fsc_to_fa_fsc_connections(const int max_fa_fsc_to_fa_fsc_connections) {
+	_max_fa_fsc_to_fa_fsc_connections = max_fa_fsc_to_fa_fsc_connections;
+}
+
+int Configuration::get_max_fa_fsc_to_fa_fsc_connections() {
+	return _max_fa_fsc_to_fa_fsc_connections;
+}
+
+void Configuration::set_max_cc_to_cc_connections(const int max_cc_to_cc_connections) {
+	_max_cc_to_cc_connections = max_cc_to_cc_connections;
+}
+
+int Configuration::get_max_cc_to_cc_connections() {
+	return _max_cc_to_cc_connections;
+}
+

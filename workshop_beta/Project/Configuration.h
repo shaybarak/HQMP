@@ -90,6 +90,12 @@ public: //get
   int get_gray_sleep_time();
   void set_additional_sample_points_file_name(const std::string& additional_sample_points_configurations_file_name);
   std::string get_additional_sample_points_file_name();
+  
+  
+  void set_max_fa_fsc_to_fa_fsc_connections(const int max_fa_fsc_to_fa_fsc_connections);
+  void set_max_cc_to_cc_connections(const int max_cc_to_cc_connections);
+  int get_max_fa_fsc_to_fa_fsc_connections();
+  int get_max_cc_to_cc_connections();
 
 
 private:
@@ -135,7 +141,9 @@ private:
   int _colored_sleep_time;
   int _gray_sleep_time;
   std::string _additional_sample_points_file_name;
-
+  
+  int _max_fa_fsc_to_fa_fsc_connections;
+  int _max_cc_to_cc_connections;
 
 }; //Configuration
 

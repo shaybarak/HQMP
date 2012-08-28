@@ -105,6 +105,13 @@ void Input_reader::read_configuration(const std::string& filename, Configuration
 
 		else if (decomposed_line[0].compare("additional_sample_points_file_name") == 0)
           configuration.set_additional_sample_points_file_name(decomposed_line[1]);
+
+		else if (decomposed_line[0].compare("max_fa_fsc_to_fa_fsc_connections") == 0)
+			configuration.set_max_fa_fsc_to_fa_fsc_connections(atoi(decomposed_line[1].c_str()));
+
+		else if (decomposed_line[0].compare("max_cc_to_cc_connections") == 0)
+			configuration.set_max_cc_to_cc_connections(atoi(decomposed_line[1].c_str()));
+
       }
       
       file.close();
