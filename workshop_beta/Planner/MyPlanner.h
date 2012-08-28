@@ -119,11 +119,22 @@ namespace mms{
 			BOOST_FOREACH (Rotation rotation, _rotations) {
 				add_layer(rotation);
 			}
-			generate_target_connectors(ref_points);
+			generate_target_connectors(false, ref_points);
 			PRINT_CONNECTIVITY_GRAPH();
 
 			TIMED_TRACE_EXIT("preprocess_targets");
 			return;
+		}
+
+		void additional_preprocessing(Ref_p& source, Ref_p_vec& targets) {
+			TIMED_TRACE_ENTER("additional_reprocessing");
+
+			Ref_p_vec connecting_points;
+			create_connecting_points(connecting_points);
+			cout << "try to generate " << connecting_points.size() << " connectors" << endl;
+			int connectors_count = generate_target_connectors(true, connecting_points);
+			cout << "generated " << connectors_count << " connectors" << endl;
+			TIMED_TRACE_EXIT("additional_preprocessing");
 		}
 
 		bool exist_reachable_target(const Ref_p& source, const Ref_p_vec& targets) {
@@ -537,18 +548,6 @@ namespace mms{
 			return false;
 		}
 
-		void additional_preprocessing(Ref_p& source, Ref_p_vec& targets) {
-			TIMED_TRACE_ENTER("additional_reprocessing");
-
-			Ref_p_vec connecting_points;
-			create_connecting_points(connecting_points);
-			cout << "try to generate " << connecting_points.size() << " connectors" << endl;
-			int connectors_count = generate_target_connectors(connecting_points, true);
-			cout << "generated " << connectors_count << " connectors" << endl;
-
-			TIMED_TRACE_EXIT("additional_preprocessing: graph is not connected");
-		}
-
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 
 	private: //layer methods
@@ -607,7 +606,7 @@ namespace mms{
 			TIMED_TRACE_ENTER("generate_random_connectors");
 			int generated = 0;
 			for (int i(0); i < configuration.get_max_num_of_intra_connections(); ++i) {
-				if (generate_connector()) {
+				if (generate_connector(true)) {
 					generated++;
 				}
 			}
@@ -616,11 +615,11 @@ namespace mms{
 		}
 
 		//returns number of connectors created
-		int generate_target_connectors(Ref_p_vec& ref_points, bool use_filter = false) {
+		int generate_target_connectors(bool use_filter, Ref_p_vec& ref_points) {
 			TIMED_TRACE_ENTER("generate_target_connectors");
 			int generated = 0;
 			for (Ref_p_vec::iterator iter = ref_points.begin(); iter != ref_points.end(); iter++){
-				if (generate_connector(&(*iter), false)) {
+				if (generate_connector(use_filter, &(*iter))) {
 					generated++;
 				}
 			}
@@ -628,7 +627,7 @@ namespace mms{
 			return generated;
 		}
 
-		bool generate_connector(Ref_p* ref_point = NULL, bool use_filter = true) {
+		bool generate_connector(bool use_filter, Ref_p* ref_point = NULL) {
 			Rotation r;
 			Point p;
 			Layer* layer_ptr;
