@@ -103,7 +103,8 @@ namespace mms{
 			BOOST_FOREACH (Rotation rotation, _rotations) {
 				add_layer(rotation);
 			}
-			generate_random_connectors();    
+			int generated_connectors = generate_random_connectors();    
+			cout << "generated " << generated_connectors << " connectors" << endl;
 			PRINT_CONNECTORS();
 			TIMED_TRACE_EXIT("preprocess");
 			return;
@@ -527,8 +528,10 @@ namespace mms{
 
 			Ref_p_vec connecting_points;
 			create_connecting_points(connecting_points);
-			generate_target_connectors(connecting_points);
-			cout << "GENERATING " << connecting_points.size() << "CONNECTORS" << endl;
+			cout << "try to generate " << connecting_points.size() << " connectors" << endl;
+			int connectors_count = generate_target_connectors(connecting_points, true);
+			cout << "generated " << connectors_count << " connectors" << endl;
+
 			TIMED_TRACE_EXIT("additional_preprocessing: graph is not connected");
 		}
 
@@ -585,20 +588,30 @@ namespace mms{
 
 	private:
 
-		void generate_random_connectors() {
+		//returns number of connectors created
+		int generate_random_connectors() {
 			TIMED_TRACE_ENTER("generate_random_connectors");
+			int generated = 0;
 			for (int i(0); i < configuration.get_max_num_of_intra_connections(); ++i) {
-				generate_connector();
+				if (generate_connector()) {
+					generated++;
+				}
 			}
 			TIMED_TRACE_EXIT("generate_random_connectors");
+			return generated;
 		}
 
-		void generate_target_connectors(Ref_p_vec& ref_points) {
+		//returns number of connectors created
+		int generate_target_connectors(Ref_p_vec& ref_points, bool use_filter = false) {
 			TIMED_TRACE_ENTER("generate_target_connectors");
+			int generated = 0;
 			for (Ref_p_vec::iterator iter = ref_points.begin(); iter != ref_points.end(); iter++){
-				generate_connector(&(*iter), false);
+				if (generate_connector(&(*iter), false)) {
+					generated++;
+				}
 			}
-			TIMED_TRACE_ENTER("generate_target_connectors");
+			TIMED_TRACE_EXIT("generate_target_connectors");
+			return generated;
 		}
 
 		bool generate_connector(Ref_p* ref_point = NULL, bool use_filter = true) {
@@ -870,7 +883,7 @@ namespace mms{
 
 		//debugging methods
 		void print_rotations() {
-			cout << "Generated " << _rotations.size() << " rotations:" << endl;
+			cout << "There exist " << _rotations.size() << " rotations:" << endl;
 			BOOST_FOREACH(Rotation rotation, _rotations) {
 				cout << rotation.to_angle() << ", ";
 			}
@@ -878,7 +891,7 @@ namespace mms{
 		}
 
 		void print_connectors() {
-			cout << "Generated " << _lines.manifold_id_iterator_end() << " connectors:" << endl; 
+			cout << "There exist " << _lines.manifold_id_iterator_end() << " connectors:" << endl; 
 			for (int i = _lines.manifold_id_iterator_begin(); i < _lines.manifold_id_iterator_end(); i++) {
 				print_point_nice<K>(_lines.get_manifold(i)->constraint().restriction());
 				cout << " ";
