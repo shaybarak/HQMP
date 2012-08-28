@@ -595,11 +595,11 @@ namespace mms{
 
 		void generate_target_connectors(Ref_p_vec& ref_points) {
 			for (Ref_p_vec::iterator iter = ref_points.begin(); iter != ref_points.end(); iter++){
-				generate_connector(&(*iter));
+				generate_connector(&(*iter), false);
 			}
 		}
 
-		void generate_connector(Ref_p* ref_point = NULL) {
+		void generate_connector(Ref_p* ref_point = NULL, bool use_filter = true) {
 			Rotation r;
 			Point p;
 			Layer* layer_ptr;
@@ -646,7 +646,7 @@ namespace mms{
 			}
 
 			// Filter out random points that don't contribute to connectivity
-			if (ref_point == NULL && filter_out(constraint)) {
+			if (use_filter && filter_out(constraint)) {
 				return;
 			}
 
