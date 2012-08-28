@@ -128,13 +128,12 @@ namespace mms{
 			TIMED_TRACE_ENTER("exist_reachable_target");
 			Fsc_indx source_fsc_indx (get_containig_fsc(source));
 			Fsc_indx target_fsc_indx;
-				//TODO: change to my assertion
-			CGAL_postcondition (source_fsc_indx != Fsc_indx());
+
+			ASSERT_CONDITION (source_fsc_indx != Fsc_indx(), "Exist reachable target: Source is not connected to graph!");
 			
 			BOOST_FOREACH(Ref_p target, targets) {
 				target_fsc_indx = get_containig_fsc(target);
-				//TODO: change to my assertion
-				CGAL_postcondition(target_fsc_indx != Fsc_indx());
+				ASSERT_CONDITION (target_fsc_indx != Fsc_indx(), "Exist reachable target: Source is not connected to graph!");
 				if (_graph.is_in_same_cc(source_fsc_indx, target_fsc_indx)) {
 					TIMED_TRACE_EXIT("exist_reachable_target");
 					return true;
