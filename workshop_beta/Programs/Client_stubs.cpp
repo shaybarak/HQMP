@@ -61,8 +61,8 @@ bool move(double remaining_time) {
 		TIMED_TRACE_ACTION("move", "generated zero length motion");
 		return false;
 	}
+	
 	std::string path_filename;
-
 	TIMED_TRACE_ACTION("move", "requesting to write move");
 	bool motion_write_successful = request_to_write(*socket_client_ptr, motion_length, path_filename);
 	// TODO graceful failure
