@@ -745,15 +745,14 @@ namespace mms{
 			//(2) get the layer
 			Layer* layer_ptr = _layers.get_manifold(closest_layer_id);    
 			Rotation closest_rotation(layer_ptr->constraint().restriction());
-			if (rotation == closest_rotation)
-			{
+			if (rotation == closest_rotation) {
 				//no motion to do
-				TIMED_TRACE_EXIT("connect_to_graph: no motion to do");
 				return ref_p;
 			}
 
+			ASSERT_CONDITION(false, "ref_p is not on graph!");
+
 			if (layer_ptr->is_free(location) == false) {
-				TIMED_TRACE_EXIT("connect_to_graph: cannot connect layer");
 				return Reference_point();
 			}
 
@@ -766,7 +765,7 @@ namespace mms{
 			int source_fsc_id = line_ptr->free_space_location_hint(ref_p);
 			int target_fsc_id = line_ptr->free_space_location_hint(Reference_point(location, closest_rotation));
 			if (source_fsc_id != target_fsc_id) {
-				TIMED_TRACE_EXIT("connect_to_graph: no fsc contains source and target");
+				TIMED_TRACE_EXIT("connect_to_graph: cannor connect source to a target");
 				return Reference_point();
 			}
 
