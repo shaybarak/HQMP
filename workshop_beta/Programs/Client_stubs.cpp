@@ -101,6 +101,7 @@ void moveable_planner(double remaining_time) {
 void client_stubs_main(int argc, char* argv[]) {
 	////////////////////////////////////////////////////////////
 	Env env(argc,argv);
+	cout << "Running using seed: " << configuration.get_seed() << endl;
 	Input_reader input_reader;
 
 	////////////////////////////////////////////////////////////

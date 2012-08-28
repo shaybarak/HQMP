@@ -18,6 +18,7 @@ void Input_reader::read_configuration(const std::string& filename, Configuration
 	  configuration.set_gray_sleep_time(-1);
 	  configuration.set_max_cc_to_cc_connections(INT_MAX);
 	  configuration.set_max_fa_fsc_to_fa_fsc_connections(INT_MAX);
+	  configuration.set_seed(time(NULL));
 
       while (! file.eof() )
       {        
@@ -100,13 +101,13 @@ void Input_reader::read_configuration(const std::string& filename, Configuration
           configuration.set_all_target_configurations_file_name(decomposed_line[1]);
 
 		/* Additions for our group */
+		else if (decomposed_line[0].compare("seed") == 0)
+          configuration.set_seed(atoi(decomposed_line[1].c_str()));
+
 		else if (decomposed_line[0].compare("colored_sleep_time") == 0)
           configuration.set_colored_sleep_time(atoi(decomposed_line[1].c_str()));
 		else if (decomposed_line[0].compare("gray_sleep_time") == 0)
           configuration.set_gray_sleep_time(atoi(decomposed_line[1].c_str()));
-
-		else if (decomposed_line[0].compare("additional_sample_points_file_name") == 0)
-          configuration.set_additional_sample_points_file_name(decomposed_line[1]);
 
 		else if (decomposed_line[0].compare("max_fa_fsc_to_fa_fsc_connections") == 0)
 			configuration.set_max_fa_fsc_to_fa_fsc_connections(atoi(decomposed_line[1].c_str()));

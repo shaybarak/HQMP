@@ -291,8 +291,17 @@ std::string Configuration::get_all_target_configurations_file_name()
   return _all_target_configurations_file_name;
 }
 
+/////////////////////////////
+//Changes for Team Bender
+/////////////////////////////
+void Configuration::set_seed(int seed) {
+	_seed = seed;
+}
 
-//noam: changes per our group
+int Configuration::get_seed() {
+	return _seed;
+}
+
 void Configuration::set_colored_sleep_time(const int colored_sleep_time) {
 	_colored_sleep_time = colored_sleep_time;
 }
@@ -307,14 +316,6 @@ void Configuration::set_gray_sleep_time(const int gray_sleep_time) {
 
 int Configuration::get_gray_sleep_time() {
 	return _gray_sleep_time;
-}
-
-void Configuration::set_additional_sample_points_file_name(const std::string& additional_sample_points_file_name) {
-	_additional_sample_points_file_name = additional_sample_points_file_name;
-}
-
-std::string Configuration::get_additional_sample_points_file_name() {
-	return _additional_sample_points_file_name;
 }
 
 void Configuration::set_max_fa_fsc_to_fa_fsc_connections(const int max_fa_fsc_to_fa_fsc_connections) {

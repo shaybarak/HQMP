@@ -83,13 +83,16 @@ public: //get
   std::string get_all_target_configurations_file_name();
 
 
-  //noam: changes per our group
-  void set_colored_sleep_time(const int _colored_sleep_time);
-  void set_gray_sleep_time(const int _gray_sleep_time);
+  /////////////////////////////
+  //Changes for Team Bender
+  /////////////////////////////
+  void set_seed(const int seed);
+  int get_seed();
+
+  void set_colored_sleep_time(const int colored_sleep_time);
+  void set_gray_sleep_time(const int gray_sleep_time);
   int get_colored_sleep_time();
   int get_gray_sleep_time();
-  void set_additional_sample_points_file_name(const std::string& additional_sample_points_configurations_file_name);
-  std::string get_additional_sample_points_file_name();
   
   
   void set_max_fa_fsc_to_fa_fsc_connections(const int max_fa_fsc_to_fa_fsc_connections);
@@ -137,7 +140,11 @@ private:
   std::string _additional_target_configurations_file_name;
   std::string _all_target_configurations_file_name;
   
-  //noam: changes per our group
+  
+  /////////////////////////////
+  //Changes for Team Bender
+  /////////////////////////////
+  int _seed;
   int _colored_sleep_time;
   int _gray_sleep_time;
   std::string _additional_sample_points_file_name;

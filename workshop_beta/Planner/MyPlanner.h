@@ -87,7 +87,7 @@ namespace mms{
 		//constructor
 		MyPlanner  (Polygon_vec &workspace, Extended_polygon& robot)
 			: _workspace (workspace), _robot(robot),
-			_graph(0,true), _rand(time(NULL)) {
+			_graph(0,true), _rand(configuration.get_seed()) {
 				compute_workspace_bbox();
 				//the minkowski sum algorithm works faster on polygons are convex
 				//hence we decompose the workspace obstacles to convex polygons
