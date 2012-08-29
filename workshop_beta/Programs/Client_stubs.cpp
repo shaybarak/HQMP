@@ -94,6 +94,9 @@ void moveable_planner(double remaining_time) {
 			static_planner(remaining_time - timer.time());
 		}
 	}
+	if (finished_game) {
+		sleep(remaining_time - timer.time());
+	}
 	TIMED_TRACE_EXIT("moveable_planner");
 	return;
 }
