@@ -1,0 +1,124 @@
+#########################################
+# configuration file for motion planner #
+#########################################
+
+
+#=================================================================#
+# input parameters                                                #
+#=================================================================#
+robot_file_name_a Robot_easy.txt  #file name for robot a
+robot_file_name_b Robot_easy.txt  #file name for robot b
+workspace_file_name Workspace.txt     #file name for workspace
+
+source_configuration_a_file_name source_a.txt
+source_configuration_b_file_name source_b.txt
+target_configurations_file_name target_configurations_easy.txt
+additional_target_configurations_file_name additional_target_configurations.txt
+all_target_configurations_file_name all_configurations.txt
+
+#additional_sample_points_file_name additional_sample_points_a.txt
+
+
+rotational_speed 45                     #rotations per seconds
+translational_speed 1                   #	
+#=================================================================#
+# socket parameters                                               #
+#=================================================================#
+host_name 127.0.0.1
+host_port 1101                          #1102
+
+
+
+
+
+#=================================================================#
+# output parameters                                               #
+#=================================================================#
+
+###################################################################
+# where_to_save_path_folder
+# when paths are saved as a series of images, they are saved in this 
+# path under a directory path_i where i is the query number
+###################################################################
+where_to_save_path_folder ./
+
+###################################################################
+# save_path
+# should path produced be saved as a series of images
+###################################################################
+save_path 1
+
+
+
+
+
+#=================================================================#
+# general parameters for path planner                             #
+#=================================================================#
+
+###################################################################
+# slices_granularity is the number of slices.
+# common vaues: 5,10,20,40,90,180,270,360
+###################################################################
+slices_granularity 40
+
+###################################################################
+# use_filtering 
+###################################################################
+use_filtering 1 
+
+###################################################################
+# use_region_of_interset
+###################################################################
+use_region_of_interest 1 
+
+
+
+
+
+#=================================================================#
+# parameters for intra connecting                                 #
+#=================================================================#
+###################################################################
+# max_num_of_intra_connections
+# the number of intra connections generated
+###################################################################
+max_num_of_intra_connections 64
+
+#=================================================================#
+# parameters for determinig size of features in the free space	  #
+#=================================================================#
+
+###################################################################
+# max_area_of_small_feature
+# maximum area of a feature that it is still considered small
+# the value is given as a percentage of the area of the workspace
+###################################################################
+max_area_of_small_feature 1 #in %
+
+
+###################################################################
+# min_area_of_large_feature
+# miniimum area of a feature that it is still considered large
+# the value is given as a percentage of the area of the workspace
+###################################################################
+min_area_of_large_feature 5 #in %
+
+###################################################################
+# workspace_area
+# area of the workspace
+# ***will be changed***
+###################################################################
+workspace_area 1
+
+###################################################################
+# rotation_range
+# range used as a step for a small feature
+###################################################################
+rotation_range 30
+
+###################################################################
+# Additions for our group
+###################################################################
+max_cc_to_cc_connections 10
+seed 1 
