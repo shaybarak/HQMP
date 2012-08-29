@@ -514,9 +514,8 @@ namespace mms{
 						}
 					}
 					if (ccp_count != 0) {
-						cout << " created " << ccp_count << " points";
+						cout << " created " << ccp_count << " points" << endl;
 					}
-					cout << endl;
 				}
 			}
 			TIMED_TRACE_ENTER("create_connecting_points");
