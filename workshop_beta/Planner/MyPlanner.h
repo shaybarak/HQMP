@@ -76,6 +76,7 @@ namespace mms{
 
 		Connectivity_graph      _graph;
 
+		// TODO: there is much bardak here, fix this
 		std::vector<Rotation>   _rotations;
 		Layers                  _layers;
 		C_space_lines           _lines;
@@ -91,7 +92,38 @@ namespace mms{
 				compute_workspace_bbox();
 				//the minkowski sum algorithm works faster on polygons are convex
 				//hence we decompose the workspace obstacles to convex polygons
-				decompose_workspace_into_convex_polygons();
+				decompose_workspace_into_convex_polygons(_workspace);
+		}
+
+		// Copy planner with an additional obstacle
+		MyPlanner(MyPlanner& other, Extended_polygon& obstacle) :
+			_workspace(other._workspace), _robot(other._robot),
+			_workspace_bbox(other._workspace_bbox),
+			_graph(0, true), _rand(configuration.get_seed()) {
+
+				TIMED_TRACE_ENTER("MyPlanner: copying");
+				Polygon_vec updated_workspace(_workspace);
+				updated_workspace.push_back(obstacle.get_absolute_polygon());
+				decompose_workspace_into_convex_polygons(updated_workspace);
+
+				// Copy all layers with the extra obstacle
+				Layers& other_layers = other._layers;
+				for (int id = other_layers.manifold_id_iterator_begin(); id != other_layers.manifold_id_iterator_end(); id = other_layers.manifold_id_iterator_next()) {
+					Layer* new_layer = new Layer(Fixed_angle_constraint<K>());
+					copy_layer(*(other_layers.get_manifold(id)), *new_layer, _robot, obstacle);
+					int new_id = _layers.add_manifold(new_layer);
+					update_connectivity_graph_vertices(*new_layer, new_id);
+				}
+
+				// Copy all lines with the extra obstacle
+				C_space_lines& other_lines = other._lines;
+				for (int id = other_lines.manifold_id_iterator_begin(); id != other_lines.manifold_id_iterator_end(); id = other_lines.manifold_id_iterator_next()) {
+					C_space_line* new_line = new C_space_line(Fixed_point_constraint<K>(), _ak);
+					copy_line(*(other_lines.get_manifold(id)), *new_line, _robot, obstacle);
+					int new_id = _lines.add_manifold(new_line);
+					update_connectivity_graph(new_id);
+				}
+				TIMED_TRACE_EXIT("MyPlanner: copying");
 		}
 
 		//preprocess
@@ -352,6 +384,12 @@ namespace mms{
 			}
 		}
 
+		void copy_layer(Layer& oldLayer, Layer& newLayer, Extended_polygon& robot, Extended_polygon& obstacle) {
+			newLayer.copy(oldLayer, false);
+			// Add the dynamic obstacle to the layer copy
+			newLayer.add_obstacle(robot, obstacle.get_absolute_polygon());
+		}
+
 		VALIDATION validate_step(MS_translational& ms, Extended_polygon& robot, Extended_polygon& obstacle) {
 			TIMED_TRACE_ENTER("validate_step translational");
 			// Find the layer that the step was plotted in
@@ -359,10 +397,7 @@ namespace mms{
 
 			// Make a copy of the original layer
 			Layer updatedLayer = Layer(Fixed_angle_constraint<K>());
-			updatedLayer.copy(*layer, false);
-
-			// Add the dynamic obstacle to the layer copy
-			updatedLayer.add_obstacle(robot, obstacle.get_absolute_polygon());
+			copy_layer(*layer, updatedLayer, robot, obstacle);
 
 			// Check that the destination is reachable
 			int target_fsc_id = updatedLayer.get_containing_cell(ms.target().get_location());
@@ -389,6 +424,12 @@ namespace mms{
 			return OK;
 		}
 
+		void copy_line(C_space_line& oldLine, C_space_line& newLine, Extended_polygon& robot, Extended_polygon& obstacle) {
+			newLine.copy(oldLine, false);
+			// Add the dynamic obstacle to the layer copy
+			newLine.add_obstacle(robot, obstacle.get_absolute_polygon());
+		}
+
 		VALIDATION validate_step(MS_rotational& ms, Extended_polygon& robot, Extended_polygon& obstacle) {
 			TIMED_TRACE_ENTER("validate_step rotational");
 			// Find the original line that the step was taken from
@@ -396,10 +437,7 @@ namespace mms{
 
 			// Make a copy of the original line
 			C_space_line updatedLine = C_space_line(Fixed_point_constraint<K>(), _ak);
-			updatedLine.copy(*line, false);
-
-			// Add the dynamic obstacle to the layer copy
-			updatedLine.add_obstacle(robot, obstacle.get_absolute_polygon());
+			copy_line(*line, updatedLine, robot, obstacle);
 
 			// Check that the destination is reachable
 			int target_fsc_id = updatedLine.free_space_location_hint(ms.target());
@@ -854,9 +892,9 @@ namespace mms{
 				_workspace_bbox = _workspace_bbox + _workspace[i].bbox();
 			return;
 		}
-		void decompose_workspace_into_convex_polygons()
+		void decompose_workspace_into_convex_polygons(Polygon_vec& workspace)
 		{
-			BOOST_FOREACH(Polygon polygon, _workspace)
+			BOOST_FOREACH(Polygon polygon, workspace)
 				decompose_into_convex_polygons(polygon, std::back_inserter(_decomposed_workspace) );
 		}
 		template <typename OutputIterator>
