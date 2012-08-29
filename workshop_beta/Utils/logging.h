@@ -26,4 +26,13 @@
 
 #endif
 
+#ifdef PLAYBACK_MODE
+#define PLAYBACK_PRINT_CONNECTORS() print_connectors_as_configurations()
+#define PLAYBACK_PRINT_FIXED_ANGLE_FSCS() print_fixed_angle_fscs(true)
+
+#else
+#define PLAYBACK_PRINT_CONNECTORS()
+#define PLAYBACK_PRINT_FIXED_ANGLE_FSCS()
+#endif
+
 void timed_trace(const char* function_name, const char* full_path, int line, const char* action);
