@@ -889,7 +889,7 @@ namespace mms{
 		void print_connectivity_graph() {
 			cout << "nodes in graph: " << _graph.get_vertex_count() 
 				<< ", edges in graph: " << _graph.get_edge_count() << endl;
-			_graph.print_connected_components();
+			//_graph.print_connected_components();
 		}
 
 		void print_fixed_angle_fsc(Fsc_indx& fsc_indx) {
