@@ -88,11 +88,7 @@ void moveable_planner(double remaining_time) {
 	TIMED_TRACE_ENTER("moveable_planner");
 	while((timer.time() < remaining_time) && !finished_game) {
 		// Continue moving
-		if (!move(remaining_time - timer.time())) {
-			TIMED_TRACE_ACTION("moveable_planner", "could not find next move, spending rest of turn planning");
-			// If there is no extra movement to do this turn, spend the remaining time planning
-			static_planner(remaining_time - timer.time());
-		}
+		move(remaining_time - timer.time());
 	}
 	if (finished_game) {
 		sleep(remaining_time - timer.time());
