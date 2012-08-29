@@ -31,6 +31,12 @@
 // Graphics    
 //--------------------------------------
 #define USE_GLOBAL_GRAPHICS
+
+//--------------------------------------
+// Logging and Playback    
+//--------------------------------------
 #define DEBUG_PRINT_TIME_LOG
+
+//#define PLAYBACK_MODE
 
 #endif //COMPILATION_FLAGS_H
