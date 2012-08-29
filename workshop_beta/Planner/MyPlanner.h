@@ -468,7 +468,6 @@ namespace mms{
 						continue;
 					}
 					int ccp_count = 0;
-					cout << "FA fsc " << fa_fsc_index << " of " << fa_fsc_count << " ";
 					print_fixed_angle_fsc(*fsc_iter1);		
 					fa_fsc_index++;
 					layer_ptr1 = _layers.get_manifold(fsc_iter1->_manifold_id);
