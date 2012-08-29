@@ -2,38 +2,41 @@
 #include "MyPlayer.h"
 
 MyPlayer::MyPlayer(Env* env, Configuration* config) :
-	Player(env, config),
+Player(env, config),
 	// Initialize planner
 	planner(env->get_workspace(), env->get_robot_a()),
 	// End of buffer is the source configuration
 	buffer_end(env->get_source_configuration_a()),
 	// Remember to initialize the planner
-	planner_initialized(false),
-	last_query_succeeded(true) {
+	planner_initialized(false) {
 }
 
 // Perform preprocessing and buffering of future motion
 bool MyPlayer::plan(double deadline) {
 	TIMED_TRACE_ENTER("plan");
+	if (deadline <= 0) {
+		return false;
+	}
+
 	initialize();
 
-	// If last attempt to plan a path succeeded and there are remaining targets
-	if (last_query_succeeded && !env->get_target_configurations().empty()) {
-		// Plan additional motion to the next target
-		Motion new_motion;
-		last_query_succeeded = move_to_closest_target(buffer_end, env->get_target_configurations(), new_motion);
-		motion_buffer.push_back(new_motion);
-		buffered_targets.push_back(buffer_end);
-
-	} else {
-		// Spend some time doing additional preprocessing
-		planner.additional_preprocessing(buffer_end, env->get_target_configurations());
-		// Try again on the next call to plan
-		last_query_succeeded = true;
-	}
+	// Try to find a path to targets that are already connected ("easy targets")
+	if (has_reachable_targets()) {
+			// Plan additional motion to the next target
+			Motion new_motion;
+			move_to_closest_target(buffer_end, env->get_target_configurations(), new_motion);
+			motion_buffer.push_back(new_motion);
+			buffered_targets.push_back(buffer_end);
 	
+	// Otherwise focus on improving connectivity
+	} else if (has_unreachable_targets()) {
+		// Spend some time doing additional preprocessing
+		TIMED_TRACE_ACTION("plan", "no reachable targets");
+		planner.additional_preprocessing(buffer_end, env->get_target_configurations());
+	}
+
 	TIMED_TRACE_EXIT("plan");
-	return true;
+	return has_remaining_targets();
 }
 
 // Generate next movement
@@ -42,23 +45,23 @@ bool MyPlayer::move(double deadline, Motion& motion_output) {
 	CGAL::Timer timer;
 	timer.start();
 
-	if (motion_buffer.empty()) {
-		// No pending motion, buffer some more
+	// Make sure the motion buffer is not empty before we proceed
+	while ((timer.time() < deadline) && !has_buffered_motion()) {
 		TIMED_TRACE_ACTION("move", "no pending movement");
-		if (!plan(deadline)) {
-			// Could not generate additional motion at this time, skip this turn
-			TIMED_TRACE_ACTION("move", "could not find additional motion");
-			return false;
-		} else {
-			TIMED_TRACE_ACTION("move", "additional motion found");
-		}
+		plan(deadline);
+	}
+	if (timer.time() < deadline) {
+		TIMED_TRACE_ACTION("move", "additional motion found");
+	} else {
+		TIMED_TRACE_ACTION("move", "could not find additional movement");
+		return true;
 	}
 
 	// Attempt to perform the first motion in the buffer
 	Motion& motion = motion_buffer.front();
 	MS_base* step = NULL;
 	bool blocked = false;
-	
+
 	while (!motion.empty() && !blocked && (deadline - timer.time() > 0)) {
 		// Get the next step
 		motion.cut_step(deadline - timer.time(), motion_output);
@@ -138,11 +141,6 @@ bool MyPlayer::move_to_closest_target(Reference_point& source, Reference_point_v
 	Ref_p_vec::iterator target_reached;
 	int target_index;
 
-	// Verify that at least one target is reachable
-	if (!planner.exist_reachable_target(source, targets)) {
-		return false;
-	}
-
 	// Plan a motion to the closest remaining target
 	bool path_found = planner.query_closest_point(
 		source, 
@@ -151,16 +149,38 @@ bool MyPlayer::move_to_closest_target(Reference_point& source, Reference_point_v
 		// Append it to the output motion
 		motion);
 	ASSERT_CONDITION(path_found, "targets are connected but could not find path!");
-	
+
 	// Reached another target
 	target_reached = targets.begin() + target_index;
 	source = *target_reached;
 	targets.erase(target_reached);
-	
+
 	TIMED_TRACE_EXIT("move_to_closest_target");
 	return true;
 }
 
 void MyPlayer::additional_targets_preprocessing(Ref_p_vec& additional_targets) {
 	planner.preprocess_targets(additional_targets);
+}
+
+// Are there remaining targets that are reachable?
+bool MyPlayer::has_reachable_targets() {
+	return (!env->get_target_configurations().empty()
+		&& planner.exist_reachable_target(buffer_end, env->get_target_configurations()));
+}
+
+// Are there remaining targets that are unreachable?
+bool MyPlayer::has_unreachable_targets() {
+	return (!env->get_target_configurations().empty()
+		&& !planner.exist_reachable_target(buffer_end, env->get_target_configurations()));
+}
+
+// Are there any remaining targets?
+bool MyPlayer::has_remaining_targets() {
+	return !env->get_target_configurations().empty();
+}
+
+// Is there pending motion in the buffer?
+bool MyPlayer::has_buffered_motion() {
+	return !motion_buffer.empty();
 }

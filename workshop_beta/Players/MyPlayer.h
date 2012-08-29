@@ -30,10 +30,16 @@ private:
 	Reference_point buffer_end;
 	// Targets in buffer
 	std::deque<Reference_point> buffered_targets;
-	// Caches whether the last query attempt succeeded
-	bool last_query_succeeded;
 
 	bool planner_initialized;
+	// Initialize the underlying planner if not initialized already
 	bool initialize();
+	// Buffer motion to the closest target
 	bool move_to_closest_target(Reference_point& source, Reference_point_vec& targets, Motion& motion);
+
+	// Useful predicates
+	bool MyPlayer::has_reachable_targets();
+	bool MyPlayer::has_unreachable_targets();
+	bool MyPlayer::has_remaining_targets();
+	bool MyPlayer::has_buffered_motion();
 };
