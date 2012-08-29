@@ -133,7 +133,7 @@ bool MyPlayer::initialize() {
 // Updates source to the target selected.
 // Removes said target from targets.
 bool MyPlayer::move_to_closest_target(Reference_point& source, Reference_point_vec& targets, Motion& motion) {
-	TIMED_TRACE_ENTER("buffer_motion_ahead");
+	TIMED_TRACE_ENTER("move_to_closest_target");
 	CGAL_precondition(!env->get_target_configurations().empty());
 	Ref_p_vec::iterator target_reached;
 	int target_index;
@@ -157,7 +157,7 @@ bool MyPlayer::move_to_closest_target(Reference_point& source, Reference_point_v
 	source = *target_reached;
 	targets.erase(target_reached);
 	
-	TIMED_TRACE_EXIT("buffer_motion_ahead");
+	TIMED_TRACE_EXIT("move_to_closest_target");
 	return true;
 }
 
