@@ -468,7 +468,6 @@ namespace mms{
 						continue;
 					}
 					int ccp_count = 0;
-					print_fixed_angle_fsc(*fsc_iter1);		
 					fa_fsc_index++;
 					layer_ptr1 = _layers.get_manifold(fsc_iter1->_manifold_id);
 					Polygon_with_holes& pgn1 = layer_ptr1->get_fsc(fsc_iter1->_fsc_id).cell().polygon();
