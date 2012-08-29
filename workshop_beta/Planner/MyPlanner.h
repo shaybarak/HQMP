@@ -135,9 +135,17 @@ namespace mms{
 			BOOST_FOREACH (Rotation rotation, _rotations) {
 				add_layer(rotation);
 			}
-			int generated_connectors = generate_random_connectors();    
+
+			Ref_p_vec connecting_points;
+			create_connecting_points(connecting_points, 2);
+			int generated_connectors = generate_target_connectors(false, connecting_points);
+			//int generated_connectors = generate_random_connectors();    
 			cout << "generated " << generated_connectors << " connectors" << endl;
 			PRINT_CONNECTORS();
+			
+			PLAYBACK_PRINT_CONNECTORS();
+			PLAYBACK_PRINT_FIXED_ANGLE_FSCS();
+
 			TIMED_TRACE_EXIT("preprocess");
 			return;
 		}
@@ -166,6 +174,7 @@ namespace mms{
 			cout << "try to generate " << connecting_points.size() << " connectors" << endl;
 			int connectors_count = generate_target_connectors(true, connecting_points);
 			cout << "generated " << connectors_count << " connectors" << endl;
+			PLAYBACK_PRINT_CONNECTORS();
 			TIMED_TRACE_EXIT("additional_preprocessing");
 		}
 
@@ -485,7 +494,10 @@ namespace mms{
 			return fa_fsc_count;
 		}
 
-		bool create_connecting_points(Ref_p_vec& connecting_points) {
+		bool create_connecting_points(
+			Ref_p_vec& connecting_points, 
+			int max_cc_to_cc_connections = configuration.get_max_cc_to_cc_connections()) {
+
 			TIMED_TRACE_ENTER("create_connecting_points");
 			PRINT_CONNECTIVITY_GRAPH();
 			std::vector<Fsc_indx_vec> ccs_vec = _graph.get_connected_components();
@@ -506,6 +518,8 @@ namespace mms{
 						continue;
 					}
 					int ccp_count = 0;
+					cout << "FA fsc " << fa_fsc_index << " of " << fa_fsc_count << " ";
+					print_fixed_angle_fsc(*fsc_iter1, false);		
 					fa_fsc_index++;
 					layer_ptr1 = _layers.get_manifold(fsc_iter1->_manifold_id);
 					Polygon_with_holes& pgn1 = layer_ptr1->get_fsc(fsc_iter1->_fsc_id).cell().polygon();
@@ -540,13 +554,13 @@ namespace mms{
 							cc_to_cc_count++;
 							
 							//create only up to parameter limit cross cc connectors
-							if (cc_to_cc_count >= configuration.get_max_cc_to_cc_connections()) {
+							if (cc_to_cc_count >= max_cc_to_cc_connections) {
 								//Assume this CC is well connected to outer loop's cc.
 								break;
 							}
 						}
 						//TODO: checking this condition twice, looks like bad programming...
-						if (cc_to_cc_count >= configuration.get_max_cc_to_cc_connections()) {
+						if (cc_to_cc_count >= max_cc_to_cc_connections) {
 							//Assume this CC is well connected to outer loop's cc.
 							break;
 						}
@@ -914,6 +928,16 @@ namespace mms{
 			cout << endl;
 		}
 
+		void print_connectors_as_configurations(){
+			cout << "Printing " << _lines.manifold_id_iterator_end() << " connectors as configurations: " << endl;
+			for (int i = _lines.manifold_id_iterator_begin(); i < _lines.manifold_id_iterator_end(); i++) {
+				Point p = _lines.get_manifold(i)->constraint().restriction();
+				double x = CGAL::to_double(p.x());
+				double y = CGAL::to_double(p.y());
+				cout << x << " " << y << " 0" << endl;
+			}
+		}
+
 		void print_connectors() {
 			cout << "There exist " << _lines.manifold_id_iterator_end() << " connectors:" << endl; 
 			for (int i = _lines.manifold_id_iterator_begin(); i < _lines.manifold_id_iterator_end(); i++) {
@@ -929,12 +953,28 @@ namespace mms{
 			//_graph.print_connected_components();
 		}
 
-		void print_fixed_angle_fsc(Fsc_indx& fsc_indx) {
+		void print_fixed_angle_fscs(bool print_polygons) {
+			Fsc_indx_vec fsc_indx_vec;
+			std::vector<Fsc_indx_vec> ccs_vec = _graph.get_connected_components();
+			for (std::vector<Fsc_indx_vec>::iterator cc_iter = ccs_vec.begin() ; cc_iter != ccs_vec.end(); cc_iter++) {
+				fsc_indx_vec = *cc_iter;
+				for (Fsc_indx_vec::iterator fsc_iter = fsc_indx_vec.begin(); fsc_iter != fsc_indx_vec.end(); fsc_iter++) {
+					if (fsc_iter->_type == FIXED_ANGLE) {
+						print_fixed_angle_fsc(*fsc_iter, print_polygons);
+					}
+				}
+			}
+		}
+
+		void print_fixed_angle_fsc(Fsc_indx& fsc_indx, bool print_polygon) {
 			Layer* layer_ptr = _layers.get_manifold(fsc_indx._manifold_id);
-			Polygon_with_holes& pgn = layer_ptr->get_fsc(fsc_indx._fsc_id).cell().polygon();
 			cout << "manifold id: " << fsc_indx._manifold_id << " fsc id: " << fsc_indx._fsc_id
 				<< " angle = " << layer_ptr->constraint().restriction().to_angle();
-			//print_my_polygon_with_holes(pgn, 10);
+			if (print_polygon) {
+				cout << endl;
+				Polygon_with_holes& pgn = layer_ptr->get_fsc(fsc_indx._fsc_id).cell().polygon();
+				print_my_polygon_with_holes(pgn, 100);
+			}
 		}
 
 		void print_workspace() {
@@ -948,11 +988,12 @@ namespace mms{
 			cout <<"Polygon vertices: " << polygon.size() << endl;
 			int vertex_index = 0;
 			for (Polygon::Vertex_const_iterator vi = polygon.vertices_begin(); vi!= polygon.vertices_end (); ++vi) {
-				if (vertex_index = vertex_limit) {
+				if (vertex_index == vertex_limit) {
 					cout << (polygon.size() - vertex_limit) << " more..." << endl;
 					break;
 				}
-				std::cout << "(" << CGAL::to_double(vi->x()) << "  ,  " << CGAL::to_double(vi->y()) << ")" << std::endl; 
+				//format for GUI copy paste
+				std::cout << CGAL::to_double(vi->x()) << " " << CGAL::to_double(vi->y()) << std::endl; 
 				vertex_index++;
 			}
 		}
