@@ -2,7 +2,6 @@
 
 #include "Player.h"
 #include "Path_planning\Motion_sequence.h"
-#include "Planner\NaivePlanner.h"
 
 /**
  * Player that sleeps throughout the game.
