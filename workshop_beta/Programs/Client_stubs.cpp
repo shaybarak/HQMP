@@ -45,15 +45,14 @@ void plan(double remaining_time) {
 	return;
 }
 
-// Returns whether this method should be called again this turn
-// (if remaining time permits)
-bool move(double remaining_time) {
+// Returns the length of motion generated
+double move(double remaining_time) {
 	if (finished_game) {
 		return false;
 	}
 
 	Motion motion_sequence;
-	bool can_move_again = player->move(remaining_time, motion_sequence);
+	player->move(remaining_time, motion_sequence);
 	finished_game = player->is_game_over();
 
 	double motion_length(motion_sequence.motion_time());
@@ -71,7 +70,7 @@ bool move(double remaining_time) {
 	TIMED_TRACE_ACTION("move", "request granted");
 	ofstream out(path_filename.c_str());
 	motion_sequence.write(out);
-	return can_move_again;
+	return motion_length;
 }
 
 void static_planner(double remaining_time) {
@@ -86,13 +85,19 @@ void moveable_planner(double remaining_time) {
 	CGAL::Timer timer;
 	timer.start();
 	TIMED_TRACE_ENTER("moveable_planner");
-	while((timer.time() < remaining_time) && !finished_game) {
+	double remaining_motion_time = remaining_time;
+
+	while ((timer.time() < remaining_motion_time) && !finished_game) {
 		// Continue moving
-		move(remaining_time - timer.time());
+		remaining_motion_time -= move(remaining_motion_time - timer.time());
 	}
 	if (finished_game) {
 		sleep(remaining_time - timer.time());
+	} else while (timer.time() < remaining_time) {
+		// Use any extra static time to plan
+		player->plan(remaining_time - timer.time());
 	}
+	
 	TIMED_TRACE_EXIT("moveable_planner");
 	return;
 }
