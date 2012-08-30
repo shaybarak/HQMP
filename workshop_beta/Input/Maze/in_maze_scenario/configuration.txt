@@ -118,5 +118,5 @@ rotation_range 30
 # additional per our group
 # colored and gray sleep times
 ###################################################################
-colored_sleep_time 60
+colored_sleep_time 6000
 gray_sleep_time 1
