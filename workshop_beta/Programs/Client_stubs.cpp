@@ -35,7 +35,7 @@ void plan(double remaining_time) {
 	if (finished_game)  //update this flag when you finished all queries
 		return;
 
-	while((timer.time() < remaining_time) && !finished_game) {
+	while (timer.time() < remaining_time) {
 		if (!(player->plan(remaining_time - timer.time()))) {
 			TIMED_TRACE_ACTION("plan", "cannot plan anymore this turn");
 			break;
