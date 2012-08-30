@@ -372,11 +372,11 @@
     <ClInclude Include="..\Utils\logging.h">
       <Filter>Header Files\Utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\Players\MyPlayer.h">
-      <Filter>Header Files\Players</Filter>
-    </ClInclude>
     <ClInclude Include="..\Planner\MyPlanner.h">
       <Filter>Header Files\Planner</Filter>
+    </ClInclude>
+    <ClInclude Include="..\Players\BufferingPlayer.h">
+      <Filter>Header Files\Players</Filter>
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
@@ -428,7 +428,7 @@
     <ClCompile Include="..\Utils\logging.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\Players\MyPlayer.cpp">
+    <ClCompile Include="..\Players\BufferingPlayer.cpp">
       <Filter>Source Files\Players</Filter>
     </ClCompile>
   </ItemGroup>

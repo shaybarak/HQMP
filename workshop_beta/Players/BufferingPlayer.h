@@ -4,16 +4,16 @@
 #include "Path_planning\Motion_sequence.h"
 
 /**
- * Player that sleeps throughout the game.
+ * Player that buffers motion ahead during the planning phase.
  */
-class MyPlayer : protected Player {
+class BufferingPlayer : protected Player {
 	typedef Planner::Reference_point	Reference_point;
 	typedef Planner::Extended_polygon	Extended_polygon;
 	typedef Planner::MS_base			MS_base;
 	typedef Env::Reference_point_vec	Reference_point_vec;
 
 public:
-	MyPlayer(Env* env, Configuration* config);
+	BufferingPlayer(Env* env, Configuration* config);
 	virtual bool plan(double deadline);
 	virtual bool move(double deadline, Motion& motion_output);
 	virtual bool is_game_over();
@@ -37,8 +37,8 @@ private:
 	bool move_to_closest_target(Reference_point& source, Reference_point_vec& targets, Motion& motion);
 
 	// Useful predicates
-	bool MyPlayer::has_reachable_targets();
-	bool MyPlayer::has_unreachable_targets();
-	bool MyPlayer::has_remaining_targets();
-	bool MyPlayer::has_buffered_motion();
+	bool has_reachable_targets();
+	bool has_unreachable_targets();
+	bool has_remaining_targets();
+	bool has_buffered_motion();
 };

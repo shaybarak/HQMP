@@ -1,7 +1,7 @@
 #include "stdafx.h"
-#include "MyPlayer.h"
+#include "BufferingPlayer.h"
 
-MyPlayer::MyPlayer(Env* env, Configuration* config) :
+BufferingPlayer::BufferingPlayer(Env* env, Configuration* config) :
 Player(env, config),
 	// Initialize planner
 	planner(env->get_workspace(), env->get_robot_a()),
@@ -12,7 +12,7 @@ Player(env, config),
 }
 
 // Perform preprocessing and buffering of future motion
-bool MyPlayer::plan(double deadline) {
+bool BufferingPlayer::plan(double deadline) {
 	TIMED_TRACE_ENTER("plan");
 	if (deadline <= 0) {
 		return false;
@@ -40,7 +40,7 @@ bool MyPlayer::plan(double deadline) {
 }
 
 // Generate next movement
-bool MyPlayer::move(double deadline, Motion& motion_output) {
+bool BufferingPlayer::move(double deadline, Motion& motion_output) {
 	initialize();
 	CGAL::Timer timer;
 	timer.start();
@@ -106,7 +106,7 @@ bool MyPlayer::move(double deadline, Motion& motion_output) {
 }
 
 // Returns whether the player thinks that the game is over.
-bool MyPlayer::is_game_over() {
+bool BufferingPlayer::is_game_over() {
 	return (
 		// No target configurations left
 		env->get_target_configurations().empty() &&
@@ -116,7 +116,7 @@ bool MyPlayer::is_game_over() {
 
 // Initializes the underlying planner.
 // Returns true iff the planner was initialized on this invocation.
-bool MyPlayer::initialize() {
+bool BufferingPlayer::initialize() {
 	if (planner_initialized) {
 		return false;
 	}
@@ -135,7 +135,7 @@ bool MyPlayer::initialize() {
 // Returns whether a motion was successfully found.
 // Updates source to the target selected.
 // Removes said target from targets.
-bool MyPlayer::move_to_closest_target(Reference_point& source, Reference_point_vec& targets, Motion& motion) {
+bool BufferingPlayer::move_to_closest_target(Reference_point& source, Reference_point_vec& targets, Motion& motion) {
 	TIMED_TRACE_ENTER("move_to_closest_target");
 	CGAL_precondition(!env->get_target_configurations().empty());
 	Ref_p_vec::iterator target_reached;
@@ -159,28 +159,28 @@ bool MyPlayer::move_to_closest_target(Reference_point& source, Reference_point_v
 	return true;
 }
 
-void MyPlayer::additional_targets_preprocessing(Ref_p_vec& additional_targets) {
+void BufferingPlayer::additional_targets_preprocessing(Ref_p_vec& additional_targets) {
 	planner.preprocess_targets(additional_targets);
 }
 
 // Are there remaining targets that are reachable?
-bool MyPlayer::has_reachable_targets() {
+bool BufferingPlayer::has_reachable_targets() {
 	return (!env->get_target_configurations().empty()
 		&& planner.exist_reachable_target(buffer_end, env->get_target_configurations()));
 }
 
 // Are there remaining targets that are unreachable?
-bool MyPlayer::has_unreachable_targets() {
+bool BufferingPlayer::has_unreachable_targets() {
 	return (!env->get_target_configurations().empty()
 		&& !planner.exist_reachable_target(buffer_end, env->get_target_configurations()));
 }
 
 // Are there any remaining targets?
-bool MyPlayer::has_remaining_targets() {
+bool BufferingPlayer::has_remaining_targets() {
 	return !env->get_target_configurations().empty();
 }
 
 // Is there pending motion in the buffer?
-bool MyPlayer::has_buffered_motion() {
+bool BufferingPlayer::has_buffered_motion() {
 	return !motion_buffer.empty();
 }

@@ -7,7 +7,7 @@
 
 #include <boost/thread/thread.hpp>
 
-#include "..\Players\MyPlayer.h"
+#include "..\Players\BufferingPlayer.h"
 #include "..\Utils\logging.h"
 
 //global typedefs used in this file
@@ -109,7 +109,7 @@ void client_stubs_main(int argc, char* argv[]) {
 
 	////////////////////////////////////////////////////////////
 	// Begin game
-	player = (Player*)new MyPlayer(&env, &configuration);
+	player = (Player*)new BufferingPlayer(&env, &configuration);
 	bool read_additional_configurations = true;
 	while (is_game_over(*socket_client_ptr) == false) {    
 		// Before doing any planning, see if something changed
