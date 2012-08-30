@@ -76,7 +76,7 @@
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <EnableCOMDATFolding>true</EnableCOMDATFolding>
       <OptimizeReferences>true</OptimizeReferences>
-      <AdditionalDependencies>Ws2_32.lib;qtmaind.lib;QtGuid4.lib;QtCored4.lib;QtOpenGLd4.lib;libgmp-10.lib;libmpfr-4.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Ws2_32.lib;libgmp-10.lib;libmpfr-4.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies);qtmaind.lib;QtGuid4.lib;QtCored4.lib;QtOpenGLd4.lib</AdditionalDependencies>
       <IgnoreSpecificDefaultLibraries>gmp-vc100-mt.lib;mpfr-vc100-mt.lib</IgnoreSpecificDefaultLibraries>
       <AdditionalLibraryDirectories>$(CGAL_DIR)\lib;$(QTDIR)\lib;$(BOOST_DIR)\lib;$(CGAL_DIR)\auxiliary\gmp\lib</AdditionalLibraryDirectories>
     </Link>
@@ -135,7 +135,7 @@
     <ClInclude Include="..\Path_planning\ShortestPathInPolygon.h" />
     <ClInclude Include="..\Planner\MyPlanner.h" />
     <ClInclude Include="..\Planner\NaivePlanner.h" />
-    <ClInclude Include="..\Players\BufferingPlayer.h" />
+    <ClInclude Include="..\Players\FastCopyingPlayer.h" />
     <ClInclude Include="..\Players\Player.h" />
     <ClInclude Include="..\Project\CgalTypedefs.h" />
     <ClInclude Include="..\Project\CompilationFlags.h" />
@@ -170,7 +170,6 @@
     <ClInclude Include="..\Utils\Rotation_utils\RotationRange.h" />
     <ClInclude Include="..\Utils\Rotation_utils\RotationUtils.h" />
     <ClInclude Include="..\Utils\UI_utils\Environment.h" />
-    <ClInclude Include="..\Utils\UI_utils\Graphics.h" />
     <ClInclude Include="..\Utils\UI_utils\InputReader.h" />
     <ClInclude Include="..\Utils\UI_utils\TimeManager.h" />
     <ClInclude Include="stdafx.h" />
@@ -180,7 +179,7 @@
     <ClCompile Include="..\Graph\ConnectedComponents.cpp" />
     <ClCompile Include="..\Manager\File_names.cpp" />
     <ClCompile Include="..\Manager\Time_frame.cpp" />
-    <ClCompile Include="..\Players\BufferingPlayer.cpp" />
+    <ClCompile Include="..\Players\FastCopyingPlayer.cpp" />
     <ClCompile Include="..\Players\Player.cpp" />
     <ClCompile Include="..\Programs\Client_stubs.cpp" />
     <ClCompile Include="..\Programs\Path_planner.cpp" />

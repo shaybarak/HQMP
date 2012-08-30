@@ -348,9 +348,6 @@
     <ClInclude Include="..\Utils\UI_utils\Environment.h">
       <Filter>Header Files\Utils\UI_utils</Filter>
     </ClInclude>
-    <ClInclude Include="..\Utils\UI_utils\Graphics.h">
-      <Filter>Header Files\Utils\UI_utils</Filter>
-    </ClInclude>
     <ClInclude Include="..\Utils\UI_utils\InputReader.h">
       <Filter>Header Files\Utils\UI_utils</Filter>
     </ClInclude>
@@ -375,7 +372,7 @@
     <ClInclude Include="..\Planner\MyPlanner.h">
       <Filter>Header Files\Planner</Filter>
     </ClInclude>
-    <ClInclude Include="..\Players\BufferingPlayer.h">
+    <ClInclude Include="..\Players\FastCopyingPlayer.h">
       <Filter>Header Files\Players</Filter>
     </ClInclude>
   </ItemGroup>
@@ -428,7 +425,7 @@
     <ClCompile Include="..\Utils\logging.cpp">
       <Filter>Source Files\Utils</Filter>
     </ClCompile>
-    <ClCompile Include="..\Players\BufferingPlayer.cpp">
+    <ClCompile Include="..\Players\FastCopyingPlayer.cpp">
       <Filter>Source Files\Players</Filter>
     </ClCompile>
   </ItemGroup>
