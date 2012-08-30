@@ -1,3 +1,0 @@
-Changes to original code:
-1. In client_stubs.cpp changed include from client.h to client_stubs.h
-2. In server.cpp changed #define USE_CLIENT_B to 1
