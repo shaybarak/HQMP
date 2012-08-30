@@ -566,8 +566,9 @@ namespace mms{
 						}
 					}
 					if (ccp_count != 0) {
-						cout << " created " << ccp_count << " points" << endl;
+						cout << " created " << ccp_count << " points";
 					}
+					cout << endl;
 				}
 			}
 			TIMED_TRACE_ENTER("create_connecting_points");
@@ -1000,11 +1001,15 @@ namespace mms{
 
 		void print_my_polygon_with_holes(Polygon_with_holes polygon, int vertex_limit) {
 			cout << "********************" << endl;
+			cout << "Polygon boundary is convex: " << polygon.outer_boundary().is_convex() << endl;
+			cout << "Polygon had holes: " << (polygon.number_of_holes() != 0) << endl;
 			cout <<"Polygon outer boundary: " << endl;
 			print_my_polygon(polygon.outer_boundary(), vertex_limit);
-			cout <<"Polygon holes: " << endl;
-			for (Polygon_with_holes::Hole_const_iterator hi = polygon.holes_begin(); hi!= polygon.holes_end(); ++hi) {
-				print_my_polygon((*hi), vertex_limit);
+			if (polygon.number_of_holes() != 0) {	
+				cout <<"Polygon holes: " << endl;
+				for (Polygon_with_holes::Hole_const_iterator hi = polygon.holes_begin(); hi!= polygon.holes_end(); ++hi) {
+					print_my_polygon((*hi), vertex_limit);
+				}
 			}
 			cout << "********************" << endl;
 		}
