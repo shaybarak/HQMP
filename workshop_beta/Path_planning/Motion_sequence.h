@@ -263,6 +263,10 @@ public:
 			MS_base_ptr next_step = motion_sequence.front();
 			double next_step_time = step_time(next_step, translational_speed, rotational_speed);
 
+			if (remaining_time <= 0) {
+				return false;
+			}
+
 			if (remaining_time > next_step_time) {
 				// Add the step to the cut
 				output.motion_sequence.push_back(next_step);
