@@ -111,7 +111,7 @@ public: //random point in a two-dimensional area
 	  int i = 0;
 
 	  do {
-		  if (i == guess_limit) {
+		  if (i++ == guess_limit) {
 			  return false;
 		  }
 		  p = get_random_point(bbox_intersect.xmin (), bbox_intersect.xmax (),
