@@ -361,7 +361,7 @@ namespace mms{
 					double current_aerial_time = it->first;
 					Reference_point target(target_configurations[point_index]);
 
-					cout << "Query target: " << point_index << " ";
+					cout << "Query target: ";
 					target.print();
 					cout << " Aerial time to target: "<< current_aerial_time << endl;
 
