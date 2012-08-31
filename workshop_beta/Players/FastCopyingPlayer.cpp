@@ -44,9 +44,9 @@ bool FastCopyingPlayer::plan(double deadline) {
 
 // Generate next movement
 bool FastCopyingPlayer::move(double deadline, Motion& motion_output) {
-	initialize();
 	CGAL::Timer timer;
 	timer.start();
+	initialize();
 
 	// Make sure we have at least one reachable target before proceeding
 	while ((timer.time() < deadline) && !has_reachable_targets(original_planner)) {
