@@ -18,6 +18,7 @@ public:
 	virtual bool move(double deadline, Motion& motion_output);
 	virtual bool is_game_over();
 	virtual void additional_targets_preprocessing(Ref_p_vec& additional_targets);
+	virtual void reject_last_move(Motion& motion_sequence);
 
 private:
 	// Initializes the underlying planner if not initialized already
@@ -58,4 +59,10 @@ private:
 	
 	// Caches whether the planner was initialized
 	bool planner_initialized;
+
+	// Workaround for rejecting the last move
+	// Whether the last motion was returned completely
+	bool is_last_motion_complete;
+	// The last target that was reached
+	Reference_point last_target;
 };

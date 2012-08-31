@@ -10,7 +10,8 @@ FastCopyingPlayer::FastCopyingPlayer(Env* env, Configuration* config) :
 	// Initial location is the source configuration
 	location(env->get_source_configuration_a()),
 	// Remember to initialize the planner
-	planner_initialized(false) {
+	planner_initialized(false),
+	is_last_motion_complete(false) {
 }
 
 FastCopyingPlayer::~FastCopyingPlayer() {
@@ -72,6 +73,8 @@ bool FastCopyingPlayer::move(double deadline, Motion& motion_output) {
 		motion_output.add_motion_sequence(new_motion);
 		// Update location to target reached
 		location = *target_iter;
+		is_last_motion_complete = true;
+		last_target = *target_iter;
 		// Remove target reached from targets left
 		env->get_target_configurations().erase(target_iter);
 	} else {
@@ -79,6 +82,7 @@ bool FastCopyingPlayer::move(double deadline, Motion& motion_output) {
 		new_motion.cut_motion(deadline - timer.time(), motion_output);
 		// Update location to end of new motion
 		location = motion_output.back()->target();
+		is_last_motion_complete = false;
 	}
 	return true;
 }
@@ -90,6 +94,14 @@ bool FastCopyingPlayer::is_game_over() {
 
 void FastCopyingPlayer::additional_targets_preprocessing(Ref_p_vec& additional_targets) {
 	original_planner.preprocess_targets(additional_targets);
+}
+
+void FastCopyingPlayer::reject_last_move(Motion& motion_sequence) {
+	// If the last (rejected) motion was to a target
+	if (is_last_motion_complete) {
+		// Return that target to the list of remaining targets
+		env->get_target_configurations().push_back(last_target);
+	}
 }
 
 // Initializes the underlying planner.
