@@ -109,6 +109,7 @@ namespace mms{
 				// Copy all layers with the extra obstacle
 				Layers& other_layers = other._layers;
 				for (int id = other_layers.manifold_id_iterator_begin(); id != other_layers.manifold_id_iterator_end(); id = other_layers.manifold_id_iterator_next()) {
+					// Memory leak here (but all of the planner code is already leaking like crazy so I'm not fixing this)
 					Layer* new_layer = new Layer(Fixed_angle_constraint<K>());
 					copy_layer(*(other_layers.get_manifold(id)), *new_layer, _robot, obstacle);
 					int new_id = _layers.add_manifold(new_layer);
@@ -118,6 +119,7 @@ namespace mms{
 				// Copy all lines with the extra obstacle
 				C_space_lines& other_lines = other._lines;
 				for (int id = other_lines.manifold_id_iterator_begin(); id != other_lines.manifold_id_iterator_end(); id = other_lines.manifold_id_iterator_next()) {
+					// Memory leak here (but all of the planner code is already leaking like crazy so I'm not fixing this)
 					C_space_line* new_line = new C_space_line(Fixed_point_constraint<K>(), _ak);
 					copy_line(*(other_lines.get_manifold(id)), *new_line, _robot, obstacle);
 					int new_id = _lines.add_manifold(new_line);
