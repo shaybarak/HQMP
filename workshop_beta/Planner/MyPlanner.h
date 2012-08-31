@@ -205,9 +205,8 @@ namespace mms{
 			Motion_sequence& motion_sequence, double& motion_time, double motion_time_limit) {
 
 			TIMED_TRACE_ENTER("query");
-			////////////////////////////////////
+			
 			//connect source and target to graph
-			////////////////////////////////////
 			Motion_sequence source_motion_sequence, target_motion_sequence;
 
 			Reference_point perturbed_source = connect_to_graph(source, source_motion_sequence);
@@ -222,9 +221,7 @@ namespace mms{
 				return false;
 			}
 
-			////////////////////////////////////
 			//find path of fscs(if exists)
-			////////////////////////////////////
 			Fsc_indx source_fsc_indx (get_containig_fsc(perturbed_source));
 			CGAL_postcondition (source_fsc_indx != Fsc_indx());
 			Fsc_indx target_fsc_indx (get_containig_fsc(perturbed_target));
@@ -241,9 +238,7 @@ namespace mms{
 				return false;
 			}
 
-			////////////////////////////////////
 			//construct motion sequence
-			////////////////////////////////////
 			//(1) add source motion
 			motion_sequence.add_motion_sequence(source_motion_sequence);
 
