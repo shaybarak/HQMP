@@ -60,7 +60,7 @@ save_path 1
 # slices_granularity is the number of slices.
 # common vaues: 5,10,20,40,90,180,270,360
 ###################################################################
-slices_granularity 20
+slices_granularity 40
 
 ###################################################################
 # use_filtering 
@@ -70,7 +70,7 @@ use_filtering 1
 ###################################################################
 # use_region_of_interset
 ###################################################################
-use_region_of_interest 1 
+use_region_of_interest 0
 
 
 
