@@ -202,8 +202,7 @@ namespace mms{
 
 		//query
 		bool query( const Reference_point& source, const Reference_point& target,
-			Motion_sequence& motion_sequence, double& motion_time, double motion_time_limit) 
-		{
+			Motion_sequence& motion_sequence, double& motion_time, double motion_time_limit) {
 
 			TIMED_TRACE_ENTER("query");
 			////////////////////////////////////
@@ -232,11 +231,11 @@ namespace mms{
 			CGAL_postcondition (target_fsc_indx != Fsc_indx());
 
 			std::list<Fsc_indx> fsc_indx_path;
-			if (source_fsc_indx == target_fsc_indx)
+			if (source_fsc_indx == target_fsc_indx) {
 				fsc_indx_path.push_back(source_fsc_indx);
-			else
-				_graph.find_path( source_fsc_indx, target_fsc_indx, fsc_indx_path);
-
+			} else {
+				_graph.find_path(source_fsc_indx, target_fsc_indx, fsc_indx_path);
+			}
 			if (fsc_indx_path.empty()) {
 				TIMED_TRACE_EXIT("query: fsc index path is empty");
 				return false;
@@ -249,7 +248,7 @@ namespace mms{
 			motion_sequence.add_motion_sequence(source_motion_sequence);
 
 			//(2) construct real motion sequence from connectivity graph
-			int             curr_fsc_indx = 0;
+			int curr_fsc_indx = 0;
 			Reference_point curr_ref_p = perturbed_source;
 
 			std::list<Fsc_indx>::iterator curr, next;
@@ -269,18 +268,6 @@ namespace mms{
 					(motion_sequence.get_sequence().back()->target() == curr_ref_p) );
 				plan_path(fsc_ptr, curr_ref_p, next_ref_p, motion_sequence);
 
-				//TODO: there still seems to be a loop in plan_path__fixed_[angle/point]
-				//However seems like heaviest part in plan_path is before. May consider do more delicate "return"
-				//from this functions
-				int current_size = motion_sequence.get_sequence().size();
-				motion_time += motion_sequence.motion_time_between(time_index, current_size-1);
-				if (motion_time >= motion_time_limit) {
-					TIMED_TRACE_EXIT("query: connecting fscs, not the closest point");
-					return false;
-				}
-
-				time_index = current_size;
-
 				CGAL_precondition ( (motion_sequence.get_sequence().empty()) || 
 					(motion_sequence.get_sequence().back()->target() == next_ref_p) );
 
@@ -292,17 +279,19 @@ namespace mms{
 
 			Fsc* fsc_ptr = get_fsc(*curr);
 			plan_path(fsc_ptr, curr_ref_p, perturbed_target, motion_sequence);
-			motion_time += motion_sequence.motion_time_between(time_index, motion_sequence.get_sequence().size()-1);
-			if (motion_time >= motion_time_limit) {
-				TIMED_TRACE_EXIT("query: connecting perturbed target, not the closest point");
-				return false;
-			}
+
+			//motion_time += motion_sequence.motion_time_between(time_index, motion_sequence.get_sequence().size()-1);
+			//if (motion_time >= motion_time_limit) {
+			//	TIMED_TRACE_EXIT("query: connecting perturbed target, not the closest point");
+			//	return false;
+			//}
 
 			delete fsc_ptr;
 
 			//(3) add target motion
 			target_motion_sequence.reverse_motion_sequence();
 			motion_sequence.add_motion_sequence(target_motion_sequence);
+			motion_time = motion_sequence.motion_time();
 			TIMED_TRACE_EXIT("query");
 			return true;
 		}
@@ -352,22 +341,23 @@ namespace mms{
 					double current_aerial_time = it->first;
 					Reference_point target(target_configurations[point_index]);
 
-					cout << endl << "Time: " << global_tm.timer.time() << " Query point: " << point_index << " ";
+					cout << "Query target: " << point_index << " ";
 					target.print();
-					cout << endl << "AERIAL TIME TO POINT: "<< current_aerial_time << endl;
+					cout << " Aerial time to target: "<< current_aerial_time << endl;
 
 					if (current_aerial_time > shortest_time) {
 						//since vector is already sorted, all points from here are further. End of iterations.
-						TIMED_TRACE_ACTION("query_closest_point", "aerial_time > shortest_time, finishing query");
+						TIMED_TRACE_ACTION("query_closest_point", "aerial_time > shortest_time, no more queries needed");
 						break;
 					}
 
 					if (!query(source, target, *current, current_time, shortest_time)) {
+						current->clear();
 						continue;
 					}
 					path_found = true;
 
-					cout << "Best motion time till now: " << shortest_time << ", found path to point, motion time: " << current_time << endl;
+					cout << "Best motion time till now: " << shortest_time << ", found path to target, motion time: " << current_time << endl;
 
 					if (current_time < shortest_time) {	
 						// Exchange current and shortest
@@ -376,12 +366,16 @@ namespace mms{
 						shortest = temp;
 						shortest_time = current_time;
 						closest_target_index = point_index;
-					} else {
-						current->clear();
 					}
+					current->clear();
 				}
 
 				motion_sequence.add_motion_sequence(*shortest);
+				
+				cout << "Selected target: ";
+				target_configurations[closest_target_index].print();
+				cout << " time to target: " << shortest_time << endl;
+
 				TIMED_TRACE_EXIT("query_closest_point");
 				return path_found;
 		}
@@ -711,6 +705,7 @@ namespace mms{
 			// Create connector
 			c_space_line_ptr = new C_space_line (constraint, _ak);
 			c_space_line_ptr->decompose(_robot, _decomposed_workspace);
+
 			int c_space_line_id = _lines.add_manifold(c_space_line_ptr);
 
 			// Update connectivity graph
