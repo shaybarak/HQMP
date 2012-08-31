@@ -535,8 +535,7 @@ namespace mms{
 						continue;
 					}
 					int ccp_count = 0;
-					cout << "FA fsc " << fa_fsc_index << " of " << fa_fsc_count << " ";
-					print_fixed_angle_fsc(*fsc_iter1, false);		
+					PRINT_FA_FSC_PREFIX();		
 					fa_fsc_index++;
 					layer_ptr1 = _layers.get_manifold(fsc_iter1->_manifold_id);
 					Polygon_with_holes& pgn1 = layer_ptr1->get_fsc(fsc_iter1->_fsc_id).cell().polygon();
@@ -562,7 +561,7 @@ namespace mms{
 							}
 							bool generated = _rand.generate_random_point_in_polygons(p, pgn1, pgn2, 1000);
 							if (!generated) {
-								cout << "Failed generating point, skipping connection" << endl;
+								PRINF_FA_FSC_FAILED_GENERATING_POINT();
 								continue;
 							}
 							Ref_p generated_point(p, layer_ptr1->constraint().restriction());
@@ -582,13 +581,10 @@ namespace mms{
 							break;
 						}
 					}
-					if (ccp_count != 0) {
-						cout << " created " << ccp_count << " points";
-					}
-					cout << endl;
+					PRINT_FA_FSC_SUFFIX();
 				}
 			}
-			TIMED_TRACE_ENTER("create_connecting_points");
+			TIMED_TRACE_EXIT("create_connecting_points");
 			return false;
 		}
 
@@ -956,7 +952,7 @@ namespace mms{
 		}
 
 		void print_connectors() {
-			cout << "There exist " << _lines.manifold_id_iterator_end() << " connectors:" << endl; 
+			print_connectors_count();
 			for (int i = _lines.manifold_id_iterator_begin(); i < _lines.manifold_id_iterator_end(); i++) {
 				print_point_nice<K>(_lines.get_manifold(i)->constraint().restriction());
 				cout << " ";
@@ -964,10 +960,20 @@ namespace mms{
 			cout << endl;
 		}
 
+		void print_connectors_count() {
+			cout << "There exist " << _lines.manifold_id_iterator_end() << " connectors" << endl; 
+		}
+
+		void print_connectivity_graph_count() {
+			cout << "Connectivity Graph: " 
+				<< _graph.get_vertex_count() << " nodes, "
+				<< _graph.get_edge_count() << " edges " 
+				<< _graph.get_connected_components().size() << " connected components" << endl;
+		}
+
 		void print_connectivity_graph() {
-			cout << "nodes in graph: " << _graph.get_vertex_count() 
-				<< ", edges in graph: " << _graph.get_edge_count() << endl;
-			//_graph.print_connected_components();
+			print_connectivity_graph_count();
+			_graph.print_connected_components();
 		}
 
 		void print_fixed_angle_fscs(bool print_polygons) {
