@@ -115,12 +115,19 @@ void FastCopyingPlayer::improve_connectivity(Planner& planner, Reference_point& 
 
 void FastCopyingPlayer::clone_planner() {
 	if (cloned_planner != NULL) {
-		delete cloned_planner;
+		if (dynamic_obstacle == cached_dynamic_obstacle) {
+			// No need to re-clone the planner!
+			return;
+		} else {
+			// The cloned planner is obsolete
+			delete cloned_planner;
+		}
 	}
 
 	Extended_polygon robot_b(env->get_robot_b());
 	robot_b.move_absolute(dynamic_obstacle);
 	cloned_planner = new Planner(original_planner, robot_b);
+	cached_dynamic_obstacle = dynamic_obstacle;
 }
 
 // Moves to the closest target

@@ -52,6 +52,9 @@ private:
 	
 	// Our current location
 	Reference_point location;
+
+	// The dynamic obstacle that the planner was cloned for
+	Reference_point cached_dynamic_obstacle;
 	
 	// Caches whether the planner was initialized
 	bool planner_initialized;
