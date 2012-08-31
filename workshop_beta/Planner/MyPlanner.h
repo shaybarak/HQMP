@@ -209,15 +209,27 @@ namespace mms{
 			//connect source and target to graph
 			Motion_sequence source_motion_sequence, target_motion_sequence;
 
+			//compute source->perturbed_source motion sequence + time
 			Reference_point perturbed_source = connect_to_graph(source, source_motion_sequence);
 			if (perturbed_source == Reference_point()) {
 				TIMED_TRACE_EXIT("query: failed to connect source to pre-processed configuration space");
 				return false;
 			}
+			motion_time += source_motion_sequence.motion_time();
+			if (motion_time >= motion_time_limit) {
+				TIMED_TRACE_EXIT("query: connecting perturbed source, not the closest point");
+				return false;
+			}
 
+			//compute perturbed_target->target motion sequence + time
 			Reference_point perturbed_target = connect_to_graph(target, target_motion_sequence);
 			if (perturbed_target == Reference_point()) {
 				TIMED_TRACE_EXIT("query: failed to connect target to pre-processed configuration space");
+				return false;
+			}
+			motion_time += target_motion_sequence.motion_time();
+			if (motion_time >= motion_time_limit) {
+				TIMED_TRACE_EXIT("query: connecting perturbed target, not the closest point");
 				return false;
 			}
 
@@ -248,12 +260,11 @@ namespace mms{
 
 			std::list<Fsc_indx>::iterator curr, next;
 
-			int time_index = 0;
+			int time_index = motion_sequence.get_sequence().size();
 
 			next = curr = fsc_indx_path.begin();
 			++next;
-			while (next != fsc_indx_path.end())
-			{
+			while (next != fsc_indx_path.end()) {
 				Reference_point  next_ref_p = get_intersection(*curr, *next);
 
 				Fsc* fsc_ptr = get_fsc(*curr);
@@ -262,6 +273,16 @@ namespace mms{
 				CGAL_precondition ( (motion_sequence.get_sequence().empty()) || 
 					(motion_sequence.get_sequence().back()->target() == curr_ref_p) );
 				plan_path(fsc_ptr, curr_ref_p, next_ref_p, motion_sequence);
+
+				int current_size = motion_sequence.get_sequence().size();
+				motion_time += motion_sequence.motion_time_between(time_index, current_size-1);
+				//stop planning path as soon as we know that target is not the closest
+				if (motion_time >= motion_time_limit) {
+					delete fsc_ptr;
+					TIMED_TRACE_EXIT("query: connecting fscs, not the closest point");
+					return false;
+				}
+				time_index = current_size;
 
 				CGAL_precondition ( (motion_sequence.get_sequence().empty()) || 
 					(motion_sequence.get_sequence().back()->target() == next_ref_p) );
@@ -275,18 +296,22 @@ namespace mms{
 			Fsc* fsc_ptr = get_fsc(*curr);
 			plan_path(fsc_ptr, curr_ref_p, perturbed_target, motion_sequence);
 
-			//motion_time += motion_sequence.motion_time_between(time_index, motion_sequence.get_sequence().size()-1);
-			//if (motion_time >= motion_time_limit) {
-			//	TIMED_TRACE_EXIT("query: connecting perturbed target, not the closest point");
-			//	return false;
-			//}
+			motion_time += motion_sequence.motion_time_between(time_index, motion_sequence.get_sequence().size()-1);
+			if (motion_time >= motion_time_limit) {
+				TIMED_TRACE_EXIT("query: connecting perturbed target, not the closest point");
+				return false;
+			}
 
 			delete fsc_ptr;
 
-			//(3) add target motion
+			//(3) add target motion, this sequence time was already added to motion time
 			target_motion_sequence.reverse_motion_sequence();
 			motion_sequence.add_motion_sequence(target_motion_sequence);
-			motion_time = motion_sequence.motion_time();
+
+			ASSERT_CONDITION(CGAL::abs(motion_time - motion_sequence.motion_time()) < 0.001, 
+				"query: motion_time composed = " << motion_time 
+				<< " motion_time total = " << motion_sequence.motion_time());
+
 			TIMED_TRACE_EXIT("query");
 			return true;
 		}
