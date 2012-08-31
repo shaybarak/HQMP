@@ -103,7 +103,7 @@ public:
     if (copy_smart_polygons)
     {
       BOOST_FOREACH(Smart_polygon polygon, other.get_polygons())
-        polygons.push_back(polygon)
+        polygons.push_back(polygon);
     }
     return;
   }
