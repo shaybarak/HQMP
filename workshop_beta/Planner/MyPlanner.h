@@ -803,8 +803,6 @@ namespace mms{
 				return ref_p;
 			}
 
-			ASSERT_CONDITION(false, "ref_p is not on graph!");
-
 			if (layer_ptr->is_free(location) == false) {
 				return Reference_point();
 			}
