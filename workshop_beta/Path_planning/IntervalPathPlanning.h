@@ -52,7 +52,31 @@ void plan_path_in_interval( const typename K::FT& s,
   //add midpoint
   if (interval_list.size() == 1)
   {
-    *oi++ = (s+ t) / 2; //midpoint
+	// s is +=INF so we can approach it from either direction
+	if (s == INFINITY || s == -INFINITY) {
+		if (t > 0) {
+			// s...........0...t...... or
+			// ............0...t.....s
+			*oi++ = t + 1;
+		} else {
+			// s......t....0.......... or
+			// .......t....0.........s
+			*oi++ = t - 1;
+		}
+	// t is +=INF so we can approach it from either direction
+	} else if (t == INFINITY || t == -INFINITY) {
+		if (s > 0) {
+			// t...........0...s...... or
+			// ............0...s.....t
+			*oi++ = s + 1;
+		} else {
+			// t......s....0.......... or
+			// .......s....0.........t
+			*oi++ = s - 1;
+		}
+	} else {
+		*oi++ = (s + t) / 2; //midpoint
+	}
   }
   else //interval_list.size() ==2
   {
