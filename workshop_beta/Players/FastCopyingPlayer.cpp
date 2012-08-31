@@ -48,9 +48,17 @@ bool FastCopyingPlayer::move(double deadline, Motion& motion_output) {
 	CGAL::Timer timer;
 	timer.start();
 
-	clone_planner();
-
 	// Make sure we have at least one reachable target before proceeding
+	while ((timer.time() < deadline) && !has_reachable_targets(original_planner)) {
+		TIMED_TRACE_ACTION("move", "trying to connect targets");
+		improve_connectivity(original_planner, location, env->get_target_configurations());
+	}
+	if (timer.time() >= deadline) {
+		return false;
+	}
+
+	clone_planner();
+	// Now do the same thing with the clone
 	while ((timer.time() < deadline) && !has_reachable_targets(*cloned_planner)) {
 		TIMED_TRACE_ACTION("move", "trying to connect targets");
 		improve_connectivity(*cloned_planner, location, env->get_target_configurations());
