@@ -48,7 +48,7 @@ void plan(double remaining_time) {
 // Returns the length of motion generated
 double move(double remaining_time) {
 	if (finished_game) {
-		return false;
+		return 0;
 	}
 
 	Motion motion_sequence;
@@ -58,19 +58,21 @@ double move(double remaining_time) {
 	double motion_length(motion_sequence.motion_time());
 	if (motion_length == 0) {
 		TIMED_TRACE_ACTION("move", "generated zero length motion");
-		return false;
+		return 0;
 	}
 	
 	std::string path_filename;
 	TIMED_TRACE_ACTION("move", "requesting to write move");
-	bool motion_write_successful = request_to_write(*socket_client_ptr, motion_length, path_filename);
-	// TODO graceful failure
-	ASSERT_CONDITION(motion_write_successful, "write request denied by server!");
-	
-	TIMED_TRACE_ACTION("move", "request granted");
-	ofstream out(path_filename.c_str());
-	motion_sequence.write(out);
-	return motion_length;
+	if (request_to_write(*socket_client_ptr, motion_length, path_filename)) {
+		TIMED_TRACE_ACTION("move", "request granted");
+		ofstream out(path_filename.c_str());
+		motion_sequence.write(out);
+		return motion_length;
+	} else {
+		TIMED_TRACE_ACTION("move", "request denied");
+		player->reject_last_move(motion_sequence);
+		return 0;
+	}
 }
 
 void static_planner(double remaining_time) {

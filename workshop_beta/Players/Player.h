@@ -21,6 +21,8 @@ public:
 	virtual bool move(double deadline, Motion& motion_sequence) = 0;
 	virtual bool is_game_over() = 0;
 	virtual void additional_targets_preprocessing(Ref_p_vec& additional_targets) = 0;
+	// Workaround for client-server problems, notifies the player that the last move was rejected
+	virtual void reject_last_move(Motion& motion_sequence);
 
 protected:
 	Env* env;
