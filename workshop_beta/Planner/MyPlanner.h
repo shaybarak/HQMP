@@ -259,17 +259,7 @@ namespace mms{
 			TIMED_TRACE_ENTER("preprocess_generate_connectors");
 			Ref_p_vec connecting_points;
 			create_connecting_points(connecting_points, cc_limit);
-#ifdef DEBUG_PLANNER
-			cout << "try to generate " << connecting_points.size() << " connectors" << endl;
-#endif
 			int generated_connectors = generate_target_connectors(use_filter, use_roi, connecting_points);
-			//int generated_connectors = generate_random_connectors();    
-#ifdef DEBUG_PLANNER
-			cout << "generated " << generated_connectors << " connectors" << endl;
-#endif
-			PRINT_CONNECTORS();
-			
-			PLAYBACK_PRINT_CONNECTORS();
 			PLAYBACK_PRINT_FIXED_ANGLE_FSCS();
 			TIMED_TRACE_EXIT("preprocess_generate_connectors");
 		}
@@ -286,12 +276,8 @@ namespace mms{
 			Ref_p_vec connecting_points;
 			create_connecting_points(connecting_points, 2);
 			int generated_connectors = generate_target_connectors(false, false, connecting_points);
-			//int generated_connectors = generate_random_connectors();
-#ifdef DEBUG_PLANNER
-			cout << "generated " << generated_connectors << " connectors" << endl;
-#endif
+			PRINT_GENERATED_CONNECTORS(generated_connectors);
 			PRINT_CONNECTORS();
-			
 			PLAYBACK_PRINT_CONNECTORS();
 			PLAYBACK_PRINT_FIXED_ANGLE_FSCS();
 
@@ -320,13 +306,9 @@ namespace mms{
 
 			Ref_p_vec connecting_points;
 			create_connecting_points(connecting_points, 10);
-#ifdef DEBUG_PLANNER
-			cout << "try to generate " << connecting_points.size() << " connectors" << endl;
-#endif
+			PRINT_TRY_TO_GENERATE_CONNECTORS(connecting_points.size());
 			int connectors_count = generate_target_connectors(true, true, connecting_points);
-#ifdef DEBUG_PLANNER
-			cout << "generated " << connectors_count << " connectors" << endl;
-#endif
+			PRINT_GENERATED_CONNECTORS(connectors_count);
 			PLAYBACK_PRINT_CONNECTORS();
 			TIMED_TRACE_EXIT("additional_preprocessing");
 		}
@@ -529,13 +511,7 @@ namespace mms{
 				Motion_sequence seq1, seq2;
 				Motion_sequence *current = &seq1, *shortest = &seq2, *temp = NULL;
 				double shortest_time = INFINITY, current_time, current_aerial_time = 0;
-
-#ifdef DEBUG_PLANNER
-				cout << endl << "Time: " << global_tm.timer.time() << " SOURCE POINT: ";
-				source.print();
-				cout << endl;
-#endif
-
+				PRINT_SOURCE_POINT();
 				for (std::vector<pair<double, int>>::iterator it = aerialTimeToIndex.begin(); it!=aerialTimeToIndex.end(); it++) {
 					current_time = 0;
 
@@ -543,12 +519,7 @@ namespace mms{
 
 					double current_aerial_time = it->first;
 					Reference_point target(target_configurations[point_index]);
-
-#ifdef DEBUG_PLANNER
-					cout << "Query target: ";
-					target.print();
-					cout << " Aerial time to target: "<< current_aerial_time << endl;
-#endif
+					PRINT_TARGET_POINT_AERIAL_TIME();
 
 					if (current_aerial_time > shortest_time) {
 						//since vector is already sorted, all points from here are further. End of iterations.
@@ -561,10 +532,7 @@ namespace mms{
 						continue;
 					}
 					path_found = true;
-
-#ifdef DEBUG_PLANNER
-					cout << "Best motion time till now: " << shortest_time << ", found path to target, motion time: " << current_time << endl;
-#endif
+					PRINT_BEST_MOTION_TIME();
 
 					if (current_time < shortest_time) {	
 						// Exchange current and shortest
@@ -578,13 +546,7 @@ namespace mms{
 				}
 
 				motion_sequence.add_motion_sequence(*shortest);
-				
-#ifdef DEBUG_PLANNER
-				cout << "Selected target: ";
-				target_configurations[closest_target_index].print();
-				cout << " time to target: " << shortest_time << endl;
-#endif
-
+				PRINT_SELECTED_TARGET();
 				TIMED_TRACE_EXIT("query_closest_point");
 				return path_found;
 		}
@@ -868,6 +830,8 @@ namespace mms{
 					generated++;
 				}
 			}
+			PRINT_CONNECTIVITY_GRAPH();
+			PLAYBACK_PRINT_CONNECTORS();
 			TIMED_TRACE_EXIT("generate_target_connectors");
 			return generated;
 		}
@@ -967,15 +931,6 @@ namespace mms{
 		}
 
 	private: //Connectivity_graph methods
-		/*void update_connectivity_graph_vertices(Layer& layer, int layer_id)
-		{
-			for (int fsc_id(0); fsc_id<layer.num_of_fscs(); ++fsc_id)
-			{
-				Fsc_indx layer_fsc_indx(FIXED_ANGLE, layer_id, fsc_id);
-				_graph.add_vertex(layer_fsc_indx);
-			}
-			return;
-		}*/
 
 		void update_connectivity_graph_layer(int layer_id) {
 			CGAL_precondition (layer_id != NO_ID);

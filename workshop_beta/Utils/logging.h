@@ -8,6 +8,12 @@
 	#define PRINT_ROTATIONS() print_rotations()
 	#define PRINT_WORKSPACE() print_workspace()
 	#define ASSERT_CONDITION(x, message) if (!(x)) { cout << message << endl; __debugbreak(); }
+	#define PRINT_TRY_TO_GENERATE_CONNECTORS(x) cout << "try to generate " << (x) << " connectors" << endl
+	#define PRINT_GENERATED_CONNECTORS(x) cout << "generated " << (x) << " connectors" << endl
+	#define PRINT_SOURCE_POINT() cout << "SOURCE POINT: "; source.print(); cout << endl
+	#define PRINT_TARGET_POINT_AERIAL_TIME() cout << "Query target: "; target.print(); cout << " Aerial time to target: "<< current_aerial_time << endl
+	#define PRINT_BEST_MOTION_TIME() cout << "Best motion time till now: " << shortest_time << ", found path to target, motion time: " << current_time << endl
+	#define PRINT_SELECTED_TARGET()	cout << "Selected target: "; target_configurations[closest_target_index].print(); cout << " time to target: " << shortest_time << endl;
 
 #else
 
@@ -17,6 +23,12 @@
 	#define PRINT_ROTATIONS()
 	#define PRINT_WORKSAPCE()
 	#define ASSERT_CONDITION(x, message)
+	#define PRINT_TRY_TO_GENERATE_CONNECTORS(x)
+	#define PRINT_GENERATED_CONNECTORS(x)
+	#define PRINT_SOURCE_POINT()
+	#define PRINT_TARGET_POINT_AERIAL_TIME()
+	#define PRINT_BEST_MOTION_TIME()
+	#define PRINT_SELECTED_TARGET()
 
 #endif
 
