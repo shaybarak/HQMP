@@ -25,21 +25,13 @@ bool FastCopyingPlayer::plan(double deadline) {
 	TIMED_TRACE_ENTER("plan");
 	ASSERT_CONDITION(deadline > 0, "plan called but no time left");
 	initialize();
-
-	// Improve connectivity
-	if (has_unreachable_targets(original_planner)) {
-		TIMED_TRACE_ACTION("plan", "found unreachable targets, improving connectivity");
-		improve_connectivity(original_planner, location, env->get_target_configurations());
-	}
-
-	// Improve quality
-	else {
-		// TODO: sample more layers?
+	if (original_planner.preprocess_plan()) {
+		TIMED_TRACE_EXIT("plan: can do more preprocessing");
+		return true;
+	} else {
+		TIMED_TRACE_EXIT("plan: no more preprocessing please");
 		return false;
 	}
-
-	// TODO: when do we stop planning?
-	return true;
 }
 
 // Generate next movement
@@ -51,8 +43,8 @@ bool FastCopyingPlayer::move(double deadline, Motion& motion_output) {
 
 	// Make sure we have at least one reachable target before proceeding
 	while ((timer.time() < deadline) && !has_reachable_targets(original_planner)) {
-		TIMED_TRACE_ACTION("move", "trying to connect targets");
-		improve_connectivity(original_planner, location, env->get_target_configurations());
+		TIMED_TRACE_ACTION("move", "preprocessing original planner");
+		original_planner.preprocess_move();
 	}
 	if (timer.time() >= deadline) {
 		return false;
@@ -61,8 +53,8 @@ bool FastCopyingPlayer::move(double deadline, Motion& motion_output) {
 	clone_planner();
 	// Now do the same thing with the clone
 	while ((timer.time() < deadline) && !has_reachable_targets(*cloned_planner)) {
-		TIMED_TRACE_ACTION("move", "trying to connect targets");
-		improve_connectivity(*cloned_planner, location, env->get_target_configurations());
+		TIMED_TRACE_ACTION("move", "preprocessing cloned planner");
+		cloned_planner->preprocess_move();
 	}
 	if (timer.time() >= deadline) {
 		return false;
@@ -73,7 +65,7 @@ bool FastCopyingPlayer::move(double deadline, Motion& motion_output) {
 	Ref_p_vec::iterator target_iter = move_to_closest_target(
 		*cloned_planner,
 		location,
-		env->get_target_configurations(),
+		remaining_targets(),
 		new_motion);
 
 	// Check output motion time
@@ -85,7 +77,7 @@ bool FastCopyingPlayer::move(double deadline, Motion& motion_output) {
 		is_last_motion_complete = true;
 		last_target = *target_iter;
 		// Remove target reached from targets left
-		env->get_target_configurations().erase(target_iter);
+		remaining_targets().erase(target_iter);
 	} else {
 		// Cut the motion
 		new_motion.cut_motion(deadline - timer.time(), motion_output);
@@ -111,7 +103,7 @@ void FastCopyingPlayer::reject_last_move(Motion& motion_sequence) {
 	// If the last (rejected) motion was to a target
 	if (is_last_motion_complete) {
 		// Return that target to the list of remaining targets
-		env->get_target_configurations().push_back(last_target);
+		remaining_targets().push_back(last_target);
 	}
 }
 
@@ -121,24 +113,13 @@ bool FastCopyingPlayer::initialize() {
 	if (planner_initialized) {
 		return false;
 	}
-
-	original_planner.preprocess();
-	// Allow additional preprocessing to source point and all initial targets
-	sample_location_and_remaining_targets(original_planner);
-
+	original_planner.initialize(location, remaining_targets());
 	planner_initialized = true;
 	return true;
 }
 
 void FastCopyingPlayer::improve_connectivity(Planner& planner, Reference_point& location, Ref_p_vec& targets) {
 	planner.additional_preprocessing(location, targets);
-}
-
-void FastCopyingPlayer::sample_location_and_remaining_targets(Planner& planner) {
-	// Allow additional preprocessing to source point and all initial targets
-	Ref_p_vec source_and_targets = env->get_target_configurations();
-	source_and_targets.push_back(location);
-	original_planner.preprocess_targets(source_and_targets);
 }
 
 void FastCopyingPlayer::clone_planner() {
@@ -177,17 +158,21 @@ Ref_p_vec::iterator FastCopyingPlayer::move_to_closest_target(Planner& planner, 
 
 // Are there any remaining targets?
 bool FastCopyingPlayer::has_remaining_targets() {
-	return !env->get_target_configurations().empty();
+	return !remaining_targets().empty();
 }
 
 // Are there remaining targets that are reachable?
 bool FastCopyingPlayer::has_reachable_targets(Planner& planner) {
-	return (!env->get_target_configurations().empty()
-		&& planner.exist_reachable_target(location, env->get_target_configurations()));
+	return (!remaining_targets().empty()
+		&& planner.exist_reachable_target(location, remaining_targets()));
 }
 
 // Are there remaining targets that are unreachable?
 bool FastCopyingPlayer::has_unreachable_targets(Planner& planner) {
-	return (!env->get_target_configurations().empty()
-		&& !planner.exist_reachable_target(location, env->get_target_configurations()));
+	return (!remaining_targets().empty()
+		&& !planner.exist_unreachable_target(location, remaining_targets()));
+}
+
+Ref_p_vec& FastCopyingPlayer::remaining_targets() {
+	return env->get_target_configurations();
 }

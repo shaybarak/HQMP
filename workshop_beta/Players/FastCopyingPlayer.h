@@ -29,9 +29,6 @@ private:
 		Reference_point& location,
 		Ref_p_vec& targets);
 
-	// Sample the current location and all remaining target configurations
-	void sample_location_and_remaining_targets(Planner& planner);
-
 	// Clones the original planner, taking into account the other robot's current location
 	void clone_planner();
 
@@ -47,6 +44,7 @@ private:
 	bool has_remaining_targets();
 	bool has_reachable_targets(Planner& planner);
 	bool has_unreachable_targets(Planner& planner);
+	Ref_p_vec& remaining_targets();
 
 	// Original planner without an obstacle
 	Planner original_planner;
