@@ -248,10 +248,10 @@ namespace mms{
 		void preprocess_generate_layers(int layers_res) {
 			TIMED_TRACE_ENTER("preprocess_generate_layers");
 			generate_random_rotations(layers_res);
-			PRINT_ROTATIONS();
 			BOOST_FOREACH (Rotation rotation, _rotations) {
 				add_layer(rotation);
 			}
+			PRINT_ROTATIONS();
 			TIMED_TRACE_EXIT("preprocess_generate_layers");
 		}
 		
@@ -825,11 +825,13 @@ namespace mms{
 		int generate_target_connectors(bool use_filter, bool use_roi, Ref_p_vec& ref_points) {
 			TIMED_TRACE_ENTER("generate_target_connectors");
 			int generated = 0;
+			cout << "try to generate " << ref_points.size() << " connectors" << endl;
 			for (Ref_p_vec::iterator iter = ref_points.begin(); iter != ref_points.end(); iter++){
 				if (generate_connector(use_filter, use_roi, &(*iter))) {
 					generated++;
 				}
 			}
+			cout << "generated " << generated << " connectors" << endl;
 			PRINT_CONNECTIVITY_GRAPH();
 			PLAYBACK_PRINT_CONNECTORS();
 			TIMED_TRACE_EXIT("generate_target_connectors");
@@ -1125,9 +1127,9 @@ namespace mms{
 
 		//debugging methods
 		void print_rotations() {
-			cout << "There exist " << _rotations.size() << " rotations: ";
+			cout << "There exist " << _layers.size() << " rotations: ";
 			for (int iter = _layers.manifold_id_iterator_begin(); iter != _layers.manifold_id_iterator_end(); iter++) {
-				cout << _layers.get_manifold(iter)->constraint().restriction().to_angle();
+				cout << _layers.get_manifold(iter)->constraint().restriction().to_angle() << ", ";
 			}
 			cout << endl;
 		}
