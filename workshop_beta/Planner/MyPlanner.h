@@ -1126,7 +1126,7 @@ namespace mms{
 		//debugging methods
 		void print_rotations() {
 			cout << "There exist " << _rotations.size() << " rotations: ";
-			for (int iter = _layers.manifold_id_iterator_begin(); iter != _layers.manifold_id_iterator_end; iter++) {
+			for (int iter = _layers.manifold_id_iterator_begin(); iter != _layers.manifold_id_iterator_end(); iter++) {
 				cout << _layers.get_manifold(iter)->constraint().restriction().to_angle();
 			}
 			cout << endl;
