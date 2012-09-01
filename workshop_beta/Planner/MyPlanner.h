@@ -231,7 +231,7 @@ namespace mms{
 		}
 
 		//query
-		bool query( const Reference_point& source, const Reference_point& target,
+		bool query(const Reference_point& source, const Reference_point& target,
 			Motion_sequence& motion_sequence, double& motion_time, double motion_time_limit) {
 
 			TIMED_TRACE_ENTER("query");
