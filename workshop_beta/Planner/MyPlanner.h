@@ -943,7 +943,7 @@ namespace mms{
 			}
 
 			//iterate over all lines, find intersections
-			for (int iter = _lines.manifold_id_iterator_begin(); iter < _lines.manifold_id_iterator_end(); iter++) {
+			for (int iter = _lines.manifold_id_iterator_begin(); iter != _lines.manifold_id_iterator_end(); iter++) {
 				Int_pair edges_ids;
 				C_space_line* line_ptr = _lines.get_manifold(iter);
 				//will address the correct cell, no need to iterate over all cells
@@ -1125,9 +1125,9 @@ namespace mms{
 
 		//debugging methods
 		void print_rotations() {
-			cout << "There exist " << _rotations.size() << " rotations:" << endl;
-			BOOST_FOREACH(Rotation rotation, _rotations) {
-				cout << rotation.to_angle() << ", ";
+			cout << "There exist " << _rotations.size() << " rotations: ";
+			for (int iter = _layers.manifold_id_iterator_begin(); iter != _layers.manifold_id_iterator_end; iter++) {
+				cout << _layers.get_manifold(iter)->constraint().restriction().to_angle();
 			}
 			cout << endl;
 		}
