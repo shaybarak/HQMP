@@ -776,6 +776,8 @@ namespace mms{
 			int layer_id = _layers.add_manifold(layer_ptr);
 
 			update_connectivity_graph_vertices(*layer_ptr, layer_id);
+			// TODO uncomment
+			//update_connectivity_graph_layer(layer_id);
 			return;
 		}
 
