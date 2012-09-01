@@ -150,7 +150,7 @@ namespace mms{
 	/*	will be called when there is time to do static planning. Returns whether it should be called again if time permits.
 		If state < 3, increase state, perform action at new state and return true (call me again if time permits).
 		If state == 3, perform state 3 action again and return false.
-		If state == 4, go to state 5 performing action 5 and return true.
+		If state == 4, redo state 4 action and return false.
 		If state == 5, redo state 5 action and return false. */
 		bool preprocess_plan() {
 			TIMED_TRACE_ENTER("preprocess_plan");
@@ -179,11 +179,10 @@ namespace mms{
 				return false;
 
 			case 4:
-				/* enter state 5 */
-				_state++;
+				/* keep state 4 */
 				preprocess_generate_connectors(1, true, true);
-				TIMED_TRACE_EXIT("preprocess_plan: 4->5");
-				return true;
+				TIMED_TRACE_EXIT("preprocess_plan: 4->4");
+				return false;
 
 			case 5:
 				/* keep state 5 */
