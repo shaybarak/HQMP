@@ -45,21 +45,33 @@ bool FastCopyingPlayer::move(double deadline, Motion& motion_output) {
 	initialize();
 
 	// Make sure we have at least one reachable target before proceeding
+	int preprocessed = 0;
 	while ((timer.time() < deadline) && !has_reachable_targets(original_planner)) {
 		timed_message("Thinking harder...");
-		TIMED_TRACE_ACTION("move", "preprocessing original planner");
-		original_planner.preprocess_plan();
+		if (++preprocessed <= 3) {
+			TIMED_TRACE_ACTION("move", "preprocessing_move original planner");
+			original_planner.preprocess_move();
+		} else {
+			TIMED_TRACE_ACTION("move", "preprocessing_plan original planner");
+			original_planner.preprocess_plan();
+		}
 	}
 	if (timer.time() >= deadline) {
 		return false;
 	}
 
 	clone_planner();
+	preprocessed = 0;
 	// Now do the same thing with the clone
 	while ((timer.time() < deadline) && !has_reachable_targets(*cloned_planner)) {
 		timed_message("Thinking even harder...");
-		TIMED_TRACE_ACTION("move", "preprocessing cloned planner");
-		cloned_planner->preprocess_plan();
+		if (++preprocessed <= 3) {
+			TIMED_TRACE_ACTION("move", "preprocessing_move cloned planner");
+			cloned_planner->preprocess_move();
+		} else {
+			TIMED_TRACE_ACTION("move", "preprocessing_plan cloned planner");
+			cloned_planner->preprocess_plan();
+		}
 	}
 	if (timer.time() >= deadline) {
 		return false;
