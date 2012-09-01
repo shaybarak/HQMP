@@ -311,7 +311,7 @@ namespace mms{
 			TIMED_TRACE_ENTER("additional_reprocessing");
 
 			Ref_p_vec connecting_points;
-			create_connecting_points(connecting_points);
+			create_connecting_points(connecting_points, 10);
 			cout << "try to generate " << connecting_points.size() << " connectors" << endl;
 			int connectors_count = generate_target_connectors(true, true, connecting_points);
 			cout << "generated " << connectors_count << " connectors" << endl;
@@ -680,9 +680,7 @@ namespace mms{
 			return fa_fsc_count;
 		}
 
-		bool create_connecting_points(
-			Ref_p_vec& connecting_points, 
-			int max_cc_to_cc_connections = configuration.get_max_cc_to_cc_connections()) {
+		bool create_connecting_points(Ref_p_vec& connecting_points, int max_cc_to_cc_connections) {
 
 			TIMED_TRACE_ENTER("create_connecting_points");
 			PRINT_CONNECTIVITY_GRAPH();

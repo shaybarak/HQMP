@@ -95,11 +95,6 @@ public: //get
   int get_gray_sleep_time();
   
   
-  void set_max_fa_fsc_to_fa_fsc_connections(const int max_fa_fsc_to_fa_fsc_connections);
-  void set_max_cc_to_cc_connections(const int max_cc_to_cc_connections);
-  int get_max_fa_fsc_to_fa_fsc_connections();
-  int get_max_cc_to_cc_connections();
-
   void set_layers_res_1(const int layers_res_1);
   int get_layers_res_1();
   void set_layers_res_2(const int layers_res_2);
@@ -156,8 +151,6 @@ private:
   int _gray_sleep_time;
   std::string _additional_sample_points_file_name;
   
-  int _max_fa_fsc_to_fa_fsc_connections;
-  int _max_cc_to_cc_connections;
   int _layers_res_1;
   int _layers_res_2;
   int _layers_res_3;

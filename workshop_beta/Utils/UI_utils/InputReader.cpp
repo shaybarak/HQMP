@@ -32,10 +32,10 @@ void Input_reader::read_configuration(const std::string& filename, Configuration
 	configuration.set_max_num_of_phases(1); //currently not in use
 
 	//special parameters
-	//configuration.se
-	configuration.set_max_cc_to_cc_connections(10);
-	configuration.set_max_fa_fsc_to_fa_fsc_connections(INT_MAX);
 	configuration.set_seed(time(NULL));
+	configuration.set_layers_res_1(5);
+	configuration.set_layers_res_2(40);
+	configuration.set_layers_res_3(360);
 
 	while (! file.eof() ) {        
 		getline (file,line);
@@ -126,11 +126,6 @@ void Input_reader::read_configuration(const std::string& filename, Configuration
 		//client
 		else if (decomposed_line[0].compare("seed") == 0)
 			configuration.set_seed(atoi(decomposed_line[1].c_str()));
-
-		else if (decomposed_line[0].compare("max_fa_fsc_to_fa_fsc_connections") == 0)
-			configuration.set_max_fa_fsc_to_fa_fsc_connections(atoi(decomposed_line[1].c_str()));
-		else if (decomposed_line[0].compare("max_cc_to_cc_connections") == 0)
-			configuration.set_max_cc_to_cc_connections(atoi(decomposed_line[1].c_str()));
 
 		else if (decomposed_line[0].compare("layers_res_1") == 0)
 			configuration.set_layers_res_1(atoi(decomposed_line[1].c_str()));
