@@ -294,14 +294,8 @@ std::string Configuration::get_all_target_configurations_file_name()
 /////////////////////////////
 //Changes for Team Bender
 /////////////////////////////
-void Configuration::set_seed(int seed) {
-	_seed = seed;
-}
 
-int Configuration::get_seed() {
-	return _seed;
-}
-
+/* server */
 void Configuration::set_colored_sleep_time(const int colored_sleep_time) {
 	_colored_sleep_time = colored_sleep_time;
 }
@@ -316,6 +310,15 @@ void Configuration::set_gray_sleep_time(const int gray_sleep_time) {
 
 int Configuration::get_gray_sleep_time() {
 	return _gray_sleep_time;
+}
+
+/* client */
+void Configuration::set_seed(int seed) {
+	_seed = seed;
+}
+
+int Configuration::get_seed() {
+	return _seed;
 }
 
 void Configuration::set_max_fa_fsc_to_fa_fsc_connections(const int max_fa_fsc_to_fa_fsc_connections) {
@@ -333,3 +336,28 @@ void Configuration::set_max_cc_to_cc_connections(const int max_cc_to_cc_connecti
 int Configuration::get_max_cc_to_cc_connections() {
 	return _max_cc_to_cc_connections;
 }
+
+void Configuration::set_layers_res_1(const int layers_res_1) {
+	_layers_res_1 = layers_res_1;
+}
+
+int Configuration::get_layers_res_1() {
+	return _layers_res_1;
+}
+
+void Configuration::set_layers_res_2(const int layers_res_2) {
+	_layers_res_2 = layers_res_2;
+}
+
+int Configuration::get_layers_res_2() {
+	return _layers_res_2;
+}
+
+void Configuration::set_layers_res_3(const int layers_res_3) {
+	_layers_res_3 = layers_res_3;
+}
+
+int Configuration::get_layers_res_3() {
+	return _layers_res_3;
+}
+

@@ -26,11 +26,13 @@ void Input_reader::read_configuration(const std::string& filename, Configuration
 	configuration.set_max_area_of_small_feature(1);
 	configuration.set_min_area_of_large_feature(5);
 	configuration.set_workspace_area(1);
+
 	configuration.set_max_num_of_intra_connections(64); //currently not in use!
 	configuration.set_max_num_of_base_intra_connections(5); //currently not in use
 	configuration.set_max_num_of_phases(1); //currently not in use
 
 	//special parameters
+	//configuration.se
 	configuration.set_max_cc_to_cc_connections(10);
 	configuration.set_max_fa_fsc_to_fa_fsc_connections(INT_MAX);
 	configuration.set_seed(time(NULL));
@@ -124,10 +126,20 @@ void Input_reader::read_configuration(const std::string& filename, Configuration
 		//client
 		else if (decomposed_line[0].compare("seed") == 0)
 			configuration.set_seed(atoi(decomposed_line[1].c_str()));
+
 		else if (decomposed_line[0].compare("max_fa_fsc_to_fa_fsc_connections") == 0)
 			configuration.set_max_fa_fsc_to_fa_fsc_connections(atoi(decomposed_line[1].c_str()));
 		else if (decomposed_line[0].compare("max_cc_to_cc_connections") == 0)
 			configuration.set_max_cc_to_cc_connections(atoi(decomposed_line[1].c_str()));
+
+		else if (decomposed_line[0].compare("layers_res_1") == 0)
+			configuration.set_layers_res_1(atoi(decomposed_line[1].c_str()));
+		else if (decomposed_line[0].compare("layers_res_1") == 0)
+			configuration.set_layers_res_2(atoi(decomposed_line[1].c_str()));
+		else if (decomposed_line[0].compare("layers_res_1") == 0)
+			configuration.set_layers_res_3(atoi(decomposed_line[1].c_str()));
+
+
 
 	}
 

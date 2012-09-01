@@ -100,6 +100,13 @@ public: //get
   int get_max_fa_fsc_to_fa_fsc_connections();
   int get_max_cc_to_cc_connections();
 
+  void set_layers_res_1(const int layers_res_1);
+  int get_layers_res_1();
+  void set_layers_res_2(const int layers_res_2);
+  int get_layers_res_2();
+  void set_layers_res_3(const int layers_res_3);
+  int get_layers_res_3();
+  //////////////////////////////
 
 private:
   std::string _robot_file_name_a;
@@ -151,6 +158,9 @@ private:
   
   int _max_fa_fsc_to_fa_fsc_connections;
   int _max_cc_to_cc_connections;
+  int _layers_res_1;
+  int _layers_res_2;
+  int _layers_res_3;
 
 }; //Configuration
 
