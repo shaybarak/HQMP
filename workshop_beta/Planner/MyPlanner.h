@@ -83,28 +83,26 @@ namespace mms{
 
 		Random_utils            _rand;
 		AK                      _ak;
-		int						_layers_level; //0,1,2,3
-		bool					_added_res_2_connectors;
+		//int						_layers_level; //0,1,2,3
+		//bool					_added_res_2_connectors;
+		int						_state;
 
 	public:
 		//constructor
 		MyPlanner  (Polygon_vec &workspace, Extended_polygon& robot)
 			: _workspace (workspace), _robot(robot),
-			_graph(0,true), _rand(configuration.get_seed()) {
+			_graph(0,true), _rand(configuration.get_seed()), _state(0) {
 				compute_workspace_bbox();
 				//the minkowski sum algorithm works faster on polygons are convex
 				//hence we decompose the workspace obstacles to convex polygons
 				decompose_workspace_into_convex_polygons(_workspace);
-				_layers_level = 0;
-				_added_res_2_connectors = false;
 		}
 
 		// Copy planner with an additional obstacle
 		MyPlanner(MyPlanner& other, Extended_polygon& obstacle) :
 			_workspace(other._workspace), _robot(other._robot),
 			_workspace_bbox(other._workspace_bbox),
-			_graph(0, true), _rand(configuration.get_seed()), 
-			_layers_level(other._layers_level), _added_res_2_connectors(false) {
+			_graph(0, true), _rand(configuration.get_seed()), _state(other._state) {
 
 				TIMED_TRACE_ENTER("MyPlanner: copying");
 				Polygon_vec updated_workspace(_workspace);
@@ -128,42 +126,145 @@ namespace mms{
 					C_space_line* new_line = new C_space_line(Fixed_point_constraint<K>(), _ak);
 					copy_line(*(other_lines.get_manifold(id)), *new_line, _robot, obstacle);
 					int new_id = _lines.add_manifold(new_line);
-					update_connectivity_graph_line(new_id);
+					update_connectivity_graph(new_id);
 				}
 				TIMED_TRACE_EXIT("MyPlanner: copying");
 		}
 
-		//create layers
-		void preprocess_generate_layers() {
+		void initialize(Ref_p& source, Ref_p_vec& targets) {
+			TIMED_TRACE_ENTER("initialize");
+			ASSERT_CONDITION((_state == 0),"Initialize called with state != 0");
+
+			/* enter state 1 */
+			_state = 1;
+			preprocess_generate_layers(configuration.get_layers_res_1());
+			Ref_p_vec all_conf = targets;
+			all_conf.push_back(source);
+			preprocess_targets(all_conf);
+			preprocess_generate_connectors(2, false, false);
+			TIMED_TRACE_EXIT("initialize");
+		}
+
+	/*	will be called when there is time to do static planning. Returns whether it should be called again if time permits.
+		If state < 3, increase state, perform action at new state and return true (call me again if time permits).
+		If state == 3, perform state 3 action again and return false.
+		If state == 4, go to state 5 performing action 5 and return true.
+		If state == 5, redo state 5 action and return false. */
+		bool preprocess_plan() {
+			TIMED_TRACE_ENTER("preprocess_plan");
+
+			switch(_state) {
+			case 1:
+				/* enter state 2 */
+				state++;
+				preprocess_generate_layers(configuration.get_layers_res_2());
+				//TODO: connect existing layers!, and also check what ROI matters
+				preprocess_generate_connectors(2, false, true);
+				TIMED_TRACE_EXIT("preprocess_plan: 1->2");
+				return true;
+			
+			case 2:
+				/* enter state 3 */
+				state++;
+				preprocess_generate_connectors(5, true, true);
+				TIMED_TRACE_EXIT("preprocess_plan: 2->3");
+				return true;
+
+			case 3:
+				/* keep state 3 */
+				preprocess_generate_connectors(5, true, true);
+				TIMED_TRACE_EXIT("preprocess_plan: 3->3");
+				return false;
+
+			case 4:
+				/* enter state 5 */
+				state++;
+				preprocess_generate_connectors(1, true, true);
+				TIMED_TRACE_EXIT("preprocess_plan: 4->5");
+				return true;
+
+			case 5:
+				/* keep state 5 */
+				preprocess_generate_connectors(1, true, true);
+				TIMED_TRACE_EXIT("preprocess_plan: 5->5");
+				return false;
+
+			case default:
+				ASSERT_CONDITION(false, "preprocess plan: invalid state");
+				TIMED_TRACE_EXIT("preprocess_plan: ?->?");
+				return false;
+			}
+		}
+
+	/*	will be called when a move needs to be made but the planner cannot satisfy any requests. 
+		Guaranteed to be called only if there are no reachable targets.
+		Always takes us from state n to state n+1 with the exception of 5.*/
+		bool preprocess_move(Ref_p& source, Ref_p_vec& targets) {
+			switch(_state) {
+			case 1:
+				/* enter state 2 */
+				state++;
+				preprocess_generate_layers(configuration.get_layers_res_2());
+				//TODO: connect existing layers!, and also check what ROI matters
+				preprocess_generate_connectors(2, false, true);
+				TIMED_TRACE_EXIT("preprocess_move: 1->2");
+				return true;
+			
+			case 2:
+				/* enter state 3 */
+				state++;
+				preprocess_generate_connectors(5, true, true);
+				TIMED_TRACE_EXIT("preprocess_move: 2->3");
+				return true;
+
+			case 3:
+				/* enter state 4 */
+				state++;
+				preprocess_generate_connectors(1, true, true);
+				TIMED_TRACE_EXIT("preprocess_move: 3->4");
+				return true;
+
+			case 4:
+				state++;
+				preprocess_generate_layers(configuration.get_layers_res_3());
+				preprocess_generate_connectors(1, true, true);
+				TIMED_TRACE_EXIT("preprocess_move: 4->5");
+				return true;
+
+			case 5:
+				preprocess_generate_connectors(1, true, true);
+				TIMED_TRACE_EXIT("preprocess_move: 5->5");
+				return true;
+
+			case default:
+				ASSERT_CONDITION(false, "preprocess plan: invalid state");
+				TIMED_TRACE_EXIT("preprocess_plan: ?->?");
+				return false;
+			}
+		}
+
+		void preprocess_generate_layers(int layers_res) {
 			TIMED_TRACE_ENTER("preprocess_generate_layers");
-			int layers_res = get_layers_res(_layers_level);
 			generate_random_rotations(layers_res);
 			PRINT_ROTATIONS();
 			BOOST_FOREACH (Rotation rotation, _rotations) {
 				add_layer(rotation);
 			}
-			if (_layers_level < 3) {
-				_layers_level ++;
-			}
 			TIMED_TRACE_EXIT("preprocess_generate_layers");
 		}
 		
-		void preprocess_generate_connectors() {
+		void preprocess_generate_connectors(int cc_limit, bool use_filter, bool use_roi) {
 			TIMED_TRACE_ENTER("preprocess_generate_connectors");
 			Ref_p_vec connecting_points;
-			create_connecting_points(connecting_points, get_cc_limit());
+			create_connecting_points(connecting_points, cc_limit);
 			cout << "try to generate " << connecting_points.size() << " connectors" << endl;
-			int generated_connectors = generate_target_connectors(get_use_filter(), get_use_roi(), connecting_points);
+			int generated_connectors = generate_target_connectors(use_filter, use_roi, connecting_points);
 			//int generated_connectors = generate_random_connectors();    
 			cout << "generated " << generated_connectors << " connectors" << endl;
 			PRINT_CONNECTORS();
 			
 			PLAYBACK_PRINT_CONNECTORS();
 			PLAYBACK_PRINT_FIXED_ANGLE_FSCS();
-
-			if (_layers_level == 2) {
-				_added_res_2_connectors = true;
-			}
 			TIMED_TRACE_EXIT("preprocess_generate_connectors");
 		}
 
@@ -673,60 +774,6 @@ namespace mms{
 		_layers_level = layers_level;
 	}
 
-	int get_layers_res(int layers_level) {
-		switch (layers_level) {
-			case 0: 
-				return configuration.get_layers_res_1();
-			case 1: 
-				return configuration.get_layers_res_2();
-			case 2: 
-				return configuration.get_layers_res_3();
-			case 3:
-				// No additional layers to sample
-				return 0;
-			default:
-				TIMED_TRACE_ACTION("get_layers_res", "unknown level");
-				return 0;
-		}
-	}
-
-	int get_cc_limit() {
-		if (_layers_level == 1) {
-			return 2;
-		}
-		if ((_layers_level == 2) && (!_added_res_2_connectors)) {
-			return 2;
-		}
-		if ((_layers_level == 2) && (_added_res_2_connectors)) {
-			return 5;
-		}
-		if (_layers_level == 3) {
-			return 1;
-		}
-		TIMED_TRACE_ACTION("get_cc_limit", "illegal state");
-		return 0;
-	}
-
-	bool get_use_filter() {
-		if (_layers_level == 1) {
-			return false;
-		}
-		if ((_layers_level == 2) && (!_added_res_2_connectors)) {
-			return false;
-		}
-		if ((_layers_level == 2) && (_added_res_2_connectors)) {
-			return true;
-		}
-		if (_layers_level == 3) {
-			return true;
-		}
-		TIMED_TRACE_ACTION("get_use_filter", "illegal state");
-		return false;
-	}
-
-	bool get_use_roi() {
-		return (_layers_level != 1);
-	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -776,8 +823,6 @@ namespace mms{
 			int layer_id = _layers.add_manifold(layer_ptr);
 
 			update_connectivity_graph_vertices(*layer_ptr, layer_id);
-			// TODO uncomment
-			//update_connectivity_graph_layer(layer_id);
 			return;
 		}
 
@@ -867,7 +912,7 @@ namespace mms{
 			int c_space_line_id = _lines.add_manifold(c_space_line_ptr);
 
 			// Update connectivity graph
-			update_connectivity_graph_line(c_space_line_id);
+			update_connectivity_graph(c_space_line_id);
 			return true;
 		}
 
@@ -913,7 +958,7 @@ namespace mms{
 			}
 			return;
 		}
-		void update_connectivity_graph_line(int c_space_line_id)
+		void update_connectivity_graph(int c_space_line_id)
 		{
 			CGAL_precondition (c_space_line_id != NO_ID);
 
@@ -942,11 +987,7 @@ namespace mms{
 				_graph.add_edge(layer_fsc_indx, line_fsc_indx);
 			}
 			return;
-		}
-		void update_connectivity_graph_layer(int layer_id)
-		{
-			ASSERT_CONDITION(false, "NOT IMPLEMENTED");
-		}
+		}  
 	private: //query related methods
 		Reference_point connect_to_graph( const Reference_point& ref_p,
 			Motion_sequence& motion_sequence)
