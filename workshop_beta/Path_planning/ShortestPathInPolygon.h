@@ -72,40 +72,47 @@ public:
   //get shortest path
   void shortest_path(const Point & source,const Point & target, Point_list& path, const Polygon_with_holes& polygon)
   {	
-		TIMED_TRACE_ENTER("shortest_path (Path_planning folder)");
+	TIMED_TRACE_ENTER("shortest_path (Path_planning folder)");
 		
-		Polygon polygon_outer_boundary(polygon.outer_boundary());
+	Polygon polygon_outer_boundary(polygon.outer_boundary());
 
-		
-			Segment_2 straigh_line_path(source, target);
-			//If there is a straight-line solution, return with it immediately.
-			if (is_in_polygon(straigh_line_path, polygon,true)){
-				path.push_front(target);
-				path.push_front(source);
-				return;
-			}
-		
+	if (polygon.has_holes()){
+		Segment_2 straigh_line_path(source, target);
+		//If there is a straight-line solution, return with it immediately.
+		if (is_in_polygon(straigh_line_path, polygon,true)){
+			path.push_front(target);
+			path.push_front(source);
+			return;
+		}else{
 				
-				Delaunay tr;
-				if (!_initialized){
-					//triangulate polygon
-					
-					for (H_iterator hi = polygon.holes_begin  (); hi!= polygon.holes_end (); ++hi){
-						insert_consrtaints(Polygon(*hi), tr);
-					}
-					insert_consrtaints(polygon_outer_boundary, tr);
-					this->construct_dual_graph(tr,source,target);
-					_initialized = true;
+			Delaunay tr;
+			if (!_initialized){
+
+				//triangulate polygon
+				for (H_iterator hi = polygon.holes_begin  (); hi!= polygon.holes_end (); ++hi){
+					insert_consrtaints(Polygon(*hi), tr);
 				}
-				Point_list point_path;
-				_graph.find_path(source,target, point_path);
-				refine_path(point_path, path, tr);
-				TIMED_TRACE_EXIT("path_in_polygon (Path_planning folder)");
-				return;
+				insert_consrtaints(polygon_outer_boundary, tr);
+				this->construct_dual_graph(tr,source,target);
+				_initialized = true;
+			}
+			Point_list point_path;
+			_graph.find_path(source,target,point_path);
+			refine_path(point_path, path, tr);
+			TIMED_TRACE_EXIT("path_in_polygon (Path_planning folder)");
+			return;
+		}
+	}
+
+	path_in_polygon(source,target,path, polygon_outer_boundary);
+	return;
 	
 
   }
  
+
+  private:
+
    void insert_consrtaints(Polygon &polygon, Delaunay& tr){
 		V_circulator start =  polygon.vertices_circulator();
 		V_circulator cur = start;
@@ -124,10 +131,11 @@ public:
   {
 	TIMED_TRACE_ENTER("path_in_polygon (Path_planning folder)");
     if (polygon.is_convex()){
-                path.push_front(target);
-                path.push_front(source);
-                return;
+		path.push_front(target);
+		path.push_front(source);
+		return;
 	}else{
+		//If there is a straight-line solution, return with it immediately.
 		Segment_2 straigh_line_path(source, target);
 		if (is_in_polygon(straigh_line_path, polygon,true)){
 			path.push_front(target);
@@ -143,7 +151,7 @@ public:
   }
 
 
-private:
+
   void add_polygon_vertices(const Polygon& pgn)
   {
     for (Polygon::Vertex_iterator iter (pgn.vertices_begin()); iter != pgn.vertices_end(); ++iter)
@@ -309,7 +317,7 @@ void construct_dual_graph(Delaunay& tr,const Point & source,const Point & target
 			_vertices.push_back(center_face2);
 		}
 		
-			this->insert_edge(center_face1, center_face2);  
+		this->insert_edge(center_face1, center_face2);  
 		edge_it++;
     }
  
@@ -344,6 +352,7 @@ void construct_dual_graph(Delaunay& tr,const Point & source,const Point & target
 		this->insert_edge(target_face_center, target);
     }
     TIMED_TRACE_ACTION("build_dual_graph", "finish check target");
+	
 	TIMED_TRACE_EXIT("build_dual_graph");
 
 }
@@ -365,12 +374,14 @@ void refine_path(Point_list& old_path, Point_list& refined_path,Delaunay& tr){
     while(it_next !=  old_path.end()){
 		next_face = tr.locate(*it_next, cur_face);
 		if (next_face == cur_face){
-				it_next++;
-				continue;
+			it_next++;
+			continue;
 		}
 		Point p;
 		mid_point_of_common_edge(cur_face,next_face,p);
-		path.push_back(p);
+		if (p != old_path.front()){
+			path.push_back(p);
+		}
 		cur_face = next_face;
 		it_next++;          
     }
@@ -393,7 +404,6 @@ void mid_point_of_common_edge(Face_handle face1, Face_handle face2, Point& mid_p
 			v1 = face1->vertex(i)->point();
 			break;
 		}
- 
 	}
     //find the second common vertex 
 	for(int j = i+1; j < 3; j++){
@@ -401,7 +411,6 @@ void mid_point_of_common_edge(Face_handle face1, Face_handle face2, Point& mid_p
 			v2 = face1->vertex(j)->point();
 			break;
 		}
- 
 	}
  
 	mid_point = midpoint(v1,v2);
