@@ -136,14 +136,14 @@ namespace mms{
 		//create layers
 		void preprocess_generate_layers() {
 			TIMED_TRACE_ENTER("preprocess_generate_layers");
-			int layers_res = get_layers_res(layers_level);
+			int layers_res = get_layers_res(_layers_level);
 			generate_random_rotations(layers_res);
 			PRINT_ROTATIONS();
 			BOOST_FOREACH (Rotation rotation, _rotations) {
 				add_layer(rotation);
 			}
-			if (layers_level < 3) {
-				layers_level ++;
+			if (_layers_level < 3) {
+				_layers_level ++;
 			}
 			TIMED_TRACE_EXIT("preprocess_generate_layers");
 		}
