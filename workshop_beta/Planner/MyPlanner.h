@@ -199,7 +199,7 @@ namespace mms{
 	/*	will be called when a move needs to be made but the planner cannot satisfy any requests. 
 		Guaranteed to be called only if there are no reachable targets.
 		Always takes us from state n to state n+1 with the exception of 5.*/
-		bool preprocess_move(Ref_p& source, Ref_p_vec& targets) {
+		bool preprocess_move() {
 			switch(_state) {
 			case 1:
 				/* enter state 2 */
