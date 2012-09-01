@@ -33,9 +33,9 @@ void Input_reader::read_configuration(const std::string& filename, Configuration
 
 	//special parameters
 	configuration.set_seed(time(NULL));
-	configuration.set_layers_res_1(5);
-	configuration.set_layers_res_2(40);
-	configuration.set_layers_res_3(360);
+	configuration.set_layers_res_1(20);
+	configuration.set_layers_res_2(20);
+	configuration.set_layers_res_3(40);
 	configuration.set_motion_time_reduces_remaining_time(1);
 
 	while (! file.eof() ) {        
