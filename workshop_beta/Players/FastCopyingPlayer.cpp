@@ -25,11 +25,13 @@ bool FastCopyingPlayer::plan(double deadline) {
 	TIMED_TRACE_ENTER("plan");
 	ASSERT_CONDITION(deadline > 0, "plan called but no time left");
 	initialize();
+	timed_message("Thinking...");
 	if (original_planner.preprocess_plan()) {
 		TIMED_TRACE_EXIT("plan: can do more preprocessing");
 		return true;
 	} else {
 		TIMED_TRACE_EXIT("plan: no more preprocessing please");
+		timed_message("I'm tired of thinking.");
 		return false;
 	}
 }
@@ -39,12 +41,14 @@ bool FastCopyingPlayer::move(double deadline, Motion& motion_output) {
 	CGAL::Timer timer;
 	timer.start();
 	ASSERT_CONDITION(deadline > 0, "move called but no time left");
+	timed_message("Planning a move...");
 	initialize();
 
 	// Make sure we have at least one reachable target before proceeding
 	while ((timer.time() < deadline) && !has_reachable_targets(original_planner)) {
+		timed_message("Thinking harder...");
 		TIMED_TRACE_ACTION("move", "preprocessing original planner");
-		original_planner.preprocess_move();
+		original_planner.preprocess_plan();
 	}
 	if (timer.time() >= deadline) {
 		return false;
@@ -53,14 +57,16 @@ bool FastCopyingPlayer::move(double deadline, Motion& motion_output) {
 	clone_planner();
 	// Now do the same thing with the clone
 	while ((timer.time() < deadline) && !has_reachable_targets(*cloned_planner)) {
+		timed_message("Thinking even harder...");
 		TIMED_TRACE_ACTION("move", "preprocessing cloned planner");
-		cloned_planner->preprocess_move();
+		cloned_planner->preprocess_plan();
 	}
 	if (timer.time() >= deadline) {
 		return false;
 	}
 
 	// Plan a motion to the closest target
+	timed_message("Making my way to a target...");
 	Motion new_motion;
 	Ref_p_vec::iterator target_iter = move_to_closest_target(
 		*cloned_planner,
@@ -78,6 +84,7 @@ bool FastCopyingPlayer::move(double deadline, Motion& motion_output) {
 		last_target = *target_iter;
 		// Remove target reached from targets left
 		remaining_targets().erase(target_iter);
+		timed_message("Reached a target!");
 	} else {
 		// Cut the motion
 		new_motion.cut_motion(deadline - timer.time(), motion_output);
@@ -86,13 +93,19 @@ bool FastCopyingPlayer::move(double deadline, Motion& motion_output) {
 			location = motion_output.back()->target();
 		}
 		is_last_motion_complete = false;
+		timed_message("Moving to target but couldn't reach within time limit.");
 	}
 	return true;
 }
 
 // Returns whether the player thinks that the game is over.
 bool FastCopyingPlayer::is_game_over() {
-	return !has_remaining_targets();
+	if (!has_remaining_targets()) {
+		timed_message("*** REACHED ALL TARGETS! ***");
+		return true;
+	} else {
+		return false;
+	}
 }
 
 void FastCopyingPlayer::additional_targets_preprocessing(Ref_p_vec& additional_targets) {
@@ -116,10 +129,6 @@ bool FastCopyingPlayer::initialize() {
 	original_planner.initialize(location, remaining_targets());
 	planner_initialized = true;
 	return true;
-}
-
-void FastCopyingPlayer::improve_connectivity(Planner& planner, Reference_point& location, Ref_p_vec& targets) {
-	planner.additional_preprocessing(location, targets);
 }
 
 void FastCopyingPlayer::clone_planner() {

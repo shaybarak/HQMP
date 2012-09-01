@@ -17,3 +17,7 @@ void timed_trace(const char* function_name, const char* full_path, int line, con
 		<< function_name << ", " << action << std::endl;
 
 };
+
+void timed_message(const char* message) {
+	std::cout << global_tm.timer.time() << ": " << message << endl;
+}

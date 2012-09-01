@@ -9,20 +9,20 @@ Time_frame_status get_time_frame_status(Socket_client& socket_client)
   //construct request
   std::stringstream request;
   request << TIME_FRAME_STATUS_REQUEST  ;
-  std::cout <<"message sent in client: "<<request.str()<<std::endl;
+  //std::cout <<"message sent in client: "<<request.str()<<std::endl;
   socket_client.send_line(request.str());
 
   //recieve reply
   std::string answer = socket_client.receive_line();
   
-  std::cout <<"answer in "<<"get_time_frame_status " <<answer<<std::endl;
+  //std::cout <<"answer in "<<"get_time_frame_status " <<answer<<std::endl;
 
   std::vector<std::string> decomposed_result;
   string_split(answer, " ", std::back_inserter(decomposed_result));
 
   //convert reply
   int header = atoi(decomposed_result[0].c_str());
-  std::cout <<header<<" " <<decomposed_result[0].c_str() <<std::endl;
+  //std::cout <<header<<" " <<decomposed_result[0].c_str() <<std::endl;
   CGAL_postcondition(header == TIME_FRAME_STATUS_REPLY);
   int is_moveable_int = atoi(decomposed_result[1].c_str());
   CGAL_postcondition( (is_moveable_int == 0) || (is_moveable_int == 1) );
@@ -40,12 +40,12 @@ Scene_status get_scene_status(Socket_client& socket_client)
   //construct request
   std::stringstream request;
   request << SCENE_STATUS_REQUEST;
-  std::cout <<"message sent in client: "<<request.str()<<std::endl;
+  //std::cout <<"message sent in client: "<<request.str()<<std::endl;
   socket_client.send_line(request.str());
 
   //recieve reply
   std::string answer = socket_client.receive_line();
-  std::cout <<"answer in "<<"get_scene_status " <<answer<<std::endl;
+  //std::cout <<"answer in "<<"get_scene_status " <<answer<<std::endl;
 
 
   std::vector<std::string> decomposed_result;
@@ -79,7 +79,7 @@ bool request_to_write(Socket_client& socket_client, double time, std::string& pa
 
   //recieve reply
   std::string answer = socket_client.receive_line();
-  std::cout <<"answer in "<<"request_to_write " <<answer<<std::endl;
+  //std::cout <<"answer in "<<"request_to_write " <<answer<<std::endl;
 
   std::vector<std::string> decomposed_result;
   string_split(answer, " ", std::back_inserter(decomposed_result));
@@ -114,7 +114,7 @@ bool is_game_over(Socket_client& socket_client)
 
   //recieve reply
   std::string answer = socket_client.receive_line();
-  std::cout <<"answer in "<<"is_game_over " <<answer<<std::endl;
+  //std::cout <<"answer in "<<"is_game_over " <<answer<<std::endl;
 
   std::vector<std::string> decomposed_result;
   string_split(answer, " ", std::back_inserter(decomposed_result));

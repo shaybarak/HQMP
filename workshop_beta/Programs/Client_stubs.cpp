@@ -1,3 +1,5 @@
+//#define DEBUG_CLIENT_STUBS
+
 #include "stdafx.h"
 #include "Programs\client_stubs.h"
 
@@ -22,7 +24,9 @@ bool                      finished_game = false;
 
 void sleep(double remaining_time) {
 	if (remaining_time > 0) {
+#ifdef DEBUG_CLIENT_STUBS
 		cout << "Sleeping for the remaining " << remaining_time << endl;
+#endif
 		boost::posix_time::seconds sleep_time(remaining_time);
 		boost::this_thread::sleep(sleep_time);
 	}
@@ -78,15 +82,17 @@ double move(double remaining_time) {
 void static_planner(double remaining_time) {
 	CGAL::Timer timer;
 	timer.start();
+	timed_message("Beginning static turn.");
 	plan(remaining_time);
 	sleep(remaining_time - timer.time());
+	timed_message("Static turn over.");
 	return;
 }
 
 void moveable_planner(double remaining_time) {
 	CGAL::Timer timer;
 	timer.start();
-	TIMED_TRACE_ENTER("moveable_planner");
+	timed_message("Beginning moveable turn.");
 	double remaining_motion_time = remaining_time;
 
 	while ((timer.time() < remaining_motion_time) && !finished_game) {
@@ -100,14 +106,16 @@ void moveable_planner(double remaining_time) {
 		player->plan(remaining_time - timer.time());
 	}
 	
-	TIMED_TRACE_EXIT("moveable_planner");
+	timed_message("Moveable turn over.");
 	return;
 }
 
 void client_stubs_main(int argc, char* argv[]) {
 	////////////////////////////////////////////////////////////
 	Env env(argc,argv);
+#ifdef DEBUG_CLIENT_STUBS
 	cout << "Running using seed: " << configuration.get_seed() << endl;
+#endif
 	Input_reader input_reader;
 
 	////////////////////////////////////////////////////////////
@@ -142,10 +150,11 @@ void client_stubs_main(int argc, char* argv[]) {
 			static_planner(time_frame_status.remaining_time);
 		}
 		TIMED_TRACE_ACTION("client_main", "turn complete");
-		cout << endl;
 	}
 
+#ifdef DEBUG_CLIENT_STUBS
 	cout << "FINISHED..." << endl;
+#endif
 
 	terminate_connection(*socket_client_ptr);
 	delete (socket_client_ptr);

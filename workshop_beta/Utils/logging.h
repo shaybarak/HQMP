@@ -29,8 +29,8 @@
 	#define PRINT_POLYGON_UNBOUNDED_SKIPPING() cout << "polygon is unbounded, skipping connection" << endl
 
 #else
-	#define PRINT_CONNECTORS() print_connectors_count()
-	#define PRINT_CONNECTIVITY_GRAPH() print_connectivity_graph_count()
+	#define PRINT_CONNECTORS()
+	#define PRINT_CONNECTIVITY_GRAPH()
 	#define PRINT_FA_FSC_PREFIX()
 	#define PRINT_FA_FSC_SUFFIX()
 	#define PRINF_FA_FSC_FAILED_GENERATING_POINT()
@@ -48,3 +48,4 @@
 #endif
 
 void timed_trace(const char* function_name, const char* full_path, int line, const char* action);
+void timed_message(const char* message);

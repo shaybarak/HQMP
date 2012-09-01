@@ -1,6 +1,8 @@
 #ifndef MY_PLANNER_H
 #define MY_PLANNER_H
 
+//#define DEBUG_PLANNER
+
 #include "Manifolds\MMSTypedefs.h"
 #include "Manifolds\Fsc_indx.h"
 #include "Manifolds\Fixed_angle\Fixed_angle_manifold_container.h"
@@ -257,10 +259,14 @@ namespace mms{
 			TIMED_TRACE_ENTER("preprocess_generate_connectors");
 			Ref_p_vec connecting_points;
 			create_connecting_points(connecting_points, cc_limit);
+#ifdef DEBUG_PLANNER
 			cout << "try to generate " << connecting_points.size() << " connectors" << endl;
+#endif
 			int generated_connectors = generate_target_connectors(use_filter, use_roi, connecting_points);
 			//int generated_connectors = generate_random_connectors();    
+#ifdef DEBUG_PLANNER
 			cout << "generated " << generated_connectors << " connectors" << endl;
+#endif
 			PRINT_CONNECTORS();
 			
 			PLAYBACK_PRINT_CONNECTORS();
@@ -280,8 +286,10 @@ namespace mms{
 			Ref_p_vec connecting_points;
 			create_connecting_points(connecting_points, 2);
 			int generated_connectors = generate_target_connectors(false, false, connecting_points);
-			//int generated_connectors = generate_random_connectors();    
+			//int generated_connectors = generate_random_connectors();
+#ifdef DEBUG_PLANNER
 			cout << "generated " << generated_connectors << " connectors" << endl;
+#endif
 			PRINT_CONNECTORS();
 			
 			PLAYBACK_PRINT_CONNECTORS();
@@ -312,9 +320,13 @@ namespace mms{
 
 			Ref_p_vec connecting_points;
 			create_connecting_points(connecting_points, 10);
+#ifdef DEBUG_PLANNER
 			cout << "try to generate " << connecting_points.size() << " connectors" << endl;
+#endif
 			int connectors_count = generate_target_connectors(true, true, connecting_points);
+#ifdef DEBUG_PLANNER
 			cout << "generated " << connectors_count << " connectors" << endl;
+#endif
 			PLAYBACK_PRINT_CONNECTORS();
 			TIMED_TRACE_EXIT("additional_preprocessing");
 		}
@@ -518,9 +530,11 @@ namespace mms{
 				Motion_sequence *current = &seq1, *shortest = &seq2, *temp = NULL;
 				double shortest_time = INFINITY, current_time, current_aerial_time = 0;
 
+#ifdef DEBUG_PLANNER
 				cout << endl << "Time: " << global_tm.timer.time() << " SOURCE POINT: ";
 				source.print();
 				cout << endl;
+#endif
 
 				for (std::vector<pair<double, int>>::iterator it = aerialTimeToIndex.begin(); it!=aerialTimeToIndex.end(); it++) {
 					current_time = 0;
@@ -530,9 +544,11 @@ namespace mms{
 					double current_aerial_time = it->first;
 					Reference_point target(target_configurations[point_index]);
 
+#ifdef DEBUG_PLANNER
 					cout << "Query target: ";
 					target.print();
 					cout << " Aerial time to target: "<< current_aerial_time << endl;
+#endif
 
 					if (current_aerial_time > shortest_time) {
 						//since vector is already sorted, all points from here are further. End of iterations.
@@ -546,7 +562,9 @@ namespace mms{
 					}
 					path_found = true;
 
+#ifdef DEBUG_PLANNER
 					cout << "Best motion time till now: " << shortest_time << ", found path to target, motion time: " << current_time << endl;
+#endif
 
 					if (current_time < shortest_time) {	
 						// Exchange current and shortest
@@ -561,9 +579,11 @@ namespace mms{
 
 				motion_sequence.add_motion_sequence(*shortest);
 				
+#ifdef DEBUG_PLANNER
 				cout << "Selected target: ";
 				target_configurations[closest_target_index].print();
 				cout << " time to target: " << shortest_time << endl;
+#endif
 
 				TIMED_TRACE_EXIT("query_closest_point");
 				return path_found;
