@@ -123,9 +123,7 @@ bool FastCopyingPlayer::initialize() {
 
 	original_planner.preprocess();
 	// Allow additional preprocessing to source point and all initial targets
-	Ref_p_vec source_and_targets = env->get_target_configurations();
-	source_and_targets.push_back(env->get_source_configuration_a());
-	original_planner.preprocess_targets(source_and_targets);
+	sample_location_and_remaining_targets(original_planner);
 
 	planner_initialized = true;
 	return true;
@@ -133,6 +131,13 @@ bool FastCopyingPlayer::initialize() {
 
 void FastCopyingPlayer::improve_connectivity(Planner& planner, Reference_point& location, Ref_p_vec& targets) {
 	planner.additional_preprocessing(location, targets);
+}
+
+void FastCopyingPlayer::sample_location_and_remaining_targets(Planner& planner) {
+	// Allow additional preprocessing to source point and all initial targets
+	Ref_p_vec source_and_targets = env->get_target_configurations();
+	source_and_targets.push_back(location);
+	original_planner.preprocess_targets(source_and_targets);
 }
 
 void FastCopyingPlayer::clone_planner() {

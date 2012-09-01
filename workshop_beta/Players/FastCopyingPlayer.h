@@ -29,6 +29,9 @@ private:
 		Reference_point& location,
 		Ref_p_vec& targets);
 
+	// Sample the current location and all remaining target configurations
+	void sample_location_and_remaining_targets(Planner& planner);
+
 	// Clones the original planner, taking into account the other robot's current location
 	void clone_planner();
 
