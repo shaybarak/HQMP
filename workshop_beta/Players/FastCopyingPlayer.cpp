@@ -99,7 +99,7 @@ bool FastCopyingPlayer::move(double deadline, Motion& motion_output) {
 
 // Returns whether the player thinks that the game is over.
 bool FastCopyingPlayer::is_game_over() {
-	return has_remaining_targets();
+	return !has_remaining_targets();
 }
 
 void FastCopyingPlayer::additional_targets_preprocessing(Ref_p_vec& additional_targets) {
@@ -176,7 +176,7 @@ Ref_p_vec::iterator FastCopyingPlayer::move_to_closest_target(Planner& planner, 
 
 // Are there any remaining targets?
 bool FastCopyingPlayer::has_remaining_targets() {
-	return env->get_target_configurations().empty();
+	return !env->get_target_configurations().empty();
 }
 
 // Are there remaining targets that are reachable?
