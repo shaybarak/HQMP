@@ -345,3 +345,14 @@ int Configuration::get_layers_res_3() {
 	return _layers_res_3;
 }
 
+void Configuration::set_motion_time_reduces_remaining_time(const int motion_time_reduces_remaining_time) {
+	if (motion_time_reduces_remaining_time == 1) {
+		_motion_time_reduces_remaining_time = true;
+	} else {
+		_motion_time_reduces_remaining_time = false;
+	}
+}
+
+bool Configuration::get_motion_time_reduces_remaining_time() {
+	return _motion_time_reduces_remaining_time;
+}

@@ -73,7 +73,7 @@ double move(double remaining_time) {
 		motion_sequence.write(out);
 		return motion_length;
 	} else {
-		TIMED_TRACE_ACTION("move", "request denied");
+		timed_message("OOPS! The server doesn't like our last move...");
 		player->reject_last_move(motion_sequence);
 		return 0;
 	}
@@ -97,7 +97,10 @@ void moveable_planner(double remaining_time) {
 
 	while ((timer.time() < remaining_motion_time) && !finished_game) {
 		// Continue moving
-		remaining_motion_time -= move(remaining_motion_time - timer.time());
+		double last_motion_time = move(remaining_motion_time - timer.time());
+		if (configuration.get_motion_time_reduces_remaining_time()) {
+			remaining_motion_time -= last_motion_time;
+		}
 	}
 	if (finished_game) {
 		sleep(remaining_time - timer.time());

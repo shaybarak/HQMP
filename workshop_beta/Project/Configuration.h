@@ -101,6 +101,8 @@ public: //get
   int get_layers_res_2();
   void set_layers_res_3(const int layers_res_3);
   int get_layers_res_3();
+  void set_motion_time_reduces_remaining_time(const int motion_time_reduces_remaining_time);
+  bool get_motion_time_reduces_remaining_time();
   //////////////////////////////
 
 private:
@@ -154,6 +156,7 @@ private:
   int _layers_res_1;
   int _layers_res_2;
   int _layers_res_3;
+  bool _motion_time_reduces_remaining_time;
 
 }; //Configuration
 
