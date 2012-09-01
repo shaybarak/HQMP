@@ -83,6 +83,7 @@ namespace mms{
 
 		Random_utils            _rand;
 		AK                      _ak;
+		int						_layers_level; //0,1,2,3
 
 	public:
 		//constructor
@@ -93,13 +94,14 @@ namespace mms{
 				//the minkowski sum algorithm works faster on polygons are convex
 				//hence we decompose the workspace obstacles to convex polygons
 				decompose_workspace_into_convex_polygons(_workspace);
+				_layers_level = 0;
 		}
 
 		// Copy planner with an additional obstacle
 		MyPlanner(MyPlanner& other, Extended_polygon& obstacle) :
 			_workspace(other._workspace), _robot(other._robot),
 			_workspace_bbox(other._workspace_bbox),
-			_graph(0, true), _rand(configuration.get_seed()) {
+			_graph(0, true), _rand(configuration.get_seed()), _layers_level(other._layers_level) {
 
 				TIMED_TRACE_ENTER("MyPlanner: copying");
 				Polygon_vec updated_workspace(_workspace);
@@ -129,7 +131,6 @@ namespace mms{
 		}
 
 		//preprocess
-		// TODO consider renaming to preprocess_random
 		void preprocess(const unsigned int num_of_angles = configuration.get_slices_granularity()) {
 			TIMED_TRACE_ENTER("preprocess");
 			generate_random_rotations(num_of_angles);
@@ -626,9 +627,18 @@ namespace mms{
 			return false;
 		}
 
+	//layer methods
+	int get_layers_level() {
+		return _layers_level;
+	}
+
+	void set_layers_level(int layers_level) {
+		_layers_level = layers_level;
+	}
+
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 
-	private: //layer methods
+	private: 
 
 		void generate_random_rotations(const unsigned int num_of_angles) {
 			_rotations.clear();
