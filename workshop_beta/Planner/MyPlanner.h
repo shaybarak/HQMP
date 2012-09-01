@@ -675,12 +675,15 @@ namespace mms{
 
 	int get_layers_res(int layers_level) {
 		switch (layers_level) {
-			case 1: 
+			case 0: 
 				return configuration.get_layers_res_1();
-			case 2: 
+			case 1: 
 				return configuration.get_layers_res_2();
-			case 3: 
+			case 2: 
 				return configuration.get_layers_res_3();
+			case 3:
+				// No additional layers to sample
+				return 0;
 			default:
 				TIME_TRACE_ACTION("get_layers_res", "unknown level: " << layers_level);
 				return 0;
