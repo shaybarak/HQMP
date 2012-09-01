@@ -541,6 +541,10 @@ namespace mms{
 					fa_fsc_index++;
 					layer_ptr1 = _layers.get_manifold(fsc_iter1->_manifold_id);
 					Polygon_with_holes& pgn1 = layer_ptr1->get_fsc(fsc_iter1->_fsc_id).cell().polygon();
+					if (pgn1.is_unbounded()) {
+						PRINT_POLYGON_UNBOUNDED_SKIPPING();
+						continue;
+					}
 					
 					for (std::vector<Fsc_indx_vec>::iterator cc_iter2 = cc_iter1+1 ; cc_iter2 != ccs_vec.end(); cc_iter2++) {
 						fsc_indx_vec2 = *cc_iter2;
@@ -556,6 +560,10 @@ namespace mms{
 							
 							layer_ptr2 = _layers.get_manifold(fsc_iter2->_manifold_id);
 							Polygon_with_holes& pgn2 = layer_ptr2->get_fsc(fsc_iter2->_fsc_id).cell().polygon();
+							if (pgn2.is_unbounded()) {
+								//PRINT_POLYGON_UNBOUNDED_SKIPPING();
+								continue;
+							}
 
 							//now try to create ref_point
 							if (!CGAL::do_intersect(pgn1, pgn2)) {
@@ -1026,7 +1034,7 @@ namespace mms{
 		void print_my_polygon_with_holes(Polygon_with_holes polygon, int vertex_limit) {
 			cout << "********************" << endl;
 			cout << "Polygon boundary is convex: " << polygon.outer_boundary().is_convex() << endl;
-			cout << "Polygon had holes: " << (polygon.number_of_holes() != 0) << endl;
+			cout << "Polygon has holes: " << (polygon.number_of_holes() != 0) << endl;
 			cout <<"Polygon outer boundary: " << endl;
 			print_my_polygon(polygon.outer_boundary(), vertex_limit);
 			if (polygon.number_of_holes() != 0) {	
