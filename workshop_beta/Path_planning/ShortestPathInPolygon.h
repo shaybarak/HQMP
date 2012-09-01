@@ -98,7 +98,7 @@ public:
 			}
 			Point_list point_path;
 			_graph.find_path(source,target,point_path);
-			refine_path(point_path, path, tr);
+			refine_path(point_path, path, tr,polygon);
 			TIMED_TRACE_EXIT("path_in_polygon (Path_planning folder)");
 			return;
 		}
@@ -358,8 +358,8 @@ void construct_dual_graph(Delaunay& tr,const Point & source,const Point & target
 }
  
 //connect vertices at midpoints of triangulation edges
-void refine_path(Point_list& old_path, Point_list& refined_path,Delaunay& tr){
-       
+void refine_path(Point_list& old_path, Point_list& refined_path,Delaunay& tr,const Polygon_with_holes& polygon){
+      
     Point_list path;
     Point_list::iterator it_cur;
     Point_list::iterator it_next;
@@ -388,9 +388,34 @@ void refine_path(Point_list& old_path, Point_list& refined_path,Delaunay& tr){
 	if (old_path.back() != path.back()){
 		path.push_back(old_path.back());
 	}
-    refined_path = path;
+	cut_path (path,refined_path,polygon);
+	
 }
  
+void cut_path (Point_list& path, Point_list& shortcut, const Polygon_with_holes& polygon) {
+	
+	Point_list new_path;
+	Point target = path.back();
+	Point_list::iterator it_cur;
+	it_cur = path.begin();
+	new_path.push_front(*it_cur);
+
+	//begin from the second point in path
+	it_cur++;
+	
+	while(it_cur != path.end()){
+		new_path.push_back(*it_cur);
+		Segment_2 straight_line(*it_cur, target);
+		if(is_in_polygon(straight_line, polygon,true)){
+			new_path.push_back(target);
+			break;
+		}
+		it_cur++;
+	}
+	shortcut = new_path;
+
+}
+
 //find the middle point of the common edge of two adjacent facets
 void mid_point_of_common_edge(Face_handle face1, Face_handle face2, Point& mid_point){
         
