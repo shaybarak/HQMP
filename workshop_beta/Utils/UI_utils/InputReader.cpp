@@ -129,9 +129,9 @@ void Input_reader::read_configuration(const std::string& filename, Configuration
 
 		else if (decomposed_line[0].compare("layers_res_1") == 0)
 			configuration.set_layers_res_1(atoi(decomposed_line[1].c_str()));
-		else if (decomposed_line[0].compare("layers_res_1") == 0)
+		else if (decomposed_line[0].compare("layers_res_2") == 0)
 			configuration.set_layers_res_2(atoi(decomposed_line[1].c_str()));
-		else if (decomposed_line[0].compare("layers_res_1") == 0)
+		else if (decomposed_line[0].compare("layers_res_3") == 0)
 			configuration.set_layers_res_3(atoi(decomposed_line[1].c_str()));
 
 
