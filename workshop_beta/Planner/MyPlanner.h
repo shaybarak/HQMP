@@ -144,7 +144,7 @@ namespace mms{
 			all_conf.push_back(source);
 			preprocess_targets(all_conf);
 			preprocess_generate_connectors(2, false, false);
-			TIMED_TRACE_EXIT("initialize");
+			TIMED_TRACE_EXIT("initialize: 0->1");
 		}
 
 	/*	will be called when there is time to do static planning. Returns whether it should be called again if time permits.

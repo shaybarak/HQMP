@@ -38,6 +38,6 @@
 //#define DEBUG_PRINT_TIME_LOG
 #define DEBUG_PLANNER
 
-//#define PLAYBACK_MODE
+#define PLAYBACK_MODE
 
 #endif //COMPILATION_FLAGS_H
