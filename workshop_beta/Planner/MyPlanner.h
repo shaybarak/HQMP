@@ -685,7 +685,7 @@ namespace mms{
 				// No additional layers to sample
 				return 0;
 			default:
-				TIME_TRACE_ACTION("get_layers_res", "unknown level: " << layers_level);
+				TIMED_TRACE_ACTION("get_layers_res", "unknown level");
 				return 0;
 		}
 	}
@@ -703,8 +703,7 @@ namespace mms{
 		if (_layers_level == 3) {
 			return 1;
 		}
-		TIME_TRACE_ACTION("get_cc_limit", "illegal state: layers_level=" << layers_level 
-						<< ", _added_res_2_connectors=" << _added_res_2_connectors);
+		TIMED_TRACE_ACTION("get_cc_limit", "illegal state");
 		return 0;
 	}
 
@@ -721,11 +720,12 @@ namespace mms{
 		if (_layers_level == 3) {
 			return true;
 		}
+		TIMED_TRACE_ACTION("get_use_filter", "illegal state");
+		return false;
 	}
 
 	bool get_use_roi() {
 		return (_layers_level == 1);
-		
 	}
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
