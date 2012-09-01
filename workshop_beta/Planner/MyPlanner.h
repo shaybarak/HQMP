@@ -223,7 +223,7 @@ namespace mms{
 			Fsc_indx source_fsc_indx (get_containig_fsc(source));
 			Fsc_indx target_fsc_indx;
 
-			if (source_fsc_indx != Fsc_indx()) {
+			if (source_fsc_indx == Fsc_indx()) {
 				TIMED_TRACE_EXIT("exist_reachable_target: source is not connected to graph!");
 				return false;
 			}
