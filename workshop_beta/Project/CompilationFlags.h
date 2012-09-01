@@ -36,7 +36,7 @@
 // Logging and Playback    
 //--------------------------------------
 //#define DEBUG_PRINT_TIME_LOG
-//#define DEBUG_PLANNER
+#define DEBUG_PLANNER
 
 //#define PLAYBACK_MODE
 
