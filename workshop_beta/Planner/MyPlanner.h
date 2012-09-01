@@ -128,7 +128,7 @@ namespace mms{
 					C_space_line* new_line = new C_space_line(Fixed_point_constraint<K>(), _ak);
 					copy_line(*(other_lines.get_manifold(id)), *new_line, _robot, obstacle);
 					int new_id = _lines.add_manifold(new_line);
-					update_connectivity_graph(new_id);
+					update_connectivity_graph_line(new_id);
 				}
 				TIMED_TRACE_EXIT("MyPlanner: copying");
 		}
@@ -865,7 +865,7 @@ namespace mms{
 			int c_space_line_id = _lines.add_manifold(c_space_line_ptr);
 
 			// Update connectivity graph
-			update_connectivity_graph(c_space_line_id);
+			update_connectivity_graph_line(c_space_line_id);
 			return true;
 		}
 
@@ -911,7 +911,7 @@ namespace mms{
 			}
 			return;
 		}
-		void update_connectivity_graph(int c_space_line_id)
+		void update_connectivity_graph_line(int c_space_line_id)
 		{
 			CGAL_precondition (c_space_line_id != NO_ID);
 
@@ -940,7 +940,11 @@ namespace mms{
 				_graph.add_edge(layer_fsc_indx, line_fsc_indx);
 			}
 			return;
-		}  
+		}
+		void update_connectivity_graph_layer(int layer_id)
+		{
+			ASSERT_CONDITION(false, "NOT IMPLEMENTED");
+		}
 	private: //query related methods
 		Reference_point connect_to_graph( const Reference_point& ref_p,
 			Motion_sequence& motion_sequence)
