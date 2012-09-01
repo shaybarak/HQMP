@@ -76,44 +76,37 @@ public:
 		
 		Polygon polygon_outer_boundary(polygon.outer_boundary());
 
-		if (polygon.has_holes()){
+		
 			Segment_2 straigh_line_path(source, target);
 			//If there is a straight-line solution, return with it immediately.
 			if (is_in_polygon(straigh_line_path, polygon,true)){
 				path.push_front(target);
 				path.push_front(source);
 				return;
-			}else{
-				follow_polygon_edges(source,target,polygon_outer_boundary,path);
-				return;
 			}
-		}
-
-		path_in_polygon(source,target,path, polygon_outer_boundary);
-		return;
+		
+				
+				Delaunay tr;
+				if (!_initialized){
+					//triangulate polygon
+					
+					for (H_iterator hi = polygon.holes_begin  (); hi!= polygon.holes_end (); ++hi){
+						insert_consrtaints(Polygon(*hi), tr);
+					}
+					insert_consrtaints(polygon_outer_boundary, tr);
+					this->construct_dual_graph(tr,source,target);
+					_initialized = true;
+				}
+				Point_list point_path;
+				_graph.find_path(source,target, point_path);
+				refine_path(point_path, path, tr);
+				TIMED_TRACE_EXIT("path_in_polygon (Path_planning folder)");
+				return;
+	
 
   }
  
-  //find a path in a simple polygon with no holes
-  void path_in_polygon(const Point & source,const Point & target, Point_list& path, const Polygon& polygon)
-  {
-	TIMED_TRACE_ENTER("path_in_polygon (Path_planning folder)");
-    if (polygon.is_convex()){
-                path.push_front(target);
-                path.push_front(source);
-                return;
-	}else{
-		Segment_2 straigh_line_path(source, target);
-		if (is_in_polygon(straigh_line_path, polygon,false)){
-			path.push_front(target);
-			path.push_front(source);
-			return;
-		}
-	}
-	
-	Delaunay tr;
-	if (!_initialized){
-		//triangulate polygon
+   void insert_consrtaints(Polygon &polygon, Delaunay& tr){
 		V_circulator start =  polygon.vertices_circulator();
 		V_circulator cur = start;
 		V_circulator next = cur;
@@ -124,19 +117,32 @@ public:
 			next++;
 		}
 		tr.insert_constraint(*cur, *next);
-			
-		this->construct_dual_graph(tr,source,target, polygon);
-		_initialized = true;
-	}
+ }
 
-	Point_list point_path;
-	_graph.find_path(source,target, point_path);
-	refine_path(point_path, path, tr);
+  //find a path in a simple polygon with no holes
+  void path_in_polygon(const Point & source,const Point & target, Point_list& path, const Polygon& polygon)
+  {
+	TIMED_TRACE_ENTER("path_in_polygon (Path_planning folder)");
+    if (polygon.is_convex()){
+                path.push_front(target);
+                path.push_front(source);
+                return;
+	}else{
+		Segment_2 straigh_line_path(source, target);
+		if (is_in_polygon(straigh_line_path, polygon,true)){
+			path.push_front(target);
+			path.push_front(source);
+			return;
+		}
+	}
+	
+	follow_polygon_edges(source,target,polygon,path);
 	TIMED_TRACE_EXIT("path_in_polygon (Path_planning folder)");
 	return;
 		      
   }
- 
+
+
 private:
   void add_polygon_vertices(const Polygon& pgn)
   {
@@ -267,7 +273,7 @@ void follow_polygon_edges(const Point &source,const Point & target,  const Polyg
  
  }
  
-void construct_dual_graph(Delaunay& tr,const Point & source,const Point & target, const Polygon& polygon){
+void construct_dual_graph(Delaunay& tr,const Point & source,const Point & target){
  
        
     TIMED_TRACE_ENTER("build_dual_graph (Path_planning folder)");
