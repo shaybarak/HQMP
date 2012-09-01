@@ -46,6 +46,7 @@ bool FastCopyingPlayer::plan(double deadline) {
 bool FastCopyingPlayer::move(double deadline, Motion& motion_output) {
 	CGAL::Timer timer;
 	timer.start();
+	ASSERT_CONDITION(deadline > 0, "move called but no time left");
 	initialize();
 
 	// Make sure we have at least one reachable target before proceeding
