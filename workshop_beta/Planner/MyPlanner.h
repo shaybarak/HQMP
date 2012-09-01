@@ -194,11 +194,11 @@ namespace mms{
 					continue;
 				}
 				if (_graph.is_in_same_cc(source_fsc_indx, target_fsc_indx)) {
-					TIMED_TRACE_EXIT("exist_reachable_target");
+					TIMED_TRACE_EXIT("exist_reachable_target: true");
 					return true;
 				}
 			}
-			TIMED_TRACE_EXIT("exist_reachable_target");
+			TIMED_TRACE_EXIT("exist_reachable_target: false");
 			return false;
 		}
 
