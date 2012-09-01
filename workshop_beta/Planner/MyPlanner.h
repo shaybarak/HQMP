@@ -156,7 +156,7 @@ namespace mms{
 			switch(_state) {
 			case 1:
 				/* enter state 2 */
-				state++;
+				_state++;
 				preprocess_generate_layers(configuration.get_layers_res_2());
 				//TODO: connect existing layers!, and also check what ROI matters
 				preprocess_generate_connectors(2, false, true);
@@ -165,7 +165,7 @@ namespace mms{
 			
 			case 2:
 				/* enter state 3 */
-				state++;
+				_state++;
 				preprocess_generate_connectors(5, true, true);
 				TIMED_TRACE_EXIT("preprocess_plan: 2->3");
 				return true;
@@ -178,7 +178,7 @@ namespace mms{
 
 			case 4:
 				/* enter state 5 */
-				state++;
+				_state++;
 				preprocess_generate_connectors(1, true, true);
 				TIMED_TRACE_EXIT("preprocess_plan: 4->5");
 				return true;
@@ -189,7 +189,7 @@ namespace mms{
 				TIMED_TRACE_EXIT("preprocess_plan: 5->5");
 				return false;
 
-			case default:
+			default:
 				ASSERT_CONDITION(false, "preprocess plan: invalid state");
 				TIMED_TRACE_EXIT("preprocess_plan: ?->?");
 				return false;
@@ -203,7 +203,7 @@ namespace mms{
 			switch(_state) {
 			case 1:
 				/* enter state 2 */
-				state++;
+				_state++;
 				preprocess_generate_layers(configuration.get_layers_res_2());
 				//TODO: connect existing layers!, and also check what ROI matters
 				preprocess_generate_connectors(2, false, true);
@@ -212,20 +212,20 @@ namespace mms{
 			
 			case 2:
 				/* enter state 3 */
-				state++;
+				_state++;
 				preprocess_generate_connectors(5, true, true);
 				TIMED_TRACE_EXIT("preprocess_move: 2->3");
 				return true;
 
 			case 3:
 				/* enter state 4 */
-				state++;
+				_state++;
 				preprocess_generate_connectors(1, true, true);
 				TIMED_TRACE_EXIT("preprocess_move: 3->4");
 				return true;
 
 			case 4:
-				state++;
+				_state++;
 				preprocess_generate_layers(configuration.get_layers_res_3());
 				preprocess_generate_connectors(1, true, true);
 				TIMED_TRACE_EXIT("preprocess_move: 4->5");
@@ -236,7 +236,7 @@ namespace mms{
 				TIMED_TRACE_EXIT("preprocess_move: 5->5");
 				return true;
 
-			case default:
+			default:
 				ASSERT_CONDITION(false, "preprocess plan: invalid state");
 				TIMED_TRACE_EXIT("preprocess_plan: ?->?");
 				return false;
