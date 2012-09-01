@@ -16,9 +16,6 @@ target_configurations_file_name target_configurations_easy.txt
 additional_target_configurations_file_name additional_target_configurations.txt
 all_target_configurations_file_name all_configurations.txt
 
-#additional_sample_points_file_name additional_sample_points_a.txt
-
-
 rotational_speed 45                     #rotations per seconds
 translational_speed 1                   #	
 #=================================================================#
@@ -46,7 +43,7 @@ where_to_save_path_folder ./
 # save_path
 # should path produced be saved as a series of images
 ###################################################################
-save_path 1
+save_path 0
 
 
 
@@ -60,7 +57,9 @@ save_path 1
 # slices_granularity is the number of slices.
 # common vaues: 5,10,20,40,90,180,270,360
 ###################################################################
-slices_granularity 40
+layers_res_1 5
+layers_res_2 40
+layers_res_3 360
 
 ###################################################################
 # use_filtering 
@@ -70,7 +69,7 @@ use_filtering 1
 ###################################################################
 # use_region_of_interset
 ###################################################################
-use_region_of_interest 0
+use_region_of_interest 1
 
 
 

@@ -84,6 +84,7 @@ namespace mms{
 		Random_utils            _rand;
 		AK                      _ak;
 		int						_layers_level; //0,1,2,3
+		bool					_added_res_2_connectors;
 
 	public:
 		//constructor
@@ -95,13 +96,15 @@ namespace mms{
 				//hence we decompose the workspace obstacles to convex polygons
 				decompose_workspace_into_convex_polygons(_workspace);
 				_layers_level = 0;
+				_added_res_2_connectors = false;
 		}
 
 		// Copy planner with an additional obstacle
 		MyPlanner(MyPlanner& other, Extended_polygon& obstacle) :
 			_workspace(other._workspace), _robot(other._robot),
 			_workspace_bbox(other._workspace_bbox),
-			_graph(0, true), _rand(configuration.get_seed()), _layers_level(other._layers_level) {
+			_graph(0, true), _rand(configuration.get_seed()), 
+			_layers_level(other._layers_level), _added_res_2_connectors(false) {
 
 				TIMED_TRACE_ENTER("MyPlanner: copying");
 				Polygon_vec updated_workspace(_workspace);
@@ -130,7 +133,41 @@ namespace mms{
 				TIMED_TRACE_EXIT("MyPlanner: copying");
 		}
 
-		//preprocess
+		//create layers
+		void preprocess_generate_layers() {
+			TIMED_TRACE_ENTER("preprocess_generate_layers");
+			int layers_res = get_layers_res(layers_level);
+			generate_random_rotations(layers_res);
+			PRINT_ROTATIONS();
+			BOOST_FOREACH (Rotation rotation, _rotations) {
+				add_layer(rotation);
+			}
+			if (layers_level < 3) {
+				layers_level ++;
+			}
+			TIMED_TRACE_EXIT("preprocess_generate_layers");
+		}
+		
+		void preprocess_generate_connectors() {
+			TIMED_TRACE_ENTER("preprocess_generate_connectors");
+			Ref_p_vec connecting_points;
+			create_connecting_points(connecting_points, get_cc_limit());
+			cout << "try to generate " << connecting_points.size() << " connectors" << endl;
+			int generated_connectors = generate_target_connectors(get_use_filter(), get_use_roi(), connecting_points);
+			//int generated_connectors = generate_random_connectors();    
+			cout << "generated " << generated_connectors << " connectors" << endl;
+			PRINT_CONNECTORS();
+			
+			PLAYBACK_PRINT_CONNECTORS();
+			PLAYBACK_PRINT_FIXED_ANGLE_FSCS();
+
+			if (_layers_level == 2) {
+				_added_res_2_connectors = true;
+			}
+			TIMED_TRACE_EXIT("preprocess_generate_connectors");
+		}
+
+		//old version, kept for backward compatibility
 		void preprocess(const unsigned int num_of_angles = configuration.get_slices_granularity()) {
 			TIMED_TRACE_ENTER("preprocess");
 			generate_random_rotations(num_of_angles);
@@ -141,7 +178,7 @@ namespace mms{
 
 			Ref_p_vec connecting_points;
 			create_connecting_points(connecting_points, 2);
-			int generated_connectors = generate_target_connectors(false, connecting_points);
+			int generated_connectors = generate_target_connectors(false, false, connecting_points);
 			//int generated_connectors = generate_random_connectors();    
 			cout << "generated " << generated_connectors << " connectors" << endl;
 			PRINT_CONNECTORS();
@@ -162,7 +199,7 @@ namespace mms{
 			BOOST_FOREACH (Rotation rotation, _rotations) {
 				add_layer(rotation);
 			}
-			generate_target_connectors(false, ref_points);
+			generate_target_connectors(false, false, ref_points);
 			PRINT_CONNECTIVITY_GRAPH();
 
 			TIMED_TRACE_EXIT("preprocess_targets");
@@ -175,7 +212,7 @@ namespace mms{
 			Ref_p_vec connecting_points;
 			create_connecting_points(connecting_points);
 			cout << "try to generate " << connecting_points.size() << " connectors" << endl;
-			int connectors_count = generate_target_connectors(true, connecting_points);
+			int connectors_count = generate_target_connectors(true, true, connecting_points);
 			cout << "generated " << connectors_count << " connectors" << endl;
 			PLAYBACK_PRINT_CONNECTORS();
 			TIMED_TRACE_EXIT("additional_preprocessing");
@@ -636,6 +673,58 @@ namespace mms{
 		_layers_level = layers_level;
 	}
 
+	int get_layers_res(int layers_level) {
+		switch (layers_level) {
+			case 1: 
+				return configuration.get_layers_res_1();
+			case 2: 
+				return configuration.get_layers_res_2();
+			case 3: 
+				return configuration.get_layers_res_3();
+			default:
+				TIME_TRACE_ACTION("get_layers_res", "unknown level: " << layers_level);
+				return 0;
+		}
+	}
+
+	int get_cc_limit() {
+		if (_layers_level == 1) {
+			return 2;
+		}
+		if ((_layers_level == 2) && (!_added_res_2_connectors)) {
+			return 2;
+		}
+		if ((_layers_level == 2) && (_added_res_2_connectors)) {
+			return 5;
+		}
+		if (_layers_level == 3) {
+			return 1;
+		}
+		TIME_TRACE_ACTION("get_cc_limit", "illegal state: layers_level=" << layers_level 
+						<< ", _added_res_2_connectors=" << _added_res_2_connectors);
+		return 0;
+	}
+
+	bool get_use_filter() {
+		if (_layers_level == 1) {
+			return false;
+		}
+		if ((_layers_level == 2) && (!_added_res_2_connectors)) {
+			return false;
+		}
+		if ((_layers_level == 2) && (_added_res_2_connectors)) {
+			return true;
+		}
+		if (_layers_level == 3) {
+			return true;
+		}
+	}
+
+	bool get_use_roi() {
+		return (_layers_level == 1);
+		
+	}
+
 	///////////////////////////////////////////////////////////////////////////////////////////////////
 
 	private: 
@@ -694,7 +783,7 @@ namespace mms{
 			TIMED_TRACE_ENTER("generate_random_connectors");
 			int generated = 0;
 			for (int i(0); i < configuration.get_max_num_of_intra_connections(); ++i) {
-				if (generate_connector(true)) {
+				if (generate_connector(true, true)) {
 					generated++;
 				}
 			}
@@ -703,11 +792,11 @@ namespace mms{
 		}
 
 		//returns number of connectors created
-		int generate_target_connectors(bool use_filter, Ref_p_vec& ref_points) {
+		int generate_target_connectors(bool use_filter, bool use_roi, Ref_p_vec& ref_points) {
 			TIMED_TRACE_ENTER("generate_target_connectors");
 			int generated = 0;
 			for (Ref_p_vec::iterator iter = ref_points.begin(); iter != ref_points.end(); iter++){
-				if (generate_connector(use_filter, &(*iter))) {
+				if (generate_connector(use_filter, use_roi, &(*iter))) {
 					generated++;
 				}
 			}
@@ -715,7 +804,7 @@ namespace mms{
 			return generated;
 		}
 
-		bool generate_connector(bool use_filter, Ref_p* ref_point = NULL) {
+		bool generate_connector(bool use_filter, bool use_roi, Ref_p* ref_point = NULL) {
 			Rotation r;
 			Point p;
 			Layer* layer_ptr;
@@ -749,7 +838,7 @@ namespace mms{
 			double cell_size_ratio = get_size_percentage(layer_ptr->get_fsc(cell_id).cell() );
 			CGAL_precondition (cell_size_ratio >=0 && cell_size_ratio <=1);
 
-			if (configuration.get_use_region_of_interest() && cell_size_ratio < 1 ) {
+			if (use_roi && cell_size_ratio < 1 ) {
 				double small_rotation(configuration.get_rotation_range()/2);
 				CGAL_precondition(small_rotation < 180);
 				double half_range_double = small_rotation + cell_size_ratio * (180 - small_rotation);
