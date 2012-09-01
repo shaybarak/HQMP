@@ -116,7 +116,7 @@ namespace mms{
 					Layer* new_layer = new Layer(Fixed_angle_constraint<K>());
 					copy_layer(*(other_layers.get_manifold(id)), *new_layer, _robot, obstacle);
 					int new_id = _layers.add_manifold(new_layer);
-					update_connectivity_graph_vertices(*new_layer, new_id);
+					update_connectivity_graph_layer(new_id);
 				}
 
 				// Copy all lines with the extra obstacle
@@ -126,7 +126,7 @@ namespace mms{
 					C_space_line* new_line = new C_space_line(Fixed_point_constraint<K>(), _ak);
 					copy_line(*(other_lines.get_manifold(id)), *new_line, _robot, obstacle);
 					int new_id = _lines.add_manifold(new_line);
-					update_connectivity_graph(new_id);
+					update_connectivity_graph_line(new_id);
 				}
 				TIMED_TRACE_EXIT("MyPlanner: copying");
 		}
@@ -820,7 +820,7 @@ namespace mms{
 			layer_ptr->decompose(_robot, _decomposed_workspace);
 			int layer_id = _layers.add_manifold(layer_ptr);
 
-			update_connectivity_graph_vertices(*layer_ptr, layer_id);
+			update_connectivity_graph_layer(layer_id);
 			return;
 		}
 
@@ -910,7 +910,7 @@ namespace mms{
 			int c_space_line_id = _lines.add_manifold(c_space_line_ptr);
 
 			// Update connectivity graph
-			update_connectivity_graph(c_space_line_id);
+			update_connectivity_graph_line(c_space_line_id);
 			return true;
 		}
 
@@ -947,7 +947,7 @@ namespace mms{
 		}
 
 	private: //Connectivity_graph methods
-		void update_connectivity_graph_vertices(Layer& layer, int layer_id)
+		/*void update_connectivity_graph_vertices(Layer& layer, int layer_id)
 		{
 			for (int fsc_id(0); fsc_id<layer.num_of_fscs(); ++fsc_id)
 			{
@@ -955,8 +955,39 @@ namespace mms{
 				_graph.add_vertex(layer_fsc_indx);
 			}
 			return;
+		}*/
+
+		void update_connectivity_graph_layer(int layer_id) {
+			CGAL_precondition (layer_id != NO_ID);
+			Layer* layer_ptr = _layers.get_manifold(layer_id);
+
+			//add all fixed poinr fscs
+			for (int fsc_id(0); fsc_id<layer_ptr->num_of_fscs(); ++fsc_id) {
+				Fsc_indx layer_fsc_indx(FIXED_ANGLE, layer_id, fsc_id);
+				_graph.add_vertex(layer_fsc_indx);
+			}
+
+			//iterate over all lines, find intersections
+			for (int iter = _lines.manifold_id_iterator_begin(); iter < _lines.manifold_id_iterator_end(); iter++) {
+				Int_pair edges_ids;
+				C_space_line* line_ptr = _lines.get_manifold(iter);
+				//will address the correct cell, no need to iterate over all cells
+				intersect<K> (*layer_ptr, *line_ptr, edges_ids);
+				if ((edges_ids.first == NO_ID) || (edges_ids.second == NO_ID)) {
+					continue;
+				}
+
+				Fsc_indx layer_fsc_indx(FIXED_ANGLE, layer_id, edges_ids.first);
+				Fsc_indx line_fsc_indx (FIXED_POINT, iter, edges_ids.second);
+				
+				_graph.add_vertex(line_fsc_indx);
+				_graph.add_edge(layer_fsc_indx, line_fsc_indx);
+
+			}
+			return;
 		}
-		void update_connectivity_graph(int c_space_line_id)
+
+		void update_connectivity_graph_line(int c_space_line_id)
 		{
 			CGAL_precondition (c_space_line_id != NO_ID);
 
