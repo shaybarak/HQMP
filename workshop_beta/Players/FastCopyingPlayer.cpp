@@ -121,11 +121,11 @@ bool FastCopyingPlayer::initialize() {
 		return false;
 	}
 
-	// Allow additional preprocessing to source point and all initial targets
-	Ref_p_vec additional_samples = env->get_target_configurations();
-	additional_samples.push_back(env->get_source_configuration_a());
-	original_planner.preprocess_targets(additional_samples);
 	original_planner.preprocess();
+	// Allow additional preprocessing to source point and all initial targets
+	Ref_p_vec source_and_targets = env->get_target_configurations();
+	source_and_targets.push_back(env->get_source_configuration_a());
+	original_planner.preprocess_targets(source_and_targets);
 
 	planner_initialized = true;
 	return true;
