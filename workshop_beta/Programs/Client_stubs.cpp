@@ -36,8 +36,9 @@ void plan(double remaining_time) {
 	CGAL::Timer timer;
 	timer.start();
 
-	if (finished_game)  //update this flag when you finished all queries
+	if (player->is_game_over()) {
 		return;
+	}
 
 	while (timer.time() < remaining_time) {
 		if (!(player->plan(remaining_time - timer.time()))) {
@@ -51,13 +52,12 @@ void plan(double remaining_time) {
 
 // Returns the length of motion generated
 double move(double remaining_time) {
-	if (finished_game) {
+	if (player->is_game_over()) {
 		return 0;
 	}
 
 	Motion motion_sequence;
 	player->move(remaining_time, motion_sequence);
-	finished_game = player->is_game_over();
 
 	double motion_length(motion_sequence.motion_time());
 	if (motion_length == 0) {
@@ -95,14 +95,14 @@ void moveable_planner(double remaining_time) {
 	timed_message("Beginning moveable turn.");
 	double remaining_motion_time = remaining_time;
 
-	while ((timer.time() < remaining_motion_time) && !finished_game) {
+	while ((timer.time() < remaining_motion_time) && !player->is_game_over()) {
 		// Continue moving
 		double last_motion_time = move(remaining_motion_time - timer.time());
 		if (configuration.get_motion_time_reduces_remaining_time()) {
 			remaining_motion_time -= last_motion_time;
 		}
 	}
-	if (finished_game) {
+	if (player->is_game_over()) {
 		sleep(remaining_time - timer.time());
 	} else while (timer.time() < remaining_time) {
 		// Use any extra static time to plan
@@ -129,7 +129,7 @@ void client_stubs_main(int argc, char* argv[]) {
 	// Begin game
 	player = (Player*)new FastCopyingPlayer(&env, &configuration);
 	bool read_additional_configurations = true;
-	while (is_game_over(*socket_client_ptr) == false) {    
+	while (is_game_over(*socket_client_ptr) == false) {
 		// Before doing any planning, see if something changed
 		TIMED_TRACE_ACTION("client_main", "getting scene status");
 		Scene_status scene_status = get_scene_status(*socket_client_ptr); 
