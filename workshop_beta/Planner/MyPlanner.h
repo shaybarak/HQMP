@@ -311,6 +311,7 @@ namespace mms{
 			TIMED_TRACE_EXIT("additional_preprocessing");
 		}
 
+		//Public methods for accessability of targets 
 		bool exist_reachable_target(const Ref_p& source, const Ref_p_vec& targets) {
 			TIMED_TRACE_ENTER("exist_reachable_target");
 			Fsc_indx source_fsc_indx (get_containig_fsc(source));
@@ -359,6 +360,14 @@ namespace mms{
 			}
 			TIMED_TRACE_EXIT("exist_UNreachable_target: false");
 			return false;
+		}
+
+
+		/*	returns true if target is inside a fixed angle fsc.
+			given all targets are in CFree, and all targets are sampled, 
+			function returns true iff target is not blocked by the quasi-dynamic obstacle*/
+		bool is_free(Ref_p& target) {
+			return (get_containig_fsc(target) != Fsc_indx())
 		}
 
 		//query
