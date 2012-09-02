@@ -47,6 +47,7 @@ private:
 	bool has_remaining_targets();
 	bool has_reachable_targets(Planner& planner);
 	bool has_unreachable_targets(Planner& planner);
+	bool has_unblocked_targets(Planner& planner);
 	Ref_p_vec& remaining_targets();
 
 	// Original planner without an obstacle

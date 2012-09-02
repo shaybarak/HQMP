@@ -56,7 +56,14 @@ bool FastCopyingPlayer::move(double deadline, Motion& motion_output) {
 		return false;
 	}
 
+	// Create a copy of the planner, introducing the dynamic obstacle's current configuration
 	clone_planner();
+	// Verify that the dynamic obstacle does not block all remaining targets
+	if (!has_unblocked_targets(*cloned_planner)) {
+		timed_message("Arrgh! The other robot is sitting on top of the target!");
+		return false;
+	}
+
 	// Now do the same thing with the clone
 	while ((timer.time() < deadline) && !has_reachable_targets(*cloned_planner)) {
 		timed_message("Thinking even harder...");
@@ -188,6 +195,16 @@ bool FastCopyingPlayer::has_reachable_targets(Planner& planner) {
 bool FastCopyingPlayer::has_unreachable_targets(Planner& planner) {
 	return (!remaining_targets().empty()
 		&& !planner.exist_unreachable_target(location, remaining_targets()));
+}
+
+// Are there remaining targets that are non-blocked?
+bool FastCopyingPlayer::has_unblocked_targets(Planner& planner) {
+	for (Ref_p_vec::iterator iter = remaining_targets().begin(); iter != remaining_targets().end(); iter++) {
+		if (planner.is_free(*iter)) {
+			return true;
+		}
+	}
+	return false;
 }
 
 Ref_p_vec& FastCopyingPlayer::remaining_targets() {
