@@ -78,7 +78,6 @@ namespace mms{
 
 		Connectivity_graph      _graph;
 
-		// TODO: there is much bardak here, fix this
 		std::vector<Rotation>   _rotations;
 		Layers                  _layers;
 		C_space_lines           _lines;
