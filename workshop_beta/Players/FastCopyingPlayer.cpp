@@ -44,6 +44,8 @@ bool FastCopyingPlayer::move(double deadline, Motion& motion_output) {
 	timed_message("Planning a move...");
 	initialize();
 
+	sample_current_location();
+
 	// Make sure we have at least one reachable target before proceeding
 	while ((timer.time() < deadline) && !has_reachable_targets(original_planner)) {
 		timed_message("Thinking harder...");
@@ -129,6 +131,12 @@ bool FastCopyingPlayer::initialize() {
 	original_planner.initialize(location, remaining_targets());
 	planner_initialized = true;
 	return true;
+}
+
+void FastCopyingPlayer::sample_current_location() {
+	Ref_p_vec source_vec;
+	source_vec.push_back(location);
+	original_planner.preprocess_targets(source_vec);
 }
 
 void FastCopyingPlayer::clone_planner() {

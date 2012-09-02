@@ -24,6 +24,9 @@ private:
 	// Initializes the underlying planner if not initialized already
 	bool initialize();
 
+	// Samples the robot's current configuration
+	void sample_current_location();
+
 	// Improves a planner's connectivity from the current location to target configurations
 	void improve_connectivity(Planner& planner,
 		Reference_point& location,
