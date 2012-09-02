@@ -85,8 +85,6 @@ namespace mms{
 
 		Random_utils            _rand;
 		AK                      _ak;
-		//int						_layers_level; //0,1,2,3
-		//bool					_added_res_2_connectors;
 		int						_state;
 
 	public:
@@ -739,7 +737,6 @@ namespace mms{
 								break;
 							}
 						}
-						//TODO: checking this condition twice, looks like bad programming...
 						if (cc_to_cc_count >= max_cc_to_cc_connections) {
 							//Assume this CC is well connected to outer loop's cc.
 							break;
