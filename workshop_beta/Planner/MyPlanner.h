@@ -300,6 +300,7 @@ namespace mms{
 			return;
 		}
 
+		//un used, backward compatibiliy
 		void additional_preprocessing(Ref_p& source, Ref_p_vec& targets) {
 			TIMED_TRACE_ENTER("additional_reprocessing");
 
@@ -743,15 +744,6 @@ namespace mms{
 			TIMED_TRACE_EXIT("create_connecting_points");
 			return false;
 		}
-
-	//layer methods
-	int get_layers_level() {
-		return _layers_level;
-	}
-
-	void set_layers_level(int layers_level) {
-		_layers_level = layers_level;
-	}
 
 
 	///////////////////////////////////////////////////////////////////////////////////////////////////
