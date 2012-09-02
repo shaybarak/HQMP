@@ -365,7 +365,7 @@ namespace mms{
 			given all targets are in CFree, and all targets are sampled, 
 			function returns true iff target is not blocked by the quasi-dynamic obstacle*/
 		bool is_free(Ref_p& target) {
-			return (get_containig_fsc(target) != Fsc_indx())
+			return (get_containig_fsc(target) != Fsc_indx());
 		}
 
 		//query
@@ -820,13 +820,13 @@ namespace mms{
 		int generate_target_connectors(bool use_filter, bool use_roi, Ref_p_vec& ref_points) {
 			TIMED_TRACE_ENTER("generate_target_connectors");
 			int generated = 0;
-			cout << "try to generate " << ref_points.size() << " connectors" << endl;
+			cout << "Trying to generate " << ref_points.size() << " connectors" << endl;
 			for (Ref_p_vec::iterator iter = ref_points.begin(); iter != ref_points.end(); iter++){
 				if (generate_connector(use_filter, use_roi, &(*iter))) {
 					generated++;
 				}
 			}
-			cout << "generated " << generated << " connectors" << endl;
+			cout << "Generated " << generated << " connectors" << endl;
 			PRINT_CONNECTIVITY_GRAPH();
 			PLAYBACK_PRINT_CONNECTORS();
 			TIMED_TRACE_EXIT("generate_target_connectors");
@@ -1122,7 +1122,7 @@ namespace mms{
 
 		//debugging methods
 		void print_rotations() {
-			cout << "There exist " << _layers.size() << " rotations: ";
+			cout << "There are " << _layers.size() << " rotations: ";
 			for (int iter = _layers.manifold_id_iterator_begin(); iter != _layers.manifold_id_iterator_end(); iter++) {
 				cout << _layers.get_manifold(iter)->constraint().restriction().to_angle() << ", ";
 			}
@@ -1149,7 +1149,7 @@ namespace mms{
 		}
 
 		void print_connectors_count() {
-			cout << "There exist " << _lines.manifold_id_iterator_end() << " connectors" << endl; 
+			cout << "There are " << _lines.manifold_id_iterator_end() << " connectors" << endl; 
 		}
 
 		void print_connectivity_graph_count() {
@@ -1179,7 +1179,7 @@ namespace mms{
 
 		void print_fixed_angle_fsc(Fsc_indx& fsc_indx, bool print_polygon) {
 			Layer* layer_ptr = _layers.get_manifold(fsc_indx._manifold_id);
-			cout << "manifold id: " << fsc_indx._manifold_id << " fsc id: " << fsc_indx._fsc_id
+			cout << "Manifold id: " << fsc_indx._manifold_id << " fsc id: " << fsc_indx._fsc_id
 				<< " angle = " << layer_ptr->constraint().restriction().to_angle();
 			if (print_polygon) {
 				cout << endl;
