@@ -160,7 +160,6 @@ namespace mms{
 				/* enter state 2 */
 				_state++;
 				preprocess_generate_layers(configuration.get_layers_res_2());
-				//TODO: connect existing layers!, and also check what ROI matters
 				preprocess_generate_connectors(2, false, true);
 				TIMED_TRACE_EXIT("preprocess_plan: 1->2");
 				return true;
@@ -206,7 +205,6 @@ namespace mms{
 				/* enter state 2 */
 				_state++;
 				preprocess_generate_layers(configuration.get_layers_res_2());
-				//TODO: connect existing layers!, and also check what ROI matters
 				preprocess_generate_connectors(2, false, true);
 				TIMED_TRACE_EXIT("preprocess_move: 1->2");
 				return true;
