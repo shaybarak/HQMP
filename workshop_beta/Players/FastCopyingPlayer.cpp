@@ -97,10 +97,8 @@ bool FastCopyingPlayer::move(double deadline, Motion& motion_output) {
 	} else {
 		// Cut the motion
 		new_motion.cut_motion(deadline - timer.time(), motion_output);
-		// Update location to end of new motion
-		if (!new_motion.empty()) {
-			location = new_motion.front()->source();
-		}
+		// Update location to end of output motion
+		location = motion_output.back()->target();
 		is_last_motion_complete = false;
 		timed_message("Moving to target but couldn't reach within time limit.");
 	}
