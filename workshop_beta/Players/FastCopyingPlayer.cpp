@@ -122,6 +122,8 @@ void FastCopyingPlayer::additional_targets_preprocessing(Ref_p_vec& additional_t
 }
 
 void FastCopyingPlayer::reject_last_move(Motion& motion_sequence) {
+	// Return to the start of the rejected motion
+	location = motion_sequence.front()->source();
 	// If the last (rejected) motion was to a target
 	if (is_last_motion_complete) {
 		// Return that target to the list of remaining targets
